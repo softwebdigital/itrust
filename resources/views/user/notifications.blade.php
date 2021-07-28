@@ -1,0 +1,50 @@
+@extends('layouts.user')
+
+@section('head')
+    {{ __('Notifications') }}
+@endsection
+
+@section('title')
+    {{ __('Notifications') }}
+@endsection
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Notifications</li>
+@endsection
+
+@section('content')
+    @if($type == 'all')
+        <div class="row">
+            @foreach($notifications as $key => $notis)
+                <div class="col-md-6">
+                    <div class="card-body border">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <img src="{{ asset($notis->data['image'] ?? 'assets/images/logo-sm.svg') }}" class="rounded-circle avatar-sm" alt="user-pic">
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ $notis->data['title'] }} <small><i class="mdi mdi-clock-outline"></i> {{ $notis->created_at->diffForHumans() }}</small></h6>
+                                <div class="mt-4">
+                                    <p class="mb-1">{{ $notis->data['message'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="d-flex">
+            <div class="flex-shrink-0 me-3">
+                <img src="{{ asset($notification->data['image'] ?? 'assets/images/logo-sm.svg') }}" class="rounded-circle avatar-sm" alt="user-pic">
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">{{ $notification->data['title'] }} <small><i class="mdi mdi-clock-outline"></i> {{ $notification->created_at->diffForHumans() }}</small></h6>
+                <div class="mt-4">
+                    <p class="mb-1">{{ $notification->data['message'] }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+@endsection
