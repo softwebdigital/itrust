@@ -281,14 +281,14 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label" for="q1">How much investment experience do you have? </label>
-                                            <select class="form-select @error('q1') is-invalid @enderror" name="q1" id="q1">
+                                            <select class="form-select @error('experience') is-invalid @enderror" name="experience" id="q1">
                                                 <option selected value="">Select an Answer</option>
-                                                <option value="none" @if(old('q1') == 'none') selected @endif>None</option>
-                                                <option value="beginner" @if(old('q1') == 'beginner') selected @endif>Not much</option>
-                                                <option value="amateur" @if(old('q1') == 'amateur') selected @endif>I know what I'm doing</option>
-                                                <option value="expert" @if(old('q1') == 'expert') selected @endif>I'm an expert</option>
+                                                <option value="none" @if(old('experience') == 'none') selected @endif>None</option>
+                                                <option value="beginner" @if(old('experience') == 'beginner') selected @endif>Not much</option>
+                                                <option value="amateur" @if(old('experience') == 'amateur') selected @endif>I know what I'm doing</option>
+                                                <option value="expert" @if(old('experience') == 'expert') selected @endif>I'm an expert</option>
                                             </select>
-                                            @error('q1')
+                                            @error('experience')
                                             <span class="invalid-feedback d-block" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -298,14 +298,14 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label" for="q2">Are you employed?</label>
-                                            <select class="form-select @error('q2') is-invalid @enderror" name="q2" id="q2">
+                                            <select class="form-select @error('employment') is-invalid @enderror" name="employment" id="q2">
                                                 <option selected value="">Select an Answer</option>
-                                                <option value="employed" @if(old('q2') == 'employed') selected @endif>I'm employed</option>
-                                                <option value="unemployed" @if(old('q2') == 'unemployed') selected @endif>I'm unemployed</option>
-                                                <option value="retired" @if(old('q2') == 'retired') selected @endif>I'm retired</option>
-                                                <option value="student" @if(old('q2') == 'student') selected @endif>I'm a student</option>
+                                                <option value="employed" @if(old('employment') == 'employed') selected @endif>I'm employed</option>
+                                                <option value="unemployed" @if(old('employment') == 'unemployed') selected @endif>I'm unemployed</option>
+                                                <option value="retired" @if(old('employment') == 'retired') selected @endif>I'm retired</option>
+                                                <option value="student" @if(old('employment') == 'student') selected @endif>I'm a student</option>
                                             </select>
-                                            @error('q2')
+                                            @error('employment')
                                             <span class="invalid-feedback d-block" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -318,14 +318,14 @@
                                             <div class="d-flex">
                                                 <div class="my-auto">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="q3" id="formRadio" value="yes" {{ old('q3') == 'yes' ? 'checked' : '' }}>
+                                                        <input class="form-check-input" type="radio" name="related" id="formRadio" value="yes" {{ old('related') == 'yes' ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="formRadio">Yes</label>
                                                     </div>
                                                 </div>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                                 <div class="my-auto">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="q3" id="formRadio" value="no" {{ old('q3') ? old('q3') == 'no' ? 'checked' : '' : 'checked' }}>
+                                                        <input class="form-check-input" type="radio" name="related" id="formRadio" value="no" {{ old('related') ? old('related') == 'no' ? 'checked' : '' : 'checked' }}>
                                                         <label class="form-check-label" for="formRadio">No</label>
                                                     </div>
                                                 </div>

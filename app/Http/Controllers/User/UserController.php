@@ -4,11 +4,15 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +21,7 @@ class UserController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=NGN&per-page=100&page=1'); //&ids=BTC,ETH,XRP
+        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1'); //&ids=BTC,ETH,XRP
         $data = json_decode($data, true);
         foreach ($data as $key => $datum) {
             $data[$key]['market_cap'] = $this->cap($datum['market_cap']);
@@ -30,14 +34,15 @@ class UserController extends Controller
         $btcNews = Http::withHeaders(['X-ACCESS-KEY' => env('NEWS_API_KEY')])
             ->get('https://newsdata.io/api/1/news', $q);
         $btcNews = json_decode($btcNews, true);
-        $q = [
-            'category' => 'top',
-            'language' => 'en',
-            'q' => 'ethereum'
-        ];
-        $ethNews = Http::withHeaders(['X-ACCESS-KEY' => env('NEWS_API_KEY')])
-            ->get('https://newsdata.io/api/1/news', $q);
-        $ethNews = json_decode($ethNews, true);
+//        $q = [
+//            'category' => 'top',
+//            'language' => 'en',
+//            'q' => 'ethereum'
+//        ];
+//        $ethNews = Http::withHeaders(['X-ACCESS-KEY' => env('NEWS_API_KEY')])
+//            ->get('https://newsdata.io/api/1/news', $q);
+//        $ethNews = json_decode($ethNews, true);
+        $ethNews = [];
 
 
         return view('user.index', compact('user', 'data', 'btcNews', 'ethNews'));
@@ -53,6 +58,11 @@ class UserController extends Controller
         return view('user.transactions');
     }
 
+    public function portfolio()
+    {
+        return view('user.portfolio');
+    }
+
     public function rewards()
     {
         return view('user.rewards');
@@ -66,6 +76,20 @@ class UserController extends Controller
     public function documents()
     {
         return view('user.documents');
+    }
+
+    public function settings()
+    {
+        $devices = $this->devices();
+        $exp = $this->getExperience(Auth::user()['experience']);
+        $emp = ucwords(Auth::user()['employment']);
+        $ms = ucwords(Auth::user()['marital_status']);
+        $yi = $this->getYearlyIncome(Auth::user()['yearly_income']);
+        $sof = $this->getSourceOfFunds(Auth::user()['source_of_funds']);
+        $goal = $this->getGoal(Auth::user()['goal']);
+        $timeline = $this->getTimeline(Auth::user()['timeline']);
+        $dsp = Auth::user()['dsp'] ? 'Enabled' : 'Disabled';
+        return view('user.settings', compact(['devices', 'exp', 'emp', 'ms', 'yi', 'sof', 'goal', 'timeline', 'dsp']));
     }
 
     public function notifications()
@@ -144,6 +168,99 @@ class UserController extends Controller
         return redirect()->route('login');
     }
 
+    public function updateInvestmentProfile(Request $request, $type): JsonResponse
+    {
+        $err = null;
+        if ($type == 'employment') {
+            if (User::find(Auth::id())->update(['employment' => $request['employment']]))
+                return response()->json(['msg' => 'Employment Updated', 'data' => ucwords($request['employment'])]);
+            else $err = 'Could not update employment';
+        }
+        if ($type == 'experience') {
+            $exp = $this->getExperience($request['experience']);
+            if (User::find(Auth::id())->update(['experience' => $request['experience']]))
+                return response()->json(['msg' => 'Experience Updated', 'data' => $exp]);
+            else $err = 'Could not update experience';
+        }
+        if ($type == 'marital_status') {
+            if (User::find(Auth::id())->update(['marital_status' => $request['marital_status']]))
+                return response()->json(['msg' => 'Marital Status Updated', 'data' => ucwords($request['marital_status'])]);
+            else $err = 'Could not update Marital Status';
+        }
+        if ($type == 'yearly_income') {
+            $yearly_income = $this->getYearlyIncome($request['yi']);
+            if (User::find(Auth::id())->update(['yearly_income' => $request['yi']]))
+                return response()->json(['msg' => 'Yearly Income Updated', 'data' => $yearly_income]);
+            else $err = 'Could not update Yearly Income';
+        }
+        if ($type == 'sof') {
+            $sof = $this->getSourceOfFunds($request['sof']);
+            if (User::find(Auth::id())->update(['source_of_funds' => $request['sof']]))
+                return response()->json(['msg' => 'Source of Funds Updated', 'data' => $sof]);
+            else $err = 'Could not update Source of Funds';
+        }
+        if ($type == 'goal') {
+            $goal = $this->getGoal($request['goal']);
+            if (User::find(Auth::id())->update(['goal' => $request['goal']]))
+                return response()->json(['msg' => 'Goal Updated', 'data' => $goal]);
+            else $err = 'Could not update Goal';
+        }
+        if ($type == 'timeline') {
+            $timeline = $this->getTimeline($request['timeline']);
+            if (User::find(Auth::id())->update(['timeline' => $request['timeline']]))
+                return response()->json(['msg' => 'Timeline Updated', 'data' => $timeline]);
+            else $err = 'Could not update Timeline';
+        }
+        return response()->json(['msg' => $err ?? 'An error occurred, try again'], 400);
+    }
+
+    public function updateDSP(Request $request): JsonResponse
+    {
+        $dsp = $request['dsp'] == 'true';
+        if (User::find(Auth::id())->update(['dsp' => $request['dsp'] == 'true'])) return response()->json(['msg' => $dsp ? 'Enabled' : 'Disabled']);
+        return response()->json(['msg' => 'Could not Update Data Sharing']);
+    }
+
+    public function logoutDevice(Request $request, $id): JsonResponse
+    {
+        if (Hash::check($request['password'], Auth::user()['password'])) {
+            if (DB::table('sessions')->where('id', $id)->where('user_id', Auth::id())->delete())
+                return response()->json([
+                    'success' => true,
+                    'msg' => 'Device removed',
+                    'count' => count($this->devices())]);
+            return response()->json(['success' => false, 'msg' => 'Could not remove device'], 422);
+        } else return response()->json(['success' => false, 'msg' => 'Password is invalid'], 422);
+    }
+
+    public function logoutAllDevices(): JsonResponse
+    {
+        if (DB::table('sessions')->where('user_id', Auth::id())->where('id', '!=', Session::getId())->delete())
+            return response()->json(['success' => true, 'msg' => 'Devices removed']);
+        return response()->json(['success' => false]);
+    }
+
+    public function updateSession(Request $request): JsonResponse
+    {
+        if (DB::table('sessions')
+            ->where('user_id', Auth::id())
+            ->where('id', Session::getId())->update([
+                'os' => $request['os'],
+                'browser' => $request['browser'],
+                'location' => $request['loc'],
+                'created_at' => $session->created_at ?? now(),
+                'updated_at' => $session->updated_at ?? now()
+            ])) return response()->json(['success' => true]);
+        else return response()->json(['success' => false, 'msg' => 'Not found'], 404);
+    }
+
+    protected function devices(): Collection
+    {
+        return DB::table('sessions')
+            ->where('user_id', Auth::id())
+            ->get()->reverse();
+    }
+
     protected function cap($str): string
     {
         $string = $str;
@@ -161,5 +278,123 @@ class UserController extends Controller
         }
 
         return $string;
+    }
+
+    protected function getExperience($experience): string
+    {
+        switch ($experience) {
+            case 'beginner':
+                $exp = 'Not much';
+                break;
+            case 'amateur':
+                $exp = 'I know what I\'m doing';
+                break;
+            case 'expert':
+                $exp = 'I\'m an expert';
+                break;
+            default:
+                $exp = 'None';
+        }
+        return $exp;
+    }
+
+    protected function getYearlyIncome($yi): string
+    {
+        switch ($yi) {
+            case '25-39':
+                $exp = '$25,000 to $39,999';
+                break;
+            case '40-49':
+                $exp = '$40,000 to $49,999';
+                break;
+            case '50-74':
+                $exp = '$50,000 to $74,999';
+                break;
+            case '75-99':
+                $exp = '$75,000 to $99,999';
+                break;
+            case '100-199':
+                $exp = '$100,000 to $199,999';
+                break;
+            case '200-299':
+                $exp = '$200,000 to $299,999';
+                break;
+            case '300-499':
+                $exp = '$300,000 to $499,999';
+                break;
+            case '400-1199':
+                $exp = '$500,000 to $1,199,999';
+                break;
+            case '1200':
+                $exp = '$1,200,000 or higher';
+                break;
+            default:
+                $exp = 'Up to $25,000';
+        }
+        return $exp;
+    }
+
+    protected function getSourceOfFunds($sof): string
+    {
+        switch ($sof) {
+            case 'pension':
+                $exp = 'Pension or Retirement';
+                break;
+            case 'insurance':
+                $exp = 'Insurance Payout';
+                break;
+            case 'inheritance':
+                $exp = 'Inheritance';
+                break;
+            case 'gift':
+                $exp = 'Gift';
+                break;
+            case 'property':
+                $exp = 'Sale of Business or Property';
+                break;
+            case 'something_else':
+                $exp = 'Something Else';
+                break;
+            default:
+                $exp = 'Savings or Personal Income';
+        }
+        return $exp;
+    }
+
+    protected function getGoal($goal): string
+    {
+        switch ($goal) {
+            case 'growth':
+                $exp = 'Growth';
+                break;
+            case 'income':
+                $exp = 'A source of income';
+                break;
+            case 'trading':
+                $exp = 'Speculation trading';
+                break;
+            case 'something_else':
+                $exp = 'Something Else';
+                break;
+            default:
+                $exp = 'Preserve my savings';
+        }
+        return $exp;
+    }
+
+    protected function getTimeline($timeline): string
+    {
+        switch ($timeline) {
+            case '4-7':
+                $exp = '4 to 7 years';
+                break;
+            case '7':
+                $exp = '7 or more years';
+                break;
+            default:
+                $exp = 'Less than 4 years';
+        }
+
+        return $exp;
     }
 }

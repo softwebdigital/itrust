@@ -46,7 +46,7 @@
                 <div class="d-none reward-panel" id="reward-panel-1">
                     <h5>Invite a friend. Get a free stock</h5>
                     <p>Invite friends to Itrust Investment. Once they sign up and link their bank account, you’ll both get a free stock.</p>
-                    <div class="mb-2">
+                    <div class="mb-2 d-flex justify-content-center">
                         <img src="{{ asset('svg/undraw_Gifts_re_97j6.svg') }}" class="align-self-center" alt="" width="280">
                     </div>
                     <div class="row align-items-center mt-4">
@@ -71,11 +71,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <div></div>
-                        <div class="d-flex justify-content-around align-content-center">
-                            <a href="javascript:void(0)" class="my-auto" onclick="showLess(1)">View less <i class="mdi mdi-arrow-up"></i></a>
-                            <button class="btn btn-success btn-block mb-4 px-4">Share Link</button>
+                    <div class="mx-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+                            <button class="btn btn-success btn-block px-4">Share Link</button>
+                            <a href="javascript:void(0)" class="" onclick="showLess(1)">View less <i class="mdi mdi-arrow-up"></i></a>
                         </div>
                     </div>
                 </div>
@@ -96,7 +95,7 @@
                 <div class="d-none reward-panel" id="reward-panel-2">
                     <h5>$250K Crypto Bonus.</h5>
                     <p>Itrust Crypto is splitting up a $250K pie! Earn a piece when you invite friends and they buy crypto</p>
-                    <div class="mx-auto mb-2">
+                    <div class="d-flex justify-content-center mb-2">
                         <img src="{{ asset('svg/btc.svg') }}" alt="" width="260">
                     </div>
                     <div class="row align-items-center mt-4">
@@ -143,11 +142,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <div></div>
-                        <div class="d-flex justify-content-around align-content-center">
-                            <a href="javascript:void(0)" class="my-auto" onclick="showLess(2)">View less <i class="mdi mdi-arrow-up"></i></a>
-                            <button class="btn btn-success btn-block mb-4 px-4">Share Link</button>
+                    <div class="mx-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+                            <button class="btn btn-success btn-block px-4">Share Link</button>
+                            <a href="javascript:void(0)" class="" onclick="showLess(2)">View less <i class="mdi mdi-arrow-up"></i></a>
                         </div>
                     </div>
                 </div>

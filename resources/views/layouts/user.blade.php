@@ -31,6 +31,10 @@
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     @yield('style')
 </head>
 
@@ -500,13 +504,13 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-clipboard-text-outline font-size-16 align-middle me-1"></i> Account Status</a>
+                        <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-clipboard-text-outline font-size-16 align-middle me-1"></i> Application Status</a>
                         <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-chat-question-outline font-size-16 align-middle me-1"></i> Help</a>
                         <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-chat-processing-outline font-size-16 align-middle me-1"></i> Contact Us</a>
                         <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
                         <a class="dropdown-item" href="{{ route('user.lock') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); $('#logout-form').submit()"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="event.preventDefault(); $('#logout-form').submit()"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
                         <form action="{{ route('logout') }}" method="post" id="logout-form" class="d-none">@csrf</form>
                     </div>
                 </div>
@@ -528,8 +532,14 @@
                             </a>
                         </li>
 
+                        <li class="nav-item dropdown {{ Route::currentRouteNamed('user.portfolio') ? 'mm-active' : '' }}">
+                            <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.portfolio') }}" id="topnav-portfolio" role="button">
+                                <i data-feather="briefcase"></i><span data-key="t-portfolio">Portfolio</span>
+                            </a>
+                        </li>
+
                         <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.statements', 'user.transactions']) ? 'mm-active' : '' }}">
-                            <a class="nav-link dropdown-toggle arrow-none" href="javascript:void(0)" id="topnav-history" role="button">
+                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-history" role="button">
                                 <i data-feather="save"></i><span data-key="t-history">History</span> <div class="arrow-down"></div>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="topnav-pages">
@@ -559,7 +569,7 @@
                         </li>
 
                         <li class="nav-item dropdown {{ Route::currentRouteNamed('user.settings') ? 'mm-active' : '' }}">
-                            <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.index') }}" id="topnav-settings" role="button">
+                            <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.settings') }}" id="topnav-settings" role="button">
                                 <i data-feather="settings"></i><span data-key="t-settings">Settings</span>
                             </a>
                         </li>
@@ -832,6 +842,7 @@
     const error = {!! json_encode(Illuminate\Support\Facades\Session::get('error')) !!};
     const warning = {!! json_encode(Illuminate\Support\Facades\Session::get('warning')) !!};
     const info = {!! json_encode(Illuminate\Support\Facades\Session::get('info')) !!};
+    const get_location = {!! json_encode(Illuminate\Support\Facades\Session::get('get_location')) !!};
     const theme = localStorage.getItem('theme') ?? 'light';
 
     const Toast = Swal.mixin({
@@ -905,7 +916,201 @@
         document.body.setAttribute('data-sidebar-size', 'sm');
         document.getElementById('sidebar-size-small').checked = true;
     }
+
+    let os = [
+        { name: 'Windows Phone', value: 'Windows Phone', version: 'OS', fullValue: 'Windows Phone' },
+        { name: 'Windows', value: 'Win', version: 'NT', fullValue: 'Windows' },
+        { name: 'iPhone', value: 'iPhone', version: 'OS', fullValue: 'iPhone' },
+        { name: 'iPad', value: 'iPad', version: 'OS', fullValue: 'iPad OS' },
+        { name: 'Kindle', value: 'Silk', version: 'Silk', fullValue: 'Silk' },
+        { name: 'Android', value: 'Android', version: 'Android', fullValue: 'Android' },
+        { name: 'PlayBook', value: 'PlayBook', version: 'OS', fullValue: 'PlayBook OS' },
+        { name: 'BlackBerry', value: 'BlackBerry', version: '/', fullValue: 'BlackBerry' },
+        { name: 'Macintosh', value: 'Mac', version: 'OS X', fullValue: 'Mac OS X' },
+        { name: 'Linux', value: 'Linux', version: 'rv', fullValue: 'Linus' },
+        { name: 'Palm', value: 'Palm', version: 'PalmOS', fullValue: 'Palm PalmOS' }
+    ]
+
+    let browser = [
+        { name: 'Chrome', value: 'Chrome', version: 'Chrome' , fullValue: 'Chrome' },
+        { name: 'Firefox', value: 'Firefox', version: 'Firefox' , fullValue: 'Firefox' },
+        { name: 'Safari', value: 'Safari', version: 'Version' , fullValue: 'Safari' },
+        { name: 'Internet Explorer', value: 'MSIE', version: 'MSIE' , fullValue: 'Internet Explorer' },
+        { name: 'Opera', value: 'Opera', version: 'Opera' , fullValue: 'Opera' },
+        { name: 'BlackBerry', value: 'CLDC', version: 'CLDC' , fullValue: 'BlackBerry' },
+        { name: 'Mozilla', value: 'Mozilla', version: 'Mozilla' , fullValue: 'Mozilla' }
+    ]
+
+    let header = [
+        navigator.platform,
+        navigator.userAgent,
+        navigator.appVersion,
+        navigator.vendor,
+        window.opera
+    ];
+
+    function matchItem(string, data) {
+        let i, j = 0, html = '', regex, regexv, match, matches, version;
+
+        for (i = 0; i < data.length; i += 1) {
+            regex = new RegExp(data[i].value, 'i');
+            match = regex.test(string);
+            if (match) {
+                regexv = new RegExp(data[i].version + '[- /:;]([\d._]+)', 'i');
+                matches = string.match(regexv);
+                version = '';
+                if (matches) { if (matches[1]) { matches = matches[1]; } }
+                if (matches) {
+                    matches = matches.split(/[._]+/);
+                    for (j = 0; j < matches.length; j += 1) {
+                        if (j === 0) {
+                            version += matches[j] + '.';
+                        } else {
+                            version += matches[j];
+                        }
+                    }
+                } else {
+                    version = '0';
+                }
+                return {
+                    name: data[i].fullValue,
+                    version: parseFloat(version)
+                };
+            }
+        }
+        return { name: 'unknown', version: 0 };
+    }
+
+    function getData() {
+        let agent = header.join(' ');
+        os = matchItem(agent, os);
+        browser = matchItem(agent, browser);
+        return { os: os.name, browser: browser.name }
+    }
+
+    $.getJSON('https://geolocation-db.com/json/').done(location => {
+        const city = location.city;
+        const state = location.state;
+        const country = location.country_name;
+        const loc = `${city ? city + ',' : (state ? state + ',' : '')} ${country ?? ''}`
+        if (get_location) {
+            $.ajax({
+                url: `{{ route('user.devices.update') }}`,
+                type: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: {...getData(), loc},
+                success: function (res) {
+                    console.log(res)
+                },
+                error: function (res) {
+                    //
+                }
+            })
+        }
+    });
+
+    function removeDeviceByID(id) {
+        const password = $('input[name="confirm_password"]').val();
+        if (password.length)
+            $.ajax({
+                url: `/devices/${id}/destroy`,
+                type: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { password },
+                success: function (res) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: res.msg
+                    })
+                    $('#device-' + id).remove();
+                    $('#device-count').html(res.count)
+                },
+                error: function (res) {
+                    if (res.status === 429)
+                        Toast.fire({
+                            icon: 'error',
+                            title: res.statusText
+                        });
+                    else
+                        Toast.fire({
+                            icon: 'error',
+                            title: res['responseJSON'].msg
+                        });
+                }
+            });
+        else
+            Toast.fire({
+                icon: 'warning',
+                title: 'Please enter you password to continue'
+            })
+    }
+
+    function updateInvestmentProfile(type, id) {
+        let data;
+        if (type === 'employment') data = { employment: $('select[name="employment"]').val() };
+        if (type === 'marital_status') data = { marital_status: $('select[name="marital_status"]').val() };
+        if (type === 'yearly_income') data = { yi: $('select[name="yearly_income"]').val() };
+        if (type === 'sof') data = { sof: $('select[name="sof"]').val() };
+        if (type === 'goal') data = { goal: $('select[name="goal"]').val() };
+        if (type === 'timeline') data = { timeline: $('select[name="timeline"]').val() };
+        if (type === 'experience') data = { experience: $('select[name="experience"]').val() };
+
+        $.ajax({
+            url: `/profile/investment/${type}/update`,
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data,
+            success: function (res) {
+                Toast.fire({
+                    icon: 'success',
+                    title: res.msg
+                })
+                $(id).html(res.data)
+            },
+            error: function (res) {
+                if (res.status === 429)
+                    Toast.fire({
+                        icon: 'error',
+                        title: res.statusText
+                    });
+                else
+                    Toast.fire({
+                        icon: 'error',
+                        title: res['responseJSON'].msg
+                    });
+            }
+        })
+    }
+
+    function updateDSP(id) {
+        $.ajax({
+            url: `/dsp`,
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { dsp: !!$(id).is(':checked') },
+            success: function (res) {
+                Toast.fire({
+                    icon: 'success',
+                    title: res.msg
+                })
+                $('#dspVal').html(res.msg)
+            },
+            error: function (res) {
+                if (res.status === 429)
+                    Toast.fire({
+                        icon: 'error',
+                        title: res.statusText
+                    });
+                else
+                    Toast.fire({
+                        icon: 'error',
+                        title: res['responseJSON'].msg
+                    });
+            }
+        })
+    }
 </script>
+
 @yield('script')
 </body>
 

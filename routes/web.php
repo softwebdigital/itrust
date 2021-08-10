@@ -40,7 +40,7 @@ Route::get('/chart', function () {
 });
 
 Route::get('/cap', function () {
-    $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=NGNSD&per-page=100&page=1"'); //&ids=BTC,ETH,XRP
+    $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP,AAPL'); //&ids=BTC,ETH,XRP
     return json_decode($data, true);
 });
 
@@ -87,20 +87,37 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
     Route::post('/password/update', [UserController::class, 'updatePassword'])->name('user.password.update');
     Route::get('/notifications', [UserController::class, 'notifications'])->name('user.notifications');
     Route::get('/notifications/{id}', [UserController::class, 'showNotification'])->name('user.notifications.show');
+    Route::post('/devices/update', [UserController::class, 'updateSession'])->name('user.devices.update');
+    Route::delete('/devices/{id}/destroy', [UserController::class, 'logoutDevice'])->middleware('throttle:3,1');
+    Route::post('/dsp', [UserController::class, 'updateDSP'])->middleware('throttle:3,1');
+    Route::post('/profile/investment/{type}/update', [UserController::class, 'updateInvestmentProfile'])->middleware('throttle:8,1');
 
     Route::group(['middleware' => 'verified'], function () {
+        Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio');
         Route::get('/rewards', [UserController::class, 'rewards'])->name('user.rewards');
         Route::get('/statements', [UserController::class, 'statements'])->name('user.statements');
         Route::get('/transactions', [UserController::class, 'transactions'])->name('user.transactions');
         Route::get('/cash', [UserController::class, 'cash'])->name('user.cash');
         Route::get('/documents', [UserController::class, 'documents'])->name('user.documents');
+        Route::get('/settings', [UserController::class, 'settings'])->name('user.settings');
     });
 });
 
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
+
+    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::get('/users/{user}', [AdminController::class, 'user'])->name('admin.users.show');
+
     Route::get('/deposits', [AdminController::class, 'deposits'])->name('admin.deposits');
     Route::get('/transactions', [AdminController::class, 'transactions'])->name('admin.transactions');
     Route::get('/payouts', [AdminController::class, 'payouts'])->name('admin.payouts');
+
+    Route::get('/news', [AdminController::class, 'news'])->name('admin.news');
+    Route::get('/news/add', [AdminController::class, 'addNews'])->name('admin.news.add');
+    Route::get('/news/{news}/edit', [AdminController::class, 'editNews'])->name('admin.news.edit');
+    Route::post('/news/store', [AdminController::class, 'storeNews'])->name('admin.news.store');
+    Route::put('/news/{news}/update', [AdminController::class, 'updateNews'])->name('admin.news.update');
+
     Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
 });

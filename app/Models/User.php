@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasGravatar;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasGravatar;
 
     /**
      * The attributes that are mass assignable.
@@ -41,4 +42,15 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getFullNameAttribute(): string
+    {
+        return $this->attributes['first_name']. ' '. $this->attributes['last_name'];
+    }
+
+    public function getGravatarAttribute(): string
+    {
+        $hash = md5(strtolower(trim($this->attributes['email'])));
+        return "http://www.gravatar.com/avatar/$hash";
+    }
 }

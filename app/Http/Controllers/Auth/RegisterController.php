@@ -62,8 +62,8 @@ class RegisterController extends Controller
             'ssn' => 'required',
             'dob' => 'required',
             'nationality' => ['required', 'string'],
-            'q1' => ['required', 'string'],
-            'q2' => ['required', 'string'],
+            'experience' => ['required', 'string'],
+            'employment' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'ssn.required' => 'This field is required',
@@ -96,9 +96,9 @@ class RegisterController extends Controller
             'ssn' => $data['ssn'],
             'dob' => $data['dob'],
             'nationality' => $data['nationality'],
-            'q1' => $data['q1'],
-            'q2' => $data['q2'],
-            'q3' => $data['q3'],
+            'experience' => $data['experience'],
+            'employment' => $data['employment'],
+            'related' => $data['related'],
         ]);
     }
 }

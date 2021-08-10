@@ -39,7 +39,7 @@
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
-
+    @yield('style')
 </head>
 
 <body>
@@ -110,7 +110,7 @@
                 </div>
 
                 <div class="dropdown d-none d-sm-inline-block">
-                    <button type="button" class="btn header-item" id="mode-setting-btn" onclick="window.localStorage.setItem('theme', ('dark' === document.getElementsByTagName('body')[0].getAttribute('data-layout-mode')) ? 'light' : 'dark')">
+                    <button type="button" class="btn header-item" id="mode-setting-btn" onclick="setTheme('dark' === document.getElementsByTagName('body')[0].getAttribute('data-layout-mode') ? 'light' : 'dark')">
                         <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
                         <i data-feather="sun" class="icon-lg layout-mode-light"></i>
                     </button>
@@ -303,6 +303,13 @@
                         </a>
                     </li>
 
+                    <li class="{{ Route::currentRouteNamed(['admin.users', 'admin.users.show']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.users') }}">
+                            <i data-feather="users"></i>
+                            <span data-key="t-users">Users</span>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="javascript: void(0);" class="has-arrow {{ Route::currentRouteNamed(['admin.deposits', 'admin.transactions', 'admin.payouts']) ? 'mm-active' : '' }}">
                             <i data-feather="dollar-sign"></i>
@@ -328,6 +335,13 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed(['admin.news', 'admin.news.add', 'admin.news.edit']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.news') }}">
+                            <i data-feather="book-open"></i>
+                            <span data-key="t-news">News</span>
+                        </a>
                     </li>
 
                     <li class="{{ Route::currentRouteNamed('admin.settings') ? 'mm-active' : '' }}">
@@ -409,22 +423,12 @@
 
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="layout-mode"
-                       id="layout-mode-light" value="light" onchange="(() => {
-                           if (this.checked === true) {
-                               localStorage.setItem('theme', 'light');
-                               localStorage.setItem('topbar', 'light');
-                           }
-                       })()">
+                       id="layout-mode-light" value="light" onchange="if (this.checked === true) setTheme('light')">
                 <label class="form-check-label" for="layout-mode-light">Light</label>
             </div>
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="layout-mode"
-                       id="layout-mode-dark" value="dark" onchange="(() => {
-                           if (this.checked === true) {
-                               localStorage.setItem('theme', 'dark');
-                               localStorage.setItem('topbar', 'dark');
-                           }
-                       })()">
+                       id="layout-mode-dark" value="dark" onchange="if (this.checked === true) setTheme('dark')">
                 <label class="form-check-label" for="layout-mode-dark">Dark</label>
             </div>
 
@@ -599,6 +603,7 @@
 
 <!-- Datatable init js -->
 <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
+
 <script>
     const success = {!! json_encode(Illuminate\Support\Facades\Session::get('success')) !!};
     const error = {!! json_encode(Illuminate\Support\Facades\Session::get('error')) !!};
@@ -643,6 +648,25 @@
         document.getElementById(t).checked = !0
     }
 
+    function setTheme(theme) {
+        if (theme === 'light') {
+            localStorage.setItem('theme', 'light');
+            localStorage.setItem('topbar', 'light');
+            localStorage.setItem('sidebar-theme', 'light');
+            document.getElementById('layout-mode-light').checked = true
+            document.getElementById('topbar-color-light').checked = true
+            document.getElementById('sidebar-color-light').checked = true;
+        }
+        if (theme === 'dark') {
+            localStorage.setItem('theme', 'dark');
+            localStorage.setItem('topbar', 'dark');
+            localStorage.setItem('sidebar-theme', 'dark');
+            document.getElementById('layout-mode-dark').checked = true
+            document.getElementById('topbar-color-dark').checked = true
+            document.getElementById('sidebar-color-dark').checked = true;
+        }
+    }
+
     let n = document.getElementsByTagName("body")[0]
     const topbar = localStorage.getItem('topbar') ?? 'light';
     const sidebar = localStorage.getItem('sidebar') ?? 'lg';
@@ -678,6 +702,7 @@
         document.getElementById('sidebar-size-small').checked = true;
     }
 </script>
+@yield('script')
 </body>
 
 </html>

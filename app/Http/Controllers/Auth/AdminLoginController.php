@@ -46,10 +46,10 @@ class AdminLoginController extends Controller
      * Handle admin-dashboard login request to the application.
      *
      * @param Request $request
-     * @return RedirectResponse|Response|JsonResponse
+     * @return RedirectResponse
      *
      */
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required',
@@ -61,7 +61,7 @@ class AdminLoginController extends Controller
         }
 
         if (Auth::guard('admin')->attempt($request->only('email', 'password'), $request->has('remember'))) {
-            return redirect(Session::get('url.intended', $this->redirectTo));
+            return redirect($this->redirectTo);
         } else {
             return back()->withErrors(['email' => 'Invalid Credentials', 'password' => ''])->withInput();
         }
