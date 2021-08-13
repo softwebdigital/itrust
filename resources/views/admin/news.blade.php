@@ -22,12 +22,10 @@
             <thead>
             <tr>
                 <th>Title</th>
-                <th>Heading</th>
                 <th>Body</th>
                 <th>Image</th>
                 <th>Date Range</th>
                 <th>Date Added</th>
-                <th></th>
                 <th></th>
             </tr>
             </thead>
@@ -35,12 +33,65 @@
             @foreach($news as $info)
                 <tr>
                     <td>{{ $info->title }}</td>
-                    <td>{{ $info->heading }}</td>
                     <td>{!! $info->body !!}</td>
-                    <td><img src="{{ $info->image ? asset($info->image) : '' }}" alt=""></td>
-                    <td>{{ $info->date_range }}</td>
-
+                    <td><img src="{{ $info->image ? asset($info->image) : '' }}" width="50" alt=""></td>
+                    <td>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</td>
+                    <td>{{ \Carbon\Carbon::make($info->created_at)->format('Y/m/d') }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-dark btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
+                                <span>Menu </span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-view-{{ $info->id }}">View</a>
+                                <a class="dropdown-item" href="{{ route('admin.news.edit', $info->id) }}">Edit</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $info->id }}">Delete</a>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
+                <div class="modal fade" id="staticBackdrop-view-{{ $info->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">News Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="">Title</label>
+                                    <input type="text" class="form-control-plaintext" value="{{ $info->title ?? '-----' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Heading</label>
+                                    <input type="text" class="form-control-plaintext" value="{{ $info->heading ?? '-----' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Url</label>
+                                    <input type="text" class="form-control-plaintext" value="{{ $info->url ?? '-----' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Date</label>
+                                    <input type="datetime-local" class="form-control-plaintext" value="{{ \Carbon\Carbon::make($info->date_range)->format('Y-m-d').'T'.\Carbon\Carbon::make($info->date_range)->format('H:i:s') }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Body</label>
+                                    <textarea name="" id="" cols="30" rows="3" class="form-control-plaintext">{!! $info->body ?? '-----' !!}</textarea>
+                                </div>
+                                <div class="form-group text-center mx-auto">
+                                    <img src="{{ asset($info->image ?? '') }}" alt="" height="140">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal fade" id="staticBackdrop-delete-{{ $info->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">

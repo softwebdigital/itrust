@@ -33,29 +33,19 @@
             <h4>News</h4>
             <hr>
             <div class="">
-                <div class="row">
-                    <div class="col-9">
-                        <h6>Nikkei Asian Review <small>7h</small></h6>
-                        <p>China's tech crackdown widens to Tencent from Alibaba</p>
-                        <p>BABA &nbsp; 1.40% &nbsp;&nbsp;&nbsp; TCEHY &nbsp; 0.54%</p>
+                @foreach($news as $info)
+                    <div class="row">
+                        <div class="col-9">
+                            <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
+                            <p>{!! $info->body !!}</p>
+{{--                            <p>BABA &nbsp; 1.40% &nbsp;&nbsp;&nbsp; TCEHY &nbsp; 0.54%</p>--}}
+                        </div>
+                        <div class="col-3">
+                            <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <img src="{{ asset('assets/images/small/img-7.jpg') }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-9">
-                        <h6>Nikkei Asian Review <small>7h</small></h6>
-                        <h5>Uber and Lyft Drivers Are Coming Back, but Prices Aren't Falling</h5>
-                        <p>Drivers are returning to Uber Technologies Inc. and Lyft Inc. after the companies spent big on incentives to address a pandemic-driven labor shortage. That shif...</p>
-                        <p>BABA &nbsp; 1.40% &nbsp;&nbsp;&nbsp; TCEHY &nbsp; 0.54%</p>
-                    </div>
-                    <div class="col-3">
-                        <img src="{{ asset('assets/images/small/img-7.jpg') }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
-                    </div>
-                </div>
-                <hr>
+                    <hr>
+                @endforeach
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\News;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -50,7 +51,8 @@ class UserController extends Controller
 
     public function portfolio()
     {
-        return view('user.portfolio');
+        $news = News::query()->orderByDesc('date_range')->get();
+        return view('user.portfolio', compact('news'));
     }
 
     public function rewards()
