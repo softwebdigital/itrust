@@ -66,7 +66,8 @@ class CreateUsersTable extends Migration
             'experience' => 'beginner',
             'employment' => 'student',
             'related' => 'no',
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
+            'status' => 'approved'
         ]);
     }
 

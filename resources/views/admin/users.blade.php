@@ -15,7 +15,7 @@
 
 @section('content')
 <div>
-    <table id="datatable" class="table table-borderless table-striped dt-responsive  nowrap w-100">
+    <table id="datatable" class="table table-borderless table-striped dt-responsive nowrap w-100">
         <thead>
         <tr>
             <th>Name</th>
@@ -33,7 +33,12 @@
                 <td>{{ $user->full_name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->phone }}</td>
-                <td>{{ $user->status }}</td>
+                <td> <span class="badge
+                    {{ $user->status == 'pending' ? 'bg-warning' : '' }}
+                    {{ $user->status == 'declined' ? 'bg-danger' : '' }}
+                    {{ $user->status == 'approved' ? 'bg-success' : '' }}
+                    {{ $user->status == 'suspended' ? 'bg-dark' : '' }}
+                        ">{{ ucwords($user->status) }}</td>
                 <td>{{ date('d/M/Y', strtotime($user->created_at)) }}</td>
                 <td>
                     <div class="btn-group">
@@ -124,4 +129,10 @@
         </tbody>
     </table>
 </div>
+@endsection
+
+@section('script')
+    <script>
+        $('#datatable').DataTable()
+    </script>
 @endsection
