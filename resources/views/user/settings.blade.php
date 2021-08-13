@@ -118,16 +118,16 @@
                                         <div class="col-7">
                                             <div class="form-group">
                                                 <select name="yearly_income" id="yearly_income" class="form-select">
-                                                    <option value="default" @if(auth()->user()['$yearly_income'] == 'default') selected @endif>Up to $25,000</option>
-                                                    <option value="25-39" @if(auth()->user()['$yearly_income'] == '25-39') selected @endif>$25,000 to $39,999</option>
-                                                    <option value="40-49" @if(auth()->user()['$yearly_income'] == '40-49') selected @endif>$40,000 to $49,999</option>
-                                                    <option value="50-74" @if(auth()->user()['$yearly_income'] == '50-74') selected @endif>$50,000 to $74,999</option>
-                                                    <option value="75-99" @if(auth()->user()['$yearly_income'] == '75-99') selected @endif>$75,000 to $99,999</option>
-                                                    <option value="100-199" @if(auth()->user()['$yearly_income'] == '100-199') selected @endif>$100,000 to $199,999</option>
-                                                    <option value="200-299" @if(auth()->user()['$yearly_income'] == '200-299') selected @endif>$200,000 to $299,999</option>
-                                                    <option value="300-499" @if(auth()->user()['$yearly_income'] == '300-499') selected @endif>$300,000 to $499,999</option>
-                                                    <option value="500-1199" @if(auth()->user()['$yearly_income'] == '500-1199') selected @endif>$500,000 to $1,199,999</option>
-                                                    <option value="1200" @if(auth()->user()['$yearly_income'] == '1200') selected @endif>$1,200,000 or higher</option>
+                                                    <option value="default" @if(auth()->user()['yearly_income'] == 'default') selected @endif>Up to $25,000</option>
+                                                    <option value="25-39" @if(auth()->user()['yearly_income'] == '25-39') selected @endif>$25,000 to $39,999</option>
+                                                    <option value="40-49" @if(auth()->user()['yearly_income'] == '40-49') selected @endif>$40,000 to $49,999</option>
+                                                    <option value="50-74" @if(auth()->user()['yearly_income'] == '50-74') selected @endif>$50,000 to $74,999</option>
+                                                    <option value="75-99" @if(auth()->user()['yearly_income'] == '75-99') selected @endif>$75,000 to $99,999</option>
+                                                    <option value="100-199" @if(auth()->user()['$early_income'] == '100-199') selected @endif>$100,000 to $199,999</option>
+                                                    <option value="200-299" @if(auth()->user()['yearly_income'] == '200-299') selected @endif>$200,000 to $299,999</option>
+                                                    <option value="300-499" @if(auth()->user()['yearly_income'] == '300-499') selected @endif>$300,000 to $499,999</option>
+                                                    <option value="500-1199" @if(auth()->user()['yearly_income'] == '500-1199') selected @endif>$500,000 to $1,199,999</option>
+                                                    <option value="1200" @if(auth()->user()['yearly_income'] == '1200') selected @endif>$1,200,000 or higher</option>
                                                 </select>
                                                 <div class="d-flex justify-content-end mt-3">
                                                     <button onclick="$('#YIVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"

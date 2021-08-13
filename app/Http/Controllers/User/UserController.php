@@ -48,16 +48,6 @@ class UserController extends Controller
         return view('user.index', compact('user', 'data', 'btcNews', 'ethNews'));
     }
 
-    public function statements()
-    {
-        return view('user.statement');
-    }
-
-    public function transactions()
-    {
-        return view('user.transactions');
-    }
-
     public function portfolio()
     {
         return view('user.portfolio');
@@ -261,7 +251,7 @@ class UserController extends Controller
             ->get()->reverse();
     }
 
-    protected function cap($str): string
+    public static function cap($str): string
     {
         $string = $str;
         if (strlen($str) > 12) {
@@ -280,7 +270,7 @@ class UserController extends Controller
         return $string;
     }
 
-    protected function getExperience($experience): string
+    public static function getExperience($experience): string
     {
         switch ($experience) {
             case 'beginner':
@@ -298,7 +288,7 @@ class UserController extends Controller
         return $exp;
     }
 
-    protected function getYearlyIncome($yi): string
+    public static function getYearlyIncome($yi): string
     {
         switch ($yi) {
             case '25-39':
@@ -334,7 +324,7 @@ class UserController extends Controller
         return $exp;
     }
 
-    protected function getSourceOfFunds($sof): string
+    public static function getSourceOfFunds($sof): string
     {
         switch ($sof) {
             case 'pension':
@@ -361,7 +351,7 @@ class UserController extends Controller
         return $exp;
     }
 
-    protected function getGoal($goal): string
+    public static function getGoal($goal): string
     {
         switch ($goal) {
             case 'growth':
@@ -382,7 +372,7 @@ class UserController extends Controller
         return $exp;
     }
 
-    protected function getTimeline($timeline): string
+    public static function getTimeline($timeline): string
     {
         switch ($timeline) {
             case '4-7':

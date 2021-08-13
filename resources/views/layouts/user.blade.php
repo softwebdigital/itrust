@@ -455,27 +455,27 @@
                             </div>
                         </div>
                         @if($user->notifications()->count() > 0)
-                            <div data-simplebar style="max-height: 230px;">
-                                @foreach($user->notifications()->limit(3)->get() as $notis)
+                            <div data-simplebar style="max-height: 250px;">
+                                @foreach($user->notifications()->latest()->limit(2)->get() as $notis)
                                     <a href="{{ route('user.notifications.show', $notis->id) }}#{{ $notis->id }}" class="text-reset notification-item">
                                         <div class="d-flex {{ $notis->read_at == null ? 'bg-light' : '' }}">
                                             <div class="flex-shrink-0 me-3">
                                                 <img src="{{ asset($notis->data['image'] ?? 'assets/images/logo-sm.svg') }}" class="rounded-circle avatar-sm" alt="user-pic">
                                             </div>
                                             <div class="flex-grow-1">
-                                                <h6 class="mb-1">{{ $notis->data['title'] }}</h6>
+                                                <h6 class="mb-1">{{ ucwords($notis->data['title']) }}</h6>
                                                 <div class="font-size-13 text-muted">
-                                                    <p class="mb-1">{{ strlen($notis->data['message']) > 20 ? substr($notis->data['message'], 0, 20).'...' : $notis->data['message'] }}</p>
-                                                    <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>{{ $notis->created_at->diffForHumans() }}</span></p>
+                                                    <p class="mb-0">{!! strlen($notis->data['message']) > 30 ? substr($notis->data['message'], 0, 30).'...' : $notis->data['message'] !!}
+                                                        <br> <span><i class="mdi mdi-clock-outline"></i> {{ \Carbon\Carbon::make($notis->created_at)->diffForHumans() }}</span></p>
                                                 </div>
                                             </div>
                                         </div>
                                     </a>
                                 @endforeach
                             </div>
-                            @if($user->notifications()->count() > 3)
+                            @if($user->notifications()->count() > 2)
                                 <div class="p-2 border-top d-grid">
-                                    <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
+                                    <a class="btn btn-sm btn-link font-size-14 text-center" href="{{ route('user.notifications') }}">
                                         <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span>
                                     </a>
                                 </div>

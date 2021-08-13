@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Traits\HasGravatar;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -43,6 +45,26 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function deposits(): Collection
+    {
+        return $this->transactions()->where('type', 'deposit')->get();
+    }
+
+    public function payouts(): Collection
+    {
+        return $this->transactions()->where('type', 'payouts')->get();
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->attributes['first_name'];
+    }
+
     public function getFullNameAttribute(): string
     {
         return $this->attributes['first_name']. ' '. $this->attributes['last_name'];
@@ -52,5 +74,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $hash = md5(strtolower(trim($this->attributes['email'])));
         return "http://www.gravatar.com/avatar/$hash";
+    }
+
+    public function isWaitingApproval(): bool
+    {
+        return $this->attributes['status'] == 'pending';
+    }
+
+    public function isDeclined(): bool
+    {
+        return $this->attributes['status'] == 'declined';
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->attributes['status'] == 'suspended';
     }
 }

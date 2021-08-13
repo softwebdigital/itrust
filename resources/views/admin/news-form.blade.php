@@ -25,9 +25,19 @@
             <label for="heading" class="form-label">Heading </label>
             <input type="text" name="heading" id="heading" class="form-control form-control-lg" value="{{ old('heading') ?? $edit ? $news['heading'] : '' }}">
         </div>
-        <div class="form-group mb-3">
-            <label for="date" class="form-label">Date <strong class="text-danger">*</strong></label>
-            <input type="date" name="date" id="date" class="form-control form-control-lg" value="{{ old('date') ? \Carbon\Carbon::make(old('date'))->format('Y-m-d') : ($edit ? \Carbon\Carbon::make($news['date'])->format('Y-m-d') : '') }}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="date" class="form-label">Date <strong class="text-danger">*</strong></label>
+                    <input type="date" name="date" id="date" class="form-control form-control-lg" value="{{ old('date') ? \Carbon\Carbon::make(old('date'))->format('Y-m-d') : ($edit ? \Carbon\Carbon::make($news['date'])->format('Y-m-d') : '') }}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="url" class="form-label">Url/Link <strong class="text-danger">*</strong></label>
+                    <input type="text" name="url" id="url" class="form-control form-control-lg" value="{{ old('url') ? old('url'): ($edit ? $news['url'] : '') }}">
+                </div>
+            </div>
         </div>
         <div class="form-group mb-3">
             <label for="ckeditor-classic" class="form-label">Body <strong class="text-danger">*</strong></label>

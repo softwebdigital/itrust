@@ -15,102 +15,38 @@
 
 @section('content')
     <div class="card-body">
-        <div class="table-rep-plugin">
-            <div class="table-responsive mb-0" data-pattern="priority-columns">
-                <table id="tech-companies-1" class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>User</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>type</th>
-                        <th>Date</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </thead>
+        <table id="datatable" class="table table-borderless table-striped dt-responsive  nowrap w-100">
+            <thead>
+            <tr>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>type</th>
+                <th>Date</th>
+            </tr>
+            </thead>
 
-                    <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Withdrawal</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Deposit</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Deposit</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Deposit</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Deposit</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Deposit</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>Deedee</td>
-                        <td>$10,000</td>
-                        <td>Pending</td>
-                        <td>Deposit</td>
-                        <td>2013/08/11</td>
-                        <td><i class="icon-md" data-feather="check"></i></td>
-                        <td><i class="icon-md" data-feather="x"></i></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <tbody>
+            @foreach($transactions as $transaction)
+                <tr>
+                    <td>{{ $transaction->user->username }}</td>
+                    <td>{{ $transaction->method == 'bank' ? '$'.number_format($transaction->amount, 2) : round($transaction->amount, 8).' BTC' }}</td>
+                    <td> <span class="badge
+                                {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
+                        {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                        {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
+                            ">{{ ucwords($transaction->status) }}</td>
+                    <td>{{ ucwords($transaction->type) }}</td>
+                    <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
     </div>
 @endsection
 
 @section('script')
     <script>
-        $('#datatable').DataTable()
+        // $('#datatable').DataTable()
     </script>
 @endsection

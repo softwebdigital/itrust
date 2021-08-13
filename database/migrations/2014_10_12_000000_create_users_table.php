@@ -40,10 +40,34 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('photo')->nullable();
-            $table->enum('status', [])->default('pending');
+            $table->string('passport')->nullable();
+            $table->string('drivers_license')->nullable();
+            $table->string('state_id')->nullable();
+            $table->enum('status', ['pending', 'approved', 'declined', 'suspended'])->default('pending');
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Illuminate\Support\Facades\DB::table('users')->insert([
+            'first_name' => 'Goke',
+            'last_name' => 'Adewuyi',
+            'email' => 'adewuyiyusuf@yahoo.com',
+            'username' => 'Deedee95',
+            'password' => bcrypt('password'),
+            'phone' => '09060040819',
+            'address' => 'Block 41',
+            'city' => 'ifo',
+            'state' => 'ogun',
+            'country' => "nigeria",
+            'zip_code' => 112112,
+            'ssn' => '160211023',
+            'dob' => '1998-02-14',
+            'nationality' => 'nigerian',
+            'experience' => 'beginner',
+            'employment' => 'student',
+            'related' => 'no',
+            'email_verified_at' => now()
+        ]);
     }
 
     /**

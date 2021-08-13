@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\AdminForgotPasswordController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminResetPasswordController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -95,9 +97,12 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
     Route::group(['middleware' => 'verified'], function () {
         Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio');
         Route::get('/rewards', [UserController::class, 'rewards'])->name('user.rewards');
-        Route::get('/statements', [UserController::class, 'statements'])->name('user.statements');
-        Route::get('/transactions', [UserController::class, 'transactions'])->name('user.transactions');
+        Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements');
+        Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions');
+
         Route::get('/cash', [UserController::class, 'cash'])->name('user.cash');
+        Route::post('/cash/deposit', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store');
+
         Route::get('/documents', [UserController::class, 'documents'])->name('user.documents');
         Route::get('/settings', [UserController::class, 'settings'])->name('user.settings');
     });
@@ -108,16 +113,22 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
 
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/{user}', [AdminController::class, 'user'])->name('admin.users.show');
+    Route::put('/users/{user}/account/{action}', [AdminController::class, 'userAccountAction'])->name('admin.users.account');
 
-    Route::get('/deposits', [AdminController::class, 'deposits'])->name('admin.deposits');
-    Route::get('/transactions', [AdminController::class, 'transactions'])->name('admin.transactions');
-    Route::get('/payouts', [AdminController::class, 'payouts'])->name('admin.payouts');
+    Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');
+    Route::put('/deposits/{transaction}/{action}', [TransactionController::class, 'depositAction'])->name('admin.deposits.action');
 
-    Route::get('/news', [AdminController::class, 'news'])->name('admin.news');
-    Route::get('/news/add', [AdminController::class, 'addNews'])->name('admin.news.add');
-    Route::get('/news/{news}/edit', [AdminController::class, 'editNews'])->name('admin.news.edit');
-    Route::post('/news/store', [AdminController::class, 'storeNews'])->name('admin.news.store');
-    Route::put('/news/{news}/update', [AdminController::class, 'updateNews'])->name('admin.news.update');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('admin.transactions');
+
+    Route::get('/payouts', [TransactionController::class, 'payouts'])->name('admin.payouts');
+    Route::put('/payouts/{transaction}/{action}', [TransactionController::class, 'payoutAction'])->name('admin.payouts.action');
+
+    Route::get('/news', [NewsController::class, 'index'])->name('admin.news');
+    Route::get('/news/add', [NewsController::class, 'create'])->name('admin.news.create');
+    Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->name('admin.news.edit');
+    Route::post('/news/store', [NewsController::class, 'store'])->name('admin.news.store');
+    Route::put('/news/{news}/update', [NewsController::class, 'update'])->name('admin.news.update');
+    Route::delete('/news/{news}/destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
 
     Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
 });
