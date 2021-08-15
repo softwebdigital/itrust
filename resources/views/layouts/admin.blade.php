@@ -15,16 +15,14 @@
     <link href="{{ asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
 
+
+    <link href="{{ asset('assets/libs/alertifyjs/build/css/alertify.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Responsive datatable examples -->
     <link href="{{ asset('assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
 
     <link href="{{ asset('assets/libs/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- plugin css -->
     <link href="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" />
-
-
-    <!-- Responsive Table js -->
-    <script src="{{ asset('assets/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
 
     <!-- Init js -->
     <script src="{{ asset('assets/js/pages/table-responsive.init.js') }}"></script>
@@ -182,8 +180,8 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <a class="dropdown-item" href="apps-contacts-profile.html"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
-                        <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>
+                        <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
+{{--                        <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>--}}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#" onclick="event.preventDefault(); $('#logout-form').submit()"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
                         <form action="{{ route('admin.logout') }}" method="post" id="logout-form" class="d-none">@csrf</form>
@@ -250,6 +248,13 @@
                         <a href="{{ route('admin.news') }}">
                             <i data-feather="book-open"></i>
                             <span data-key="t-news">News</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed(['admin.documents']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.documents') }}">
+                            <i data-feather="file"></i>
+                            <span data-key="t-invoice">Invoice / Receipt</span>
                         </a>
                     </li>
 
@@ -509,7 +514,7 @@
 <script src="{{ asset('assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
-
+<script src="{{ asset('assets/libs/alertifyjs/build/alertify.min.js') }}"></script>
 <!-- Datatable init js -->
 <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
 
@@ -520,38 +525,29 @@
     const info = {!! json_encode(Illuminate\Support\Facades\Session::get('info')) !!};
     const theme = localStorage.getItem('theme') ?? 'light';
 
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000,
-        background: theme === 'light' ? 'whitesmoke' : 'white'
-    });
+    // const Toast = Swal.mixin({
+    //     toast: true,
+    //     position: 'top-end',
+    //     showConfirmButton: false,
+    //     timer: 5000,
+    //     background: theme === 'light' ? 'whitesmoke' : 'white'
+    // });
+    // Toast.fire({
+    //     icon: 'warning',
+    //     title: warning
+    // })
 
-    if (success) {
-        Toast.fire({
-            icon: 'success',
-            title: success
-        })
-    }
-    if (warning) {
-        Toast.fire({
-            icon: 'warning',
-            title: warning
-        })
-    }
-    if (info) {
-        Toast.fire({
-            icon: 'info',
-            title: info
-        })
-    }
-    if (error) {
-        Toast.fire({
-            icon: 'error',
-            title: error
-        })
-    }
+    if (success)
+        alertify.success(success);
+
+    if (warning)
+        alertify.warning(warning);
+
+    if (info)
+        alertify.message(info);
+
+    if (error)
+        alertify.error(error);
 
     function s(t) {
         document.getElementById(t).checked = !0

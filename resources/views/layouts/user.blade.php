@@ -21,6 +21,8 @@
     <!-- Responsive datatable examples -->
     <link href="{{ asset('assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
 
+    <link href="{{ asset('assets/libs/alertifyjs/build/css/alertify.min.css') }}" rel="stylesheet" type="text/css" />
+
     <!-- preloader css -->
     <link rel="stylesheet" href="{{ asset('assets/css/preloader.min.css') }}" type="text/css" />
 
@@ -37,281 +39,6 @@
 
     @yield('style')
 </head>
-
-{{--<body>--}}
-
-{{--<!-- <body data-layout="horizontal"> -->--}}
-
-{{--<!-- Begin page -->--}}
-
-{{--    <!-- ========== Left Sidebar Start ========== -->--}}
-{{--    <div class="vertical-menu">--}}
-
-{{--        <div data-simplebar class="h-100">--}}
-
-{{--            <!--- Sidemenu -->--}}
-{{--            <div id="sidebar-menu">--}}
-{{--                <!-- Left Menu Start -->--}}
-{{--                <ul class="metismenu list-unstyled" id="side-menu">--}}
-{{--                    <li class="menu-title" data-key="t-menu">Menu</li>--}}
-
-{{--                    <li class="{{ Route::currentRouteNamed('user.index') ? 'mm-active' : '' }}">--}}
-{{--                        <a href="{{ route('user.index') }}">--}}
-{{--                            <i data-feather="home"></i>--}}
-{{--                            <span data-key="t-dashboard">Dashboard</span>--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="grid"></i>--}}
-{{--                            <span data-key="t-apps">Apps</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li>--}}
-{{--                                <a href="apps-calendar.html">--}}
-{{--                                    <span data-key="t-calendar">Calendar</span>--}}
-{{--                                </a>--}}
-{{--                            </li>--}}
-
-{{--                            <li>--}}
-{{--                                <a href="apps-chat.html">--}}
-{{--                                    <span data-key="t-chat">Chat</span>--}}
-{{--                                </a>--}}
-{{--                            </li>--}}
-
-{{--                            <li>--}}
-{{--                                <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                                    <span data-key="t-email">Email</span>--}}
-{{--                                </a>--}}
-{{--                                <ul class="sub-menu" aria-expanded="false">--}}
-{{--                                    <li><a href="apps-email-inbox.html" data-key="t-inbox">Inbox</a></li>--}}
-{{--                                    <li><a href="apps-email-read.html" data-key="t-read-email">Read Email</a></li>--}}
-{{--                                </ul>--}}
-{{--                            </li>--}}
-{{--                            <li>--}}
-{{--                                <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                                    <span data-key="t-invoices">Invoices</span>--}}
-{{--                                </a>--}}
-{{--                                <ul class="sub-menu" aria-expanded="false">--}}
-{{--                                    <li><a href="apps-invoices-list.html" data-key="t-invoice-list">Invoice List</a></li>--}}
-{{--                                    <li><a href="apps-invoices-detail.html" data-key="t-invoice-detail">Invoice Detail</a></li>--}}
-{{--                                </ul>--}}
-{{--                            </li>--}}
-{{--                            <li>--}}
-{{--                                <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                                    <span data-key="t-contacts">Contacts</span>--}}
-{{--                                </a>--}}
-{{--                                <ul class="sub-menu" aria-expanded="false">--}}
-{{--                                    <li><a href="apps-contacts-grid.html" data-key="t-user-grid">User Grid</a></li>--}}
-{{--                                    <li><a href="apps-contacts-list.html" data-key="t-user-list">User List</a></li>--}}
-{{--                                    <li><a href="apps-contacts-profile.html" data-key="t-profile">Profile</a></li>--}}
-{{--                                </ul>--}}
-{{--                            </li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="users"></i>--}}
-{{--                            <span data-key="t-authentication">Authentication</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="auth-login.html" data-key="t-login">Login</a></li>--}}
-{{--                            <li><a href="auth-register.html" data-key="t-register">Register</a></li>--}}
-{{--                            <li><a href="auth-recoverpw.html" data-key="t-recover-password">Recover Password</a></li>--}}
-{{--                            <li><a href="auth-lock-screen.html" data-key="t-lock-screen">Lock Screen</a></li>--}}
-{{--                            <li><a href="auth-logout.html" data-key="t-logout">Log Out</a></li>--}}
-{{--                            <li><a href="auth-confirm-mail.html" data-key="t-confirm-mail">Confirm Mail</a></li>--}}
-{{--                            <li><a href="auth-email-verification.html" data-key="t-email-verification">Email Verification</a></li>--}}
-{{--                            <li><a href="auth-two-step-verification.html" data-key="t-two-step-verification">Two Step Verification</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="file-text"></i>--}}
-{{--                            <span data-key="t-pages">Pages</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="pages-starter.html" data-key="t-starter-page">Starter Page</a></li>--}}
-{{--                            <li><a href="pages-maintenance.html" data-key="t-maintenance">Maintenance</a></li>--}}
-{{--                            <li><a href="pages-comingsoon.html" data-key="t-coming-soon">Coming Soon</a></li>--}}
-{{--                            <li><a href="pages-timeline.html" data-key="t-timeline">Timeline</a></li>--}}
-{{--                            <li><a href="pages-faqs.html" data-key="t-faqs">FAQs</a></li>--}}
-{{--                            <li><a href="pages-pricing.html" data-key="t-pricing">Pricing</a></li>--}}
-{{--                            <li><a href="pages-404.html" data-key="t-error-404">Error 404</a></li>--}}
-{{--                            <li><a href="pages-500.html" data-key="t-error-500">Error 500</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="layouts-horizontal.html">--}}
-{{--                            <i data-feather="layout"></i>--}}
-{{--                            <span data-key="t-horizontal">Horizontal</span>--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
-
-{{--                    <li class="menu-title mt-2" data-key="t-components">Elements</li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="briefcase"></i>--}}
-{{--                            <span data-key="t-components">Components</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="ui-alerts.html" data-key="t-alerts">Alerts</a></li>--}}
-{{--                            <li><a href="ui-buttons.html" data-key="t-buttons">Buttons</a></li>--}}
-{{--                            <li><a href="ui-cards.html" data-key="t-cards">Cards</a></li>--}}
-{{--                            <li><a href="ui-carousel.html" data-key="t-carousel">Carousel</a></li>--}}
-{{--                            <li><a href="ui-dropdowns.html" data-key="t-dropdowns">Dropdowns</a></li>--}}
-{{--                            <li><a href="ui-grid.html" data-key="t-grid">Grid</a></li>--}}
-{{--                            <li><a href="ui-images.html" data-key="t-images">Images</a></li>--}}
-{{--                            <li><a href="ui-modals.html" data-key="t-modals">Modals</a></li>--}}
-{{--                            <li><a href="ui-offcanvas.html" data-key="t-offcanvas">Offcanvas</a></li>--}}
-{{--                            <li><a href="ui-progressbars.html" data-key="t-progress-bars">Progress Bars</a></li>--}}
-{{--                            <li><a href="ui-tabs-accordions.html" data-key="t-tabs-accordions">Tabs & Accordions</a></li>--}}
-{{--                            <li><a href="ui-typography.html" data-key="t-typography">Typography</a></li>--}}
-{{--                            <li><a href="ui-video.html" data-key="t-video">Video</a></li>--}}
-{{--                            <li><a href="ui-general.html" data-key="t-general">General</a></li>--}}
-{{--                            <li><a href="ui-colors.html" data-key="t-colors">Colors</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="gift"></i>--}}
-{{--                            <span data-key="t-ui-elements">Extended</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="extended-lightbox.html" data-key="t-lightbox">Lightbox</a></li>--}}
-{{--                            <li><a href="extended-rangeslider.html" data-key="t-range-slider">Range Slider</a></li>--}}
-{{--                            <li><a href="extended-sweet-alert.html" data-key="t-sweet-alert">SweetAlert 2</a></li>--}}
-{{--                            <li><a href="extended-session-timeout.html" data-key="t-session-timeout">Session Timeout</a></li>--}}
-{{--                            <li><a href="extended-rating.html" data-key="t-rating">Rating</a></li>--}}
-{{--                            <li><a href="extended-notifications.html" data-key="t-notifications">Notifications</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);">--}}
-{{--                            <i data-feather="box"></i>--}}
-{{--                            <span class="badge rounded-pill bg-soft-danger text-danger float-end">7</span>--}}
-{{--                            <span data-key="t-forms">Forms</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="form-elements.html" data-key="t-form-elements">Basic Elements</a></li>--}}
-{{--                            <li><a href="form-validation.html" data-key="t-form-validation">Validation</a></li>--}}
-{{--                            <li><a href="form-advanced.html" data-key="t-form-advanced">Advanced Plugins</a></li>--}}
-{{--                            <li><a href="form-editors.html" data-key="t-form-editors">Editors</a></li>--}}
-{{--                            <li><a href="form-uploads.html" data-key="t-form-upload">File Upload</a></li>--}}
-{{--                            <li><a href="form-wizard.html" data-key="t-form-wizard">Wizard</a></li>--}}
-{{--                            <li><a href="form-mask.html" data-key="t-form-mask">Mask</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="sliders"></i>--}}
-{{--                            <span data-key="t-tables">Tables</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="tables-basic.html" data-key="t-basic-tables">Bootstrap Basic</a></li>--}}
-{{--                            <li><a href="tables-datatable.html" data-key="t-data-tables">DataTables</a></li>--}}
-{{--                            <li><a href="tables-responsive.html" data-key="t-responsive-table">Responsive</a></li>--}}
-{{--                            <li><a href="tables-editable.html" data-key="t-editable-table">Editable</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="pie-chart"></i>--}}
-{{--                            <span data-key="t-charts">Charts</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="charts-apex.html" data-key="t-apex-charts">Apexcharts</a></li>--}}
-{{--                            <li><a href="charts-echart.html" data-key="t-e-charts">Echarts</a></li>--}}
-{{--                            <li><a href="charts-chartjs.html" data-key="t-chartjs-charts">Chartjs</a></li>--}}
-{{--                            <li><a href="charts-knob.html" data-key="t-knob-charts">Jquery Knob</a></li>--}}
-{{--                            <li><a href="charts-sparkline.html" data-key="t-sparkline-charts">Sparkline</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="cpu"></i>--}}
-{{--                            <span data-key="t-icons">Icons</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="icons-boxicons.html" data-key="t-boxicons">Boxicons</a></li>--}}
-{{--                            <li><a href="icons-materialdesign.html" data-key="t-material-design">Material Design</a></li>--}}
-{{--                            <li><a href="icons-dripicons.html" data-key="t-dripicons">Dripicons</a></li>--}}
-{{--                            <li><a href="icons-fontawesome.html" data-key="t-font-awesome">Font Awesome 5</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="map"></i>--}}
-{{--                            <span data-key="t-maps">Maps</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="false">--}}
-{{--                            <li><a href="maps-google.html" data-key="t-g-maps">Google</a></li>--}}
-{{--                            <li><a href="maps-vector.html" data-key="t-v-maps">Vector</a></li>--}}
-{{--                            <li><a href="maps-leaflet.html" data-key="t-l-maps">Leaflet</a></li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                    <li>--}}
-{{--                        <a href="javascript: void(0);" class="has-arrow">--}}
-{{--                            <i data-feather="share-2"></i>--}}
-{{--                            <span data-key="t-multi-level">Multi Level</span>--}}
-{{--                        </a>--}}
-{{--                        <ul class="sub-menu" aria-expanded="true">--}}
-{{--                            <li><a href="javascript: void(0);" data-key="t-level-1-1">Level 1.1</a></li>--}}
-{{--                            <li>--}}
-{{--                                <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1-2">Level 1.2</a>--}}
-{{--                                <ul class="sub-menu" aria-expanded="true">--}}
-{{--                                    <li><a href="javascript: void(0);" data-key="t-level-2-1">Level 2.1</a></li>--}}
-{{--                                    <li><a href="javascript: void(0);" data-key="t-level-2-2">Level 2.2</a></li>--}}
-{{--                                </ul>--}}
-{{--                            </li>--}}
-{{--                        </ul>--}}
-{{--                    </li>--}}
-
-{{--                </ul>--}}
-
-{{--                <div class="card sidebar-alert border-0 text-center mx-4 mb-0 mt-5">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <img src="assets/images/giftbox.png" alt="">--}}
-{{--                        <div class="mt-4">--}}
-{{--                            <h5 class="alertcard-title font-size-16">Unlimited Access</h5>--}}
-{{--                            <p class="font-size-13">Upgrade your plan from a Free trial, to select ‘Business Plan’.</p>--}}
-{{--                            <a href="#!" class="btn btn-primary mt-2">Upgrade Now</a>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--            <!-- Sidebar -->--}}
-{{--        </div>--}}
-{{--    </div>--}}
-{{--    <!-- Left Sidebar End -->--}}
-
-
-
-{{--    <!-- ============================================================== -->--}}
-{{--    <!-- Start right Content here -->--}}
-{{--    <!-- ============================================================== -->--}}
-
-
-
-{{--</div>--}}
-{{--<!-- END layout-wrapper -->--}}
-
-
-{{--<!-- Right Sidebar -->--}}
-
-
 
 <body data-layout="horizontal">
 
@@ -801,6 +528,12 @@
 
 
 <!-- JAVASCRIPT -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
@@ -814,16 +547,11 @@
 <!-- Plugins js-->
 <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
 <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
-<!-- dashboard init -->
-<script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
+<!-- apexcharts js -->
+<script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
 
 <script src="{{ asset('assets/js/app.js') }}"></script>
 <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <!-- Required datatable js -->
 <script src="{{ asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
@@ -833,9 +561,7 @@
 <script src="{{ asset('assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
-
-<!-- Datatable init js -->
-<script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
+<script src="{{ asset('assets/libs/alertifyjs/build/alertify.min.js') }}"></script>
 
 <script>
     const success = {!! json_encode(Illuminate\Support\Facades\Session::get('success')) !!};
@@ -845,38 +571,29 @@
     const get_location = {!! json_encode(Illuminate\Support\Facades\Session::get('get_location')) !!};
     const theme = localStorage.getItem('theme') ?? 'light';
 
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000,
-        background: theme === 'light' ? 'whitesmoke' : 'white'
-    });
+    // const Toast = Swal.mixin({
+    //     toast: true,
+    //     position: 'top-end',
+    //     showConfirmButton: false,
+    //     timer: 5000,
+    //     background: theme === 'light' ? 'whitesmoke' : 'white'
+    // });
+    // Toast.fire({
+    //     icon: 'warning',
+    //     title: warning
+    // })
 
-    if (success) {
-        Toast.fire({
-            icon: 'success',
-            title: success
-        })
-    }
-    if (warning) {
-        Toast.fire({
-            icon: 'warning',
-            title: warning
-        })
-    }
-    if (info) {
-        Toast.fire({
-            icon: 'info',
-            title: info
-        })
-    }
-    if (error) {
-        Toast.fire({
-            icon: 'error',
-            title: error
-        })
-    }
+    if (success)
+        alertify.success(success);
+
+    if (warning)
+        alertify.warning(warning);
+
+    if (info)
+        alertify.message(info);
+
+    if (error)
+        alertify.error(error);
 
     function s(t) {
         document.getElementById(t).checked = !0
@@ -1018,31 +735,19 @@
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 data: { password },
                 success: function (res) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: res.msg
-                    })
+                    alertify.success(res.msg);
                     $('#device-' + id).remove();
                     $('#device-count').html(res.count)
                 },
                 error: function (res) {
                     if (res.status === 429)
-                        Toast.fire({
-                            icon: 'error',
-                            title: res.statusText
-                        });
+                        alertify.error(res.statusText);
                     else
-                        Toast.fire({
-                            icon: 'error',
-                            title: res['responseJSON'].msg
-                        });
+                        alertify.error(res["responseJSON"].msg);
                 }
             });
         else
-            Toast.fire({
-                icon: 'warning',
-                title: 'Please enter you password to continue'
-            })
+            alertify.warning('Please enter you password to continue');
     }
 
     function updateInvestmentProfile(type, id) {
@@ -1061,23 +766,14 @@
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             data,
             success: function (res) {
-                Toast.fire({
-                    icon: 'success',
-                    title: res.msg
-                })
+                alertify.success(res.msg)
                 $(id).html(res.data)
             },
             error: function (res) {
                 if (res.status === 429)
-                    Toast.fire({
-                        icon: 'error',
-                        title: res.statusText
-                    });
+                    alertify.error(res.statusText);
                 else
-                    Toast.fire({
-                        icon: 'error',
-                        title: res['responseJSON'].msg
-                    });
+                    alertify.error(res["responsJSON"].msg)
             }
         })
     }
@@ -1089,25 +785,71 @@
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             data: { dsp: !!$(id).is(':checked') },
             success: function (res) {
-                Toast.fire({
-                    icon: 'success',
-                    title: res.msg
-                })
+                alertify.success(res.msg)
                 $('#dspVal').html(res.msg)
             },
             error: function (res) {
                 if (res.status === 429)
-                    Toast.fire({
-                        icon: 'error',
-                        title: res.statusText
-                    });
+                    alertify.error(res.statusText);
                 else
-                    Toast.fire({
-                        icon: 'error',
-                        title: res['responseJSON'].msg
-                    });
+                    alertify.error(res['responseJSON'].msg);
             }
         })
+    }
+
+    function updateDocument(type, image) {
+        const formData = new FormData()
+        formData.append('type', type)
+        formData.append('file', $(image)[0].files[0])
+
+        $.ajax({
+            url: '{{ route('user.documents.upload') }}',
+            type: 'POST',
+            headers: { "X-CSRF-TOKEN": '{{ csrf_token() }}' },
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function () {
+            },
+            success: function (res) {
+                alertify.success(res.msg)
+                if (type === 'passport')
+                    $('#passportVal').html(res.data);
+                if (type === 'drivers_license')
+                    $('#driversLicenceVal').html(res.data);
+                if (type === 'state_id')
+                    $('#stateIDVal').html(res.data);
+            },
+            error: function (res) {
+                if (res.status === 422)
+                    if (res['responseJSON'].msg['type'])
+                        alertify.error(res['responseJSON'].msg['type'][0]);
+                if (res['responseJSON'].msg['file'])
+                    alertify.error(res['responseJSON'].msg['file'][0]);
+                else if (res.status === 429)
+                    alertify.error(res.statusText);
+                else
+                    alertify.error(res['responseJSON'].msg);
+            }
+        })
+    }
+
+    function imagePreview(input, id, width = null, defaultImg = null) {
+        if (defaultImg === null) defaultImg = $(id).attr('src')
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                $(id)
+                    .attr('src', e.target.result)
+                    .width(width)
+                // .height(200);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else $(id)
+            .attr('src', defaultImg)
+            .width(width)
     }
 </script>
 

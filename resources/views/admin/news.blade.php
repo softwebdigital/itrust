@@ -18,7 +18,7 @@
         <div class="d-flex justify-content-end mb-3">
             <a href="{{ route('admin.news.create') }}" type="button" class="btn btn-primary">Add News</a>
         </div>
-        <table id="datatable" class="table table-borderless table-striped dt-responsive  nowrap w-100">
+        <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
             <thead>
             <tr>
                 <th>Title</th>
@@ -33,7 +33,7 @@
             @foreach($news as $info)
                 <tr>
                     <td>{{ $info->title }}</td>
-                    <td>{!! $info->body !!}</td>
+                    <td>{!! strlen($info->body) > 30 ? substr($info->body, 0, 30).'...' : $info->body !!}</td>
                     <td><img src="{{ $info->image ? asset($info->image) : '' }}" width="50" alt=""></td>
                     <td>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</td>
                     <td>{{ \Carbon\Carbon::make($info->created_at)->format('Y/m/d') }}</td>

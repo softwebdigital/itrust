@@ -3,56 +3,85 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Document;
 use App\Models\News;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1'); //&ids=BTC,ETH,XRP
+        $user = User::find(auth()->id());
+        $deposits = $user->deposits()->where('status', '!=', 'declined')->sum('actual_amount');
+        $payouts = $user->payouts()->where('status', '!=', 'declined')->sum('actual_amount');
+
+        $portfolioValue = $deposits - $payouts;
+
+        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP'); //&ids=BTC,ETH,XRP
         $data = json_decode($data, true);
         foreach ($data as $key => $datum) {
             $data[$key]['market_cap'] = $this->cap($datum['market_cap']);
         }
-        $q = [
-            'category' => 'top',
-            'language' => 'en',
-            'q' => 'bitcoin'
-        ];
-        $btcNews = Http::withHeaders(['X-ACCESS-KEY' => env('NEWS_API_KEY')])
-            ->get('https://newsdata.io/api/1/news', $q);
-        $btcNews = json_decode($btcNews, true);
-//        $q = [
-//            'category' => 'top',
-//            'language' => 'en',
-//            'q' => 'ethereum'
-//        ];
-//        $ethNews = Http::withHeaders(['X-ACCESS-KEY' => env('NEWS_API_KEY')])
-//            ->get('https://newsdata.io/api/1/news', $q);
-//        $ethNews = json_decode($ethNews, true);
-        $ethNews = [];
 
-
-        return view('user.index', compact('user', 'data', 'btcNews', 'ethNews'));
+        return view('user.index', compact('user', 'data', 'portfolioValue'));
     }
 
     public function portfolio()
     {
+        $user = User::find(Auth::id());
         $news = News::query()->orderByDesc('date_range')->get();
-        return view('user.portfolio', compact('news'));
+        $deposits = $user->deposits()->whereBetween('created_at', [now()->format('Y-m-').'1', now()->format('Y-m-').now()->format('t')])->get();
+        $categories = $data = $days = [];
+        for ($i = 1; $i <= now()->format('t'); $i++) {
+            $categories[$i] = 0;
+            $days[] = $i.now()->format('-M');
+        }
+        foreach ($deposits as $deposit) {
+            $day = Carbon::make($deposit->created_at)->format('d');
+            if (array_key_exists($day, $categories)) {
+                $categories[$day] = $categories[$day] + $deposit->actual_amount;
+            } else $categories[$day] = $deposit->actual_amount;
+        }
+        foreach ($categories as $category) $data[] = $category;
+        return view('user.portfolio', compact('news', 'user', 'data', 'days'));
+    }
+
+    public function downloadDocument(Document $document): BinaryFileResponse
+    {
+        return Response::download($document['file']);
+    }
+
+    public function uploadDocument(Request $request): JsonResponse
+    {
+        $user = User::find(Auth::id());
+        $validator = Validator::make($request->all(), ['type' => 'required', 'file' => 'required|file|mimes:jpg,png,jpeg|max:1024']);
+        if ($validator->fails())
+            return response()->json(['msg' => $validator->getMessageBag()], 422);
+        if (!in_array($request['type'], ['passport', 'drivers_license', 'state_id']))
+            return response()->json(['msg' => 'Invalid file option, refresh the page and try again'], 400);
+        if ($file = $request->file('file')) {
+            $loc = $file->move('files/'.$request['type'], time().mt_rand(100,999).'.'.$file->getClientOriginalExtension());
+            if ($request['type'] == 'passport') $user['passport'] = $loc;
+            if ($request['type'] == 'drivers_license') $user['drivers_license'] = $loc;
+            if ($request['type'] == 'state_id') $user['state_id'] = $loc;
+        }
+        if ($user->update())
+            return response()->json(['msg' => 'Document uploaded successfully', 'data' => 'Uploaded']);
+        return response()->json(['msg' => 'Could not upload file, try again'], 400);
     }
 
     public function rewards()
@@ -67,11 +96,14 @@ class UserController extends Controller
 
     public function documents()
     {
-        return view('user.documents');
+        $user = User::find(Auth::id());
+        $documents = $user->documents()->latest()->get();
+        return view('user.documents', compact('user', 'documents'));
     }
 
     public function settings()
     {
+        $user = User::find(Auth::id());
         $devices = $this->devices();
         $exp = $this->getExperience(Auth::user()['experience']);
         $emp = ucwords(Auth::user()['employment']);
@@ -81,7 +113,7 @@ class UserController extends Controller
         $goal = $this->getGoal(Auth::user()['goal']);
         $timeline = $this->getTimeline(Auth::user()['timeline']);
         $dsp = Auth::user()['dsp'] ? 'Enabled' : 'Disabled';
-        return view('user.settings', compact(['devices', 'exp', 'emp', 'ms', 'yi', 'sof', 'goal', 'timeline', 'dsp']));
+        return view('user.settings', compact(['user', 'devices', 'exp', 'emp', 'ms', 'yi', 'sof', 'goal', 'timeline', 'dsp']));
     }
 
     public function notifications()
@@ -113,23 +145,24 @@ class UserController extends Controller
 
     public function updateProfile(Request $request): RedirectResponse
     {
+        $user = User::find(auth()->id());
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string'],
+            'first_name' => ['required', 'string'],
+            'last_name' => ['required', 'string'],
             'username' => ['required', 'string', Rule::unique('users')->where(function ($q) use($request) { return $q->where('id', '!=', auth()->id())->where('username', $request['username']); })],
-        ]);
+            'photo' => ['sometimes', 'file', 'mimes:jpg,jpeg,png', 'max:1024']
+        ], ['photo.max' => 'Photo must not be greater than 1MB']);
         if ($validator->fails()) return back()->withInput()->withErrors($validator);
 
-        if ($request['photo']) {
-            $validator = Validator::make($request->all(), ['photo' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:1024']], ['photo.max' => 'Photo must not be greater than 1MB']);
-            if ($validator->fails()) return back()->withInput()->withErrors($validator);
+        if ($request->file('photo')) {
             $name = $request->file('photo')->getClientOriginalName();
-            $user['photo'] = $request->file('photo')->move('user/avatar', $name);
+            $user['photo'] = $request->file('photo')->move('img/avatar', $name);
         }
 
-        $user = User::find(auth()->id());
-        $user['name'] = $request['name'];
+        $user['first_name'] = $request['first_name'];
+        $user['last_name'] = $request['last_name'];
         $user['username'] = $request['username'];
-        if ($user->update()) return back()->with('success', 'Password Updated!');
+        if ($user->update()) return back()->with('success', 'Profile Updated!');
         return back()->with('error', 'An error occurred, try again');
     }
 

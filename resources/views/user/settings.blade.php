@@ -27,6 +27,7 @@
                 <a class="nav-link mb-2 active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Investment Profile</a>
                 <a class="nav-link mb-2" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Investing</a>
                 <a class="nav-link mb-2" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Security and Privacy</a>
+                <a class="nav-link mb-2" id="v-pills-documents-tab" data-bs-toggle="pill" href="#v-pills-documents" role="tab" aria-controls="v-pills-documents" aria-selected="false">Documents</a>
             </div>
         </div><!-- end col -->
         <div class="col-md-9 col-sm-8">
@@ -406,6 +407,102 @@
                                             <button onclick="$('#dspVal').toggle()" class="btn btn-outline-success btn-block px-4 mr-2"
                                                     type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseDSP" aria-expanded="false"
                                                     aria-controls="flush-collapseDSP">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-documents" role="tabpanel" aria-labelledby="v-pills-documents-tab">
+                    <div class="accordion accordion-flush mb-4" id="accordionFlushExample">
+                        <h5>Documents</h5>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingPassport">
+                                <button onclick="$('#passportVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapsePassport" aria-expanded="false" aria-controls="flush-collapsePassport">
+                                    Passport <span id="passportVal" style="position: absolute; right: 15px">{{ $user->passport ? 'Uploaded' : '---' }}</span>
+                                </button>
+                            </h2>
+                            <div id="flush-collapsePassport" class="accordion-collapse collapse" aria-labelledby="flush-headingPassport">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="card p-3 mx-auto" style="min-height: 100px;">
+                                                <img src="{{ $user->passport ? asset($user->passport) : '' }}" alt="" style="max-width: 200px" id="passport-preview">
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="form-group">
+                                                <input type="file" name="passport" id="passport-file" class="form-control" onchange="imagePreview(this, '#passport-preview', null, '{{ str_replace('\\', '/', asset($user->passport)) }}')">
+                                                <div class="d-flex justify-content-end mt-3">
+                                                    <button onclick="$('#passportVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
+                                                            type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapsePassport" aria-expanded="false"
+                                                            aria-controls="flush-collapsePassport">Cancel</button>&nbsp;&nbsp;&nbsp;
+                                                    <button type="button" class="btn btn-success btn-block px-4 ml-2" onclick="event.preventDefault(); updateDocument('passport', '#passport-file')">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingLicense">
+                                <button onclick="$('#driversLicenceVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseLicense" aria-expanded="false" aria-controls="flush-collapseLicense">
+                                    Driver's License <span id="driversLicenceVal" style="position: absolute; right: 15px">{{ $user->drivers_license ? 'Uploaded' : '---' }}</span>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseLicense" class="accordion-collapse collapse" aria-labelledby="flush-headingLicense">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="card p-3 mx-auto" style="min-height: 100px;">
+                                                <img src="{{ $user->drivers_license ? asset($user->drivers_license) : '' }}" alt="" style="max-width: 200px" id="license-preview">
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="form-group">
+                                                <input type="file" name="license" id="license-file" class="form-control" onchange="imagePreview(this, '#license-preview', null, '{{ str_replace('\\', '/', asset($user->drivers_license)) }}')">
+                                                <div class="d-flex justify-content-end mt-3">
+                                                    <button onclick="$('#driversLicenceVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
+                                                            type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseLicense" aria-expanded="false"
+                                                            aria-controls="flush-collapseLicense">Cancel</button>&nbsp;&nbsp;&nbsp;
+                                                    <button type="button" class="btn btn-success btn-block px-4 ml-2" onclick="event.preventDefault(); updateDocument('drivers_license', '#license-file')">Upload</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingStateID">
+                                <button onclick="$('#stateIDVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseStateID" aria-expanded="false" aria-controls="flush-collapseStateID">
+                                    State ID <span id="stateIDVal" style="position: absolute; right: 15px">{{ $user->state_id ? 'Uploaded' : '---' }}</span>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseStateID" class="accordion-collapse collapse" aria-labelledby="flush-headingStateID">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="card p-3 mx-auto" style="min-height: 100px;">
+                                                <img src="{{ $user->state_id ? asset($user->state_id) : '' }}" alt="" style="max-width: 200px" id="state_id-preview">
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="form-group">
+                                                <input type="file" name="state_id" id="state_id-file" class="form-control" onchange="imagePreview(this, '#state_id-preview', null, '{{ str_replace('\\', '/', asset($user->state_id)) }}')">
+                                                <div class="d-flex justify-content-end mt-3">
+                                                    <button onclick="$('#stateIDVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
+                                                            type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseStateID" aria-expanded="false"
+                                                            aria-controls="flush-collapseStateID">Cancel</button>&nbsp;&nbsp;&nbsp;
+                                                    <button type="button" class="btn btn-success btn-block px-4 ml-2" onclick="event.preventDefault(); updateDocument('state_id', '#state_id-file')">Upload</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

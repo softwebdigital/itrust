@@ -15,13 +15,13 @@
 
 @section('content')
     <div class="card-body">
-        <table id="datatable" class="table table-borderless table-striped dt-responsive  nowrap w-100">
+        <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
             <thead>
             <tr>
                 <th>User</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>type</th>
+                <th>Type</th>
                 <th>Date</th>
             </tr>
             </thead>

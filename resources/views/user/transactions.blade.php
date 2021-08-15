@@ -15,7 +15,7 @@
 
 @section('content')
     <div class="card-body">
-        <table id="datatable" class="table table-borderless table-striped dt-responsive  nowrap w-100">
+        <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
             <thead>
             <tr>
                 <th>Amount</th>

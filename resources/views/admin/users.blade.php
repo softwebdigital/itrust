@@ -15,7 +15,7 @@
 
 @section('content')
 <div>
-    <table id="datatable" class="table table-borderless table-striped dt-responsive nowrap w-100">
+    <table id="datatable" class="table table-borderless table-striped table-responsive nowrap w-100">
         <thead>
         <tr>
             <th>Name</th>

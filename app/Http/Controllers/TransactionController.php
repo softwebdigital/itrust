@@ -85,7 +85,7 @@ class TransactionController extends Controller
         if ($validator->fails()) return back()->with(['validation' => true, 'method' => $request['method']])->withErrors($validator)->withInput();
 
         if ($request['method'] == 'bank' && (float) $request['amount'] > 0) {
-            if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['amount'], 'type' => 'deposit'])) {
+            if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['amount'], 'type' => 'deposit', 'actual_amount' => (float) $request['amount']])) {
                 $msg = 'Deposit successful and is pending confirmation';
                 $body = '<p>Your deposit of $'.number_format($request['amount'], 2).' was successful. Your deposit would be confirmed in a couple of minutes. </p>';
             }
@@ -93,7 +93,7 @@ class TransactionController extends Controller
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
         } elseif ($request['method'] == 'bitcoin' && $request['btc_amount'] > 0) {
             $amount = round((float) $request['btc_amount'] / 44000, 8);
-            if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'deposit'])) {
+            if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount']])) {
                 $msg = 'Deposit successful and is pending confirmation';
                 $body = '<p>Your deposit of '.$amount.'BTC was successful. Your deposit would be confirmed in a couple of minutes. </p>';
             }

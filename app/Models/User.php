@@ -50,14 +50,29 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Transaction::class);
     }
 
-    public function deposits(): Collection
+    public function deposits()
     {
-        return $this->transactions()->where('type', 'deposit')->get();
+        return $this->transactions()->where('type', 'deposit');
     }
 
-    public function payouts(): Collection
+    public function payouts()
     {
-        return $this->transactions()->where('type', 'payouts')->get();
+        return $this->transactions()->where('type', 'payouts');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function invoices(): Collection
+    {
+        return $this->documents()->where('type', 'invoice')->get();
+    }
+
+    public function receipts(): Collection
+    {
+        return $this->documents()->where('type', 'receipt')->get();
     }
 
     public function getNameAttribute(): string

@@ -76,7 +76,7 @@
                 <h4 class="text-center">Passport</h4>
                 <div class="text-center user-info">
                     @if($user->passport != null)
-                        <img src="{{ asset($user->passport) }}" width="160" height="160" alt="avatar">
+                        <img src="{{ asset($user->passport) }}" width="200" height="" alt="avatar">
                     @else
                         <p>Not Provided Yet</p>
                     @endif
@@ -88,7 +88,7 @@
 
                 <div class="text-center user-info">
                     @if($user->drivers_license != null)
-                        <img src="{{ asset($user->drivers_license) }}" width="160" height="160" alt="avatar">
+                        <img src="{{ asset($user->drivers_license) }}" width="200" height="" alt="avatar">
                     @else
                         <p>Not Provided Yet</p>
                     @endif
@@ -96,11 +96,11 @@
                 <br>
                 <hr>
                 <br>
-                <h4 class="text-center">Other State ID</h4>
+                <h4 class="text-center">State ID</h4>
 
                 <div class="text-center user-info">
                     @if($user->state_id != null)
-                        <img src="{{ asset($user->state_id) }}" width="160" height="160" alt="avatar">
+                        <img src="{{ asset($user->state_id) }}" width="200" height="" alt="avatar">
                     @else
                         <p>Not Provided Yet</p>
                     @endif

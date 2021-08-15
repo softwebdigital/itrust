@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\AdminForgotPasswordController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminResetPasswordController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
@@ -96,12 +97,18 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
 
     Route::group(['middleware' => 'verified'], function () {
         Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio');
+        Route::get('/documents/{document}/download', [UserController::class, 'downloadDocument'])->name('user.documents.download');
+        Route::post('/portfolio', [UserController::class, 'uploadDocument'])->name('user.documents.upload')->middleware('throttle:3,1');
+
         Route::get('/rewards', [UserController::class, 'rewards'])->name('user.rewards');
         Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements');
         Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions');
 
         Route::get('/cash', [UserController::class, 'cash'])->name('user.cash');
         Route::post('/cash/deposit', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store');
+
+        Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices');
+        Route::post('/invoices', [UserController::class, 'storeInvoice'])->name('user.invoices.store');
 
         Route::get('/documents', [UserController::class, 'documents'])->name('user.documents');
         Route::get('/settings', [UserController::class, 'settings'])->name('user.settings');
@@ -130,5 +137,14 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::put('/news/{news}/update', [NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/news/{news}/destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
 
+    Route::get('/documents', [DocumentController::class, 'index'])->name('admin.documents');
+    Route::post('/documents', [DocumentController::class, 'store'])->name('admin.documents.store');
+    Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('admin.documents.update');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('admin.documents.destroy');
+
     Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
+    Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::post('/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::post('/profile/password', [AdminController::class, 'updatePassword'])->name('admin.password.update');
 });
