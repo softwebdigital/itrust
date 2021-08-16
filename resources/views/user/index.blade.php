@@ -66,8 +66,8 @@
                                     <th>{{ $key + 1 }}</th>
                                     <td><img src="{{ $market['logo_url'] }}" alt="" height="20"> {{ $market['name'] }}</td>
                                     <td>{{ $market['symbol'] }}</td>
-                                    <td>$ {{ number_format($market['price'], 2) }}</td>
-                                    <td>$ {{ $market['market_cap'] }}</td>
+                                    <td>${{ number_format($market['price'], 2) }}</td>
+                                    <td>${{ $market['market_cap'] }}</td>
                                     <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
                                     <td class="{{ isset($market["1d"]) ? ($market["1d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1d"]) ? ($market['1d']['price_change_pct'] * 100).'%' : '' }}</td>
                                     <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td>
@@ -199,7 +199,7 @@
                 <td><img src="${market['logo_url']}" alt="" height="20"> ${market['name']}</td>
                 <td>${market['symbol']}</td>
                 <td>${(market['price']).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
-                <td>$ ${market['market_cap']}</td>
+                <td>$${market['market_cap']}</td>
                 <td class="${ typeof market["1h"] !== "undefined" ? (parseFloat(market["1h"]["price_change_pct"]) < 0 ? 'text-danger' : 'text-success') : '' }">${typeof market["1h"] !== "undefined" ? roundNumber(market["1h"]["price_change_pct"] * 100, 2)+'%' : '' }</td>
                 <td class="${ typeof market["1d"] !== "undefined" ? (parseFloat(market["1d"]["price_change_pct"]) < 0 ? 'text-danger' : 'text-success') : '' }">${typeof market["1d"] !== "undefined" ? roundNumber(market["1d"]["price_change_pct"] * 100, 2)+'%' : '' }</td>
                 <td class="${ typeof market["30d"] !== "undefined" ? (parseFloat(market["30d"]["price_change_pct"]) < 0 ? 'text-danger' : 'text-success') : '' }">${typeof market["30d"] !== "undefined" ? roundNumber(market["30d"]["price_change_pct"] * 100, 2)+'%' : '' }</td>
