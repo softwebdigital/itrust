@@ -34,7 +34,7 @@ Route::get('/cap', function () {
         $data[$key]['market_cap'] = $this->cap($datum['market_cap']);
     }
     return $data;
-});
+})->name('cap');
 
 Auth::routes(['verify' => true]);
 

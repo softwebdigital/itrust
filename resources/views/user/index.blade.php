@@ -162,7 +162,7 @@
             setInterval(function () {
                 $.ajax({
                     type: "GET",
-                    url: `/cap`,
+                    url: `{{ route('cap') }}`,
                     dataType: 'json',
                     success: function (data) {
                         if (data.length > 0) {
