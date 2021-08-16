@@ -174,7 +174,7 @@
     })).render();
 
     options = {
-        series: ["{{ $deposits }}", "{{ $investments }}", "{{ $payouts }}"],
+        series: [{{ $deposits }}, {{ $investments }}, {{ $payouts }}],
         chart: {width: 320, height: 320, type: "pie"},
         labels: ["Deposits", "Investments", "Payouts"],
         colors: ['#098738', '#5156be', '#c70505'],

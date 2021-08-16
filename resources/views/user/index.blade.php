@@ -172,8 +172,10 @@
                 });
             }, 10000)
 
+            const deposit = parseFloat({{ $deposits }}).toFixed(2)
+            const payout = parseFloat({{ $payouts }}).toFixed(2)
             let options = {
-                series: ["{{ $deposits }}", "{{ $payouts }}"],
+                series: [{{ $deposits }}, {{ $payouts }}],
                 chart: {width: 320, height: 320, type: "pie"},
                 labels: ["Deposits", "Withdrawals"],
                 colors: ["#777aca", "#098738"],
