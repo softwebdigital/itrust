@@ -726,8 +726,7 @@
         }
     });
 
-    function removeDeviceByID(id) {
-        const password = $('input[name="confirm_password"]').val();
+    function removeDeviceByID(id, password) {
         if (password.length)
             $.ajax({
                 url: `/devices/${id}/destroy`,

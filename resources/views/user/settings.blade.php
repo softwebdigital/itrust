@@ -356,8 +356,8 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <h6>Confirm your password to continue this action.</h6>
-                                                            <input type="password" name="confirm_password" id="confirm-password" class="form-control mb-2" autofocus autocomplete="off">
-                                                            <button type="button" data-bs-dismiss="modal" onclick="event.preventDefault(); removeDeviceByID('{{ $device->id }}');" class="btn w-100 btn-block btn-outline-success waves-effect waves-light mb-2">Continue</button>
+                                                            <input type="password" name="confirm_password" id="settings_confirm-password" class="form-control mb-2" autofocus autocomplete="off">
+                                                            <button type="button" data-bs-dismiss="modal" onclick="event.preventDefault(); removeDeviceByID('{{ $device->id }}', $(this).prev().val());" class="btn w-100 btn-block btn-outline-success waves-effect waves-light mb-2">Continue</button>
                                                             <button type="button" data-bs-dismiss="modal"  class="btn w-100 btn-block btn-outline-danger waves-effect waves-light">Cancel</button>
                                                         </div>
                                                     </div>
@@ -514,10 +514,4 @@
             </div>
         </div><!--  end col -->
     </div>
-@endsection
-
-@section('script')
-    <script>
-
-    </script>
 @endsection

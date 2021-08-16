@@ -38,14 +38,15 @@ class AdminController extends Controller
                 $depositArr[$day] = $depositArr[$day] + $deposit->actual_amount;
             } else $depositArr[$day] = $deposit->actual_amount;
         }
-        $deposits = $this->formatAmount($deposits);
-        $depositAmount = $deposits[0];
-        $depositUnit = $deposits[1];
+        $amount = $this->formatAmount($deposits);
+        $depositAmount = $amount[0];
+        $depositUnit = $amount[1];
         foreach ($depositArr as $category) $depositData[] = $category;
 
-        $investments = $this->formatAmount(0);
-        $investedAmount = $investments[0];
-        $investedUnit = $investments[1];
+        $investments = 0;
+        $amount = $this->formatAmount($investments);
+        $investedAmount = $amount[0];
+        $investedUnit = $amount[1];
 
         foreach ($totalPayouts as $payout) {
             $day = Carbon::make($payout->created_at)->format('d');
@@ -54,11 +55,11 @@ class AdminController extends Controller
             } else $payoutArr[$day] = $payout->actual_amount;
         }
         foreach ($payoutArr as $arr) $payoutData[] = $arr;
-        $payouts = $this->formatAmount($payouts);
-        $payoutAmount = $payouts[0];
-        $payoutUnit = $payouts[1];
+        $amount = $this->formatAmount($payouts);
+        $payoutAmount = $amount[0];
+        $payoutUnit = $amount[1];
 
-        return view('admin.index', compact(['admin', 'depositData', 'days', 'depositAmount', 'depositUnit', 'payoutAmount', 'payoutUnit', 'payoutData', 'investedAmount', 'investedUnit']));
+        return view('admin.index', compact(['admin', 'depositData', 'days', 'depositAmount', 'depositUnit', 'payoutAmount', 'payoutUnit', 'payoutData', 'investedAmount', 'investedUnit', 'deposits', 'payouts', 'investments']));
     }
 
     public function users()
