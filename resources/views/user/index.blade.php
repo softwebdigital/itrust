@@ -173,7 +173,7 @@
             }, 10000)
 
             let options = {
-                series: [{!! json_encode($deposits) !!}, {!! json_encode($payouts) !!}],
+                series: ["{!! json_encode($deposits) !!}", "{!! json_encode($payouts) !!}"],
                 chart: {width: 320, height: 320, type: "pie"},
                 labels: ["Deposits", "Withdrawals"],
                 colors: ["#777aca", "#098738"],
