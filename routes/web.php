@@ -27,42 +27,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/chart', function () {
-//    $file="C:\Users\DELL\Downloads\CH_Nationality_List_20171130_v1.csv";
-//    $csv= file_get_contents($file);
-//    $array = array_map("str_getcsv", explode("\n", $csv));
-//    $json = json_encode(($array));
-//    $json = json_decode($json);
-//    $json = array_slice($json, 1, (count($json) - 2));
-
-//    foreach ($json as $value) {
-//        \App\Models\Nationality::query()->create(['name' => $value[0]]);
-//    }
-//    exit();
-    return view('chart');
-});
-
 Route::get('/cap', function () {
-    $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP,AAPL'); //&ids=BTC,ETH,XRP
-    return json_decode($data, true);
-});
-
-Route::get('/news', function () {
-//    $q = [
-//        'category' => 'top',
-//        'language' => 'en',
-//        'q' => 'bitcoin'
-////        'qInTitle' => rawurlencode('ethereum AND bitcoin')
-//    ];
-//    $data = Http::withHeaders(['X-ACCESS-KEY' => env('NEWS_API_KEY')])
-//        ->get('https://newsdata.io/api/1/news', $q);
-//    return json_decode($data, true);
-
-    $response = Http::withHeaders([
-        'x-rapidapi-key' => 'bcaaef8935msh60e77f09705e368p155434jsn7acf5d45b27f',
-        'x-rapidapi-host' => 'cryptosentiment.p.rapidapi.com'
-    ])->get('https://cryptosentiment.p.rapidapi.com/');
-    return $response;
+    $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP'); //&ids=BTC,ETH,XRP
+    $data = json_decode($data, true);
+    foreach ($data as $key => $datum) {
+        $data[$key]['market_cap'] = $this->cap($datum['market_cap']);
+    }
+    return $data;
 });
 
 Auth::routes(['verify' => true]);

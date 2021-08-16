@@ -162,7 +162,7 @@
             setInterval(function () {
                 $.ajax({
                     type: "GET",
-                    url: `https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP`,
+                    url: `/cap`,
                     dataType: 'json',
                     success: function (data) {
                         if (data.length > 0) {
@@ -172,8 +172,6 @@
                 });
             }, 10000)
 
-            const deposit = parseFloat({{ $deposits }}).toFixed(2)
-            const payout = parseFloat({{ $payouts }}).toFixed(2)
             let options = {
                 series: [{{ $deposits }}, {{ $payouts }}],
                 chart: {width: 320, height: 320, type: "pie"},
