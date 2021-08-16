@@ -24,9 +24,6 @@
     <!-- plugin css -->
     <link href="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" />
 
-    <!-- Init js -->
-    <script src="{{ asset('assets/js/pages/table-responsive.init.js') }}"></script>
-
     <!-- preloader css -->
     <link rel="stylesheet" href="{{ asset('assets/css/preloader.min.css') }}" type="text/css" />
 
@@ -75,12 +72,12 @@
                 </button>
 
                 <!-- App Search-->
-                <form class="app-search d-none d-lg-block">
-                    <div class="position-relative">
-                        <input type="text" class="form-control" placeholder="Search...">
-                        <button class="btn btn-primary" type="button"><i class="bx bx-search-alt align-middle"></i></button>
-                    </div>
-                </form>
+{{--                <form class="app-search d-none d-lg-block">--}}
+{{--                    <div class="position-relative">--}}
+{{--                        <input type="text" class="form-control" placeholder="Search...">--}}
+{{--                        <button class="btn btn-primary" type="button"><i class="bx bx-search-alt align-middle"></i></button>--}}
+{{--                    </div>--}}
+{{--                </form>--}}
             </div>
 
             <div class="d-flex">
@@ -495,8 +492,6 @@
 <!-- Plugins js-->
 <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
 <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
-<!-- dashboard init -->
-<script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
 
 <script src="{{ asset('assets/js/app.js') }}"></script>
 <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>

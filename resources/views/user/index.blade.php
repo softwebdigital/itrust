@@ -171,13 +171,13 @@
                 });
             }, 10000)
 
-            var options = {
-                series: [35, 70, 15],
-                chart: {width: 227, height: 227, type: "pie"},
-                labels: ["Ethereum", "Bitcoin", "Litecoin"],
-                colors: ["#777aca", "#5156be", "#a8aada"],
-                stroke: {width: 0},
-                legend: {show: !1},
+            let options = {
+                series: [{!! json_encode($deposits) !!}, {!! json_encode($payouts) !!}],
+                chart: {width: 320, height: 320, type: "pie"},
+                labels: ["Deposits", "Withdrawals"],
+                colors: ["#777aca", "#098738"],
+                stroke: {width: 1},
+                legend: {show: !0},
                 responsive: [{breakpoint: 480, options: {chart: {width: 200}}}]
             };
             (chart = new ApexCharts(document.querySelector("#wallet-balance"), options)).render();

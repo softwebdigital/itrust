@@ -104,8 +104,8 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
         Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements');
         Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions');
 
-        Route::get('/cash', [UserController::class, 'cash'])->name('user.cash');
-        Route::post('/cash/deposit', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store');
+        Route::get('/cash', [UserController::class, 'cash'])->name('user.cash')->middleware('approved');
+        Route::post('/cash/deposit', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store')->middleware('approved');
 
         Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices');
         Route::post('/invoices', [UserController::class, 'storeInvoice'])->name('user.invoices.store');

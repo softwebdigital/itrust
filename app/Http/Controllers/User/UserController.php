@@ -28,7 +28,6 @@ class UserController extends Controller
         $user = User::find(auth()->id());
         $deposits = $user->deposits()->where('status', '!=', 'declined')->sum('actual_amount');
         $payouts = $user->payouts()->where('status', '!=', 'declined')->sum('actual_amount');
-
         $portfolioValue = $deposits - $payouts;
 
         $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP'); //&ids=BTC,ETH,XRP
@@ -37,7 +36,7 @@ class UserController extends Controller
             $data[$key]['market_cap'] = $this->cap($datum['market_cap']);
         }
 
-        return view('user.index', compact('user', 'data', 'portfolioValue'));
+        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts']));
     }
 
     public function portfolio()

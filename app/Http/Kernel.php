@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckAccountStatusMiddleware;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\LockMiddleware;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -87,5 +88,6 @@ class Kernel extends HttpKernel
         'verified' => EnsureEmailIsVerified::class,
         'admin' => AdminMiddleware::class,
         'lock' => LockMiddleware::class,
+        'approved' => CheckAccountStatusMiddleware::class,
     ];
 }
