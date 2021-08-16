@@ -174,7 +174,7 @@
     })).render();
 
     options = {
-        series: [parseFloat({!! json_encode($deposits) !!}).toFixed(2), parseFloat({!! json_encode($investments) !!}).toFixed(2), parseFloat({!! json_encode($payouts) !!}).toFixed(2)],
+        series: ["{{ $deposits }}", "{{ $investments }}", "{{ $payouts }}"],
         chart: {width: 320, height: 320, type: "pie"},
         labels: ["Deposits", "Investments", "Payouts"],
         colors: ['#098738', '#5156be', '#c70505'],
