@@ -19,7 +19,8 @@
             <div class="card">
                 <div class="card-header"><strong>Your referral link</strong></div>
                 <div class="card-body">
-                    <input type="text" name="" readonly class="form-control mb-3" value="gbjhrfdrffjyfejdgukjhbfneklfnhkd" id="link">
+                    <input type="text" name="" readonly class="form-control mb-3" value="gbjhrfdrffjyfejdgukjhbfneklfnhkd">
+                    <input type="text" name="" readonly class="d-none" value="{{ url('/referral?uid=').auth()->id().'&link=gbjhrfdrffjyfejdgukjhbfneklfnhkd'}}" id="link">
                     <button class="btn btn-success btn-block w-100" onclick="copyToClipBoard()">Copy link</button>
                     <hr>
                     <button class="btn btn-info w-100"><i class="icon-sm" style="margin-right: 8px" data-feather="twitter"></i>Share on Twitter</button>
@@ -167,29 +168,10 @@
             $('#reward-panel-'+i).addClass('d-none')
         }
         function copyToClipBoard() {
-            const event = document.getElementById('link');
-            const link = '{{ url('/referral?uid=').auth()->id().'&link=' }}' + event.value;
-
-            if (window.clipboardData && window.clipboardData.setData) {
-                return window.clipboardData.setData("Text", text);
-
-            } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-                const textarea = document.createElement("textarea");
-                textarea.textContent = link;
-                textarea.style.position = "fixed";
-                document.body.appendChild(textarea);
-                textarea.select();
-                textarea.style.display = "none";
-                try {
-                    return document.execCommand("copy");
-                } catch (ex) {
-                    console.warn("Copy to clipboard failed.", ex);
-                    return false;
-                } finally {
-                    document.getElementById('text-copy').textContent = 'Copied!'
-                    document.body.removeChild(textarea);
-                }
-            }
+            const link = document.getElementById('link');
+            link.select();
+            link.setSelectionRange(0, 99999); /* For mobile devices */
+            navigator.clipboard.writeText(link.value);
         }
     </script>
 @endsection
