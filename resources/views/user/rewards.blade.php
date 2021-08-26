@@ -174,12 +174,12 @@
                 return window.clipboardData.setData("Text", text);
 
             } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-                let textarea = document.createElement("textarea");
+                const textarea = document.createElement("textarea");
                 textarea.textContent = link;
                 textarea.style.position = "fixed";
-                textarea.style.display = "none";
                 document.body.appendChild(textarea);
                 textarea.select();
+                textarea.style.display = "none";
                 try {
                     return document.execCommand("copy");
                 } catch (ex) {
