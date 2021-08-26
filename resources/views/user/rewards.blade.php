@@ -171,17 +171,17 @@
             const link = '{{ url('/referral?uid=').auth()->id().'&link=' }}' + event.value;
 
             if (window.clipboardData && window.clipboardData.setData) {
-                // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
                 return window.clipboardData.setData("Text", text);
 
             } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-                var textarea = document.createElement("textarea");
+                let textarea = document.createElement("textarea");
                 textarea.textContent = link;
-                textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
+                textarea.style.position = "fixed";
+                textarea.style.display = "none";
                 document.body.appendChild(textarea);
                 textarea.select();
                 try {
-                    return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+                    return document.execCommand("copy");
                 } catch (ex) {
                     console.warn("Copy to clipboard failed.", ex);
                     return false;
