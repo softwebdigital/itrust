@@ -49,15 +49,15 @@ class CreateUsersTable extends Migration
         });
 
         Illuminate\Support\Facades\DB::table('users')->insert([
-            'first_name' => 'Goke',
-            'last_name' => 'Adewuyi',
-            'email' => 'adewuyiyusuf@yahoo.com',
-            'username' => 'Deedee95',
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => 'test@yahoo.com',
+            'username' => 'Test',
             'password' => bcrypt('password'),
             'phone' => '09060040819',
             'address' => 'Block 41',
-            'city' => 'ifo',
-            'state' => 'ogun',
+            'city' => 'epe',
+            'state' => 'lagos',
             'country' => "nigeria",
             'zip_code' => 112112,
             'ssn' => '160211023',

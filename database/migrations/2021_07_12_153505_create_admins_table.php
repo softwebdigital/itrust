@@ -26,8 +26,8 @@ class CreateAdminsTable extends Migration
         });
 
         DB::table('admins')->insert([
-            'name' => 'Goke Adewuyi',
-            'email' => 'admin@itrust.com',
+            'name' => 'Super Admin',
+            'email' => 'admin@itrustinvestment.com',
             'password' => bcrypt('password')
         ]);
     }
