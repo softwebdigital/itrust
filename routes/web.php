@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Auth\AdminForgotPasswordController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminResetPasswordController;
@@ -70,6 +72,7 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
 
         Route::get('/cash', [UserController::class, 'cash'])->name('user.cash')->middleware('approved');
         Route::post('/cash/deposit', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store')->middleware('approved');
+        Route::post('/cash/withdraw', [TransactionController::class, 'userWithdrawStore'])->name('user.withdraw.store')->middleware('approved');
 
         Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices');
         Route::post('/invoices', [UserController::class, 'storeInvoice'])->name('user.invoices.store');
@@ -85,6 +88,8 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
     Route::get('/users/{user}', [AdminController::class, 'user'])->name('admin.users.show');
     Route::put('/users/{user}/account/{action}', [AdminController::class, 'userAccountAction'])->name('admin.users.account');
+    Route::put('/users/{user}/account/{action}/withBtc', [AdminController::class, 'userAccountActionwithBTCWallet'])->name('admin.users.accountBtcWallet');
+    Route::post('/users/invest/{user_id}', [InvestmentController::class, 'investUser'])->name('admin.users.invest');
 
     Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');
     Route::put('/deposits/{transaction}/{action}', [TransactionController::class, 'depositAction'])->name('admin.deposits.action');
@@ -101,6 +106,13 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::put('/news/{news}/update', [NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/news/{news}/destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
 
+    Route::get('/blogs', [BlogController::class, 'index'])->name('admin.blog');
+    Route::get('/blogs/add', [BlogController::class, 'create'])->name('admin.blog.create');
+    // Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->name('admin.news.edit');
+    Route::post('/blogs/store', [BlogController::class, 'store'])->name('admin.blog.store');
+    // Route::put('/news/{news}/update', [NewsController::class, 'update'])->name('admin.news.update');
+    // Route::delete('/news/{news}/destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
+
     Route::get('/documents', [DocumentController::class, 'index'])->name('admin.documents');
     Route::post('/documents', [DocumentController::class, 'store'])->name('admin.documents.store');
     Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('admin.documents.update');
@@ -111,4 +123,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::post('/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
     Route::post('/profile/password', [AdminController::class, 'updatePassword'])->name('admin.password.update');
+
+    Route::get('/investments', [InvestmentController::class, 'index'])->name('admin.investments');
+    Route::post('/investments/addroi/{id}', [InvestmentController::class, 'addRoi'])->name('admin.investments.addroi');
 });

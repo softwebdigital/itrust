@@ -81,6 +81,20 @@ class AdminController extends Controller
         return back()->with('error', 'An error occurred, try again.');
     }
 
+    public function userAccountActionwithBTCWallet(User $user, $action, Request $request): RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'btc_wallet' => 'required|string',
+        ]);
+        if ($validator->fails()) return back()->with('error', $validator->errors()->first())->withInput();
+
+
+        if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
+        if (!$user) return back()->with('error', 'User not found');
+        if ($user->update(['status' => $action, 'btc_wallet' => $request['btc_wallet']])) return back()->with('success', 'User account '.$action.' successfully');
+        return back()->with('error', 'An error occurred, try again.');
+    }
+
     public function profile()
     {
         $admin = auth('admin')->user();

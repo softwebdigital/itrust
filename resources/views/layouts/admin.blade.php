@@ -241,10 +241,24 @@
                         </ul>
                     </li>
 
+                    <li class="{{ Route::currentRouteNamed(['admin.investments']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.investments') }}">
+                            <i data-feather="dollar-sign"></i>
+                            <span data-key="t-news">Investment</span>
+                        </a>
+                    </li>
+
                     <li class="{{ Route::currentRouteNamed(['admin.news', 'admin.news.create', 'admin.news.edit']) ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.news') }}">
                             <i data-feather="book-open"></i>
                             <span data-key="t-news">News</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed(['admin.blog']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.blog') }}">
+                            <i data-feather="book-open"></i>
+                            <span data-key="t-news">Blog</span>
                         </a>
                     </li>
 

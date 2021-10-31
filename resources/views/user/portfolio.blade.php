@@ -43,15 +43,47 @@
             <h4>News</h4>
             <hr>
             <div class="">
+
                 @foreach($news as $info)
-                    <div class="row">
+                    {{-- <div class="row">
                         <div class="col-9">
                             <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
                             <p>{!! $info->body !!}</p>
-{{--                            <p>BABA &nbsp; 1.40% &nbsp;&nbsp;&nbsp; TCEHY &nbsp; 0.54%</p>--}}
                         </div>
                         <div class="col-3">
                             <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
+                        </div>
+                    </div> --}}
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward{{ $info->id }}" id="reward-{{ $info->id }}">
+                            <div class="col">
+                                <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" width="75">
+                            </div>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="mt-4 mt-sm-0">
+                                    <p class="mb-1">{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></p>
+                                    <h6>{{ ucfirst($info->heading) }}</h6>
+                                </div>
+                                <div class="align-self-auto my-auto"><a href="javascript:void(0)" onclick="showReward({{ $info->id }})">Read More <i class="mdi mdi-arrow-down"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="d-none reward-panel{{ $info->id }}" id="reward-panel-{{ $info->id }}">
+                            <div class="row">
+                                <div class="col-9">
+                                    <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
+                                    <p>{!! $info->body !!}</p>
+                                </div>
+                                <div class="col-3">
+                                    <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="mx-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+                                    <button class="btn btn-success btn-block px-4">Share News</button>
+                                    <a href="javascript:void(0)" class="" onclick="showLess({{ $info->id }})">View less <i class="mdi mdi-arrow-up"></i></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <hr>
@@ -321,6 +353,24 @@
                     </div>
                 `);
             }
+        }
+    </script>
+    <script>
+        function showReward(i) {
+            $('.reward'+i).removeClass('d-none')
+            $('.reward-panel'+i).addClass('d-none')
+            $('#reward-'+i).addClass('d-none')
+            $('#reward-panel-'+i).removeClass('d-none')
+        }
+        function showLess(i) {
+            $('#reward-'+i).removeClass('d-none')
+            $('#reward-panel-'+i).addClass('d-none')
+        }
+        function copyToClipBoard() {
+            const link = document.getElementById('link');
+            link.select();
+            link.setSelectionRange(0, 99999); /* For mobile devices */
+            navigator.clipboard.writeText(link.value);
         }
     </script>
 @endsection

@@ -110,4 +110,66 @@ class TransactionController extends Controller
         MailController::sendDepositNotification($user, $mail);
         return redirect()->route('user.transactions')->with($msg);
     }
+
+
+
+    public function userWithdrawStore(Request $request): RedirectResponse
+    {
+        
+        $user = User::find(auth()->id());
+        $validator = Validator::make($request->all(), [
+            'w_method' => 'required|string',
+            'bank_amount' => 'required_if:w_method,bank',
+            'bank_name' => 'required_if:w_method,bank',
+            'acct_name' => 'required_if:w_method,bank',
+            'acct_no' => 'required_if:w_method,bank',
+            'w_amount' => 'required_if:w_method,bitcoin'
+        ], [], $this->attributes());
+        if ($validator->fails()) return back()->with(['validation' => true, 'w_method' => $request['w_method']])->withErrors($validator)->withInput();
+
+        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+
+        $portfolioValue = $deposits - $payouts;
+
+        if ($request['w_method'] == 'bank' && (float) $request['bank_amount'] > 0) {
+            if($request['bank_amount'] > $portfolioValue){
+                return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Unsufficient Funds, try again'])->withInput();
+            }
+            if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount']])) {
+                $msg = 'Withdrawal successful and is pending confirmation';
+                $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
+            }
+            else
+                return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
+        } elseif ($request['w_method'] == 'bitcoin' && $request['w_amount'] > 0) {
+            if($request['w_amount'] > $portfolioValue){
+                return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Unsufficient Funds, try again'])->withInput();
+            }
+            $amount = round((float) $request['w_amount'] / 44000, 8);
+            if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount']])) {
+                $msg = 'Withdrawal successful and is pending confirmation';
+                $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
+            }
+            else
+                return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
+        } else
+            return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'Invalid payment method selected'])->withInput();
+
+        $mail = [
+            'name' => $user->name,
+            'subject' => 'Withdrawal successful',
+            'body' => $body
+        ];
+        MailController::sendDepositNotification($user, $mail);
+        return redirect()->route('user.transactions')->with($msg);
+    }
+
+    public function attributes()
+{
+    return [
+        'w_method' => 'method',
+        'w_amount' => 'amount'
+    ];
+}
 }

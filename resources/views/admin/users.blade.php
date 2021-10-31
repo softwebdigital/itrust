@@ -51,7 +51,11 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
                             <a class="dropdown-item" href="{{ route('admin.users.show', $user->id) }}">View User</a>
                             @if($user->isWaitingApproval())
-                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
+                            @if($user->btc_wallet != '')
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
+                            @else
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approvewithWallet-{{ $user->id }}">Approve User</a>
+                            @endif
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-decline-{{ $user->id }}">Decline User</a>
                             @endif
                             @if($user->isDeclined())
@@ -62,6 +66,7 @@
                             @endif
                             @if($user->status == 'approved')
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-suspend-{{ $user->id }}">Suspend User</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-invest-{{ $user->id }}">Invest</a>
                             @endif
                         </div>
                     </div>
@@ -77,6 +82,34 @@
                         </div>
                         <form action="{{ route('admin.users.account', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
                             <div class="modal-body">
+                                <p>Are you sure you want to approve this user?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Approve</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="staticBackdrop-approvewithWallet-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.accountBtcWallet', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="btc_wallet">₿</label>
+                                        <input type="text" step="any" class="form-control @error('btc_wallet') is-invalid @enderror"
+                                            name="btc_wallet" value="{{ old('btc_wallet') }}" id="btc_wallet" placeholder="BTC Wallet">
+                                    </div>
+                                    @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+                                </div>
                                 <p>Are you sure you want to approve this user?</p>
                             </div>
                             <div class="modal-footer">
@@ -120,6 +153,50 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-danger">Suspend</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="staticBackdrop-invest-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Invest for users</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.invest', $user->id) }}" method="post">
+                            @csrf
+                            @method('POST')
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="amount">$</label>
+                                        <input type="amount" step="any" class="form-control @error('amount') is-invalid @enderror"
+                                            name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
+                                    </div>
+                                    @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="type">Product :</label>
+                                    <select class="form-select @error('type') is-invalid @enderror" name="type" id="type"
+                                        onchange="showMethodwithdraw(this)">
+                                        <option value="">Select Product Type</option>
+                                        <option value="stocks_and_funds" {{ old('type') == 'stocks_and_funds' ? 'selected' : '' }}>Stocks and Funds
+                                        </option>
+                                        <option value="crypto" {{ old('type') == 'crypto' ? 'selected' : '' }}>Crypto</option>
+                                        <option value="gold" {{ old('type') == 'gold' ? 'selected' : '' }}>Gold</option>
+                                        <option value="cash_management" {{ old('type') == 'cash_management' ? 'selected' : '' }}>Cash Management</option>
+                                        <option value="options" {{ old('type') == 'options' ? 'selected' : '' }}>Options</option>
+                                    </select>
+                                    @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Invest</button>
                             </div>
                         </form>
                     </div>

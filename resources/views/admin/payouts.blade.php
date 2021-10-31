@@ -31,7 +31,7 @@
             @foreach($payouts as $payout)
                 <tr>
                     <td>{{ $payout->user->username }}</td>
-                    <td>${{ number_format($payout->amount, 2) }}</td>
+                    <td>${{ number_format($payout->actual_amount, 2) }}</td>
                     <td> <span class="badge p-2
                                 {{ $payout->status == 'pending' ? 'bg-warning' : '' }}
                         {{ $payout->status == 'declined' ? 'bg-danger' : '' }}
@@ -63,7 +63,7 @@
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('admin.deposits.action', [$payout->id, 'approved']) }}" method="post">@csrf @method('PUT')
+                            <form action="{{ route('admin.payouts.action', [$payout->id, 'approved']) }}" method="post">@csrf @method('PUT')
                                 <div class="modal-body">
                                     <p>Are you sure you want to approve this payout?</p>
                                 </div>
@@ -83,7 +83,7 @@
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Decline</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('admin.deposits.action', [$payout->id, 'declined']) }}" method="post">@csrf @method('PUT')
+                            <form action="{{ route('admin.payouts.action', [$payout->id, 'declined']) }}" method="post">@csrf @method('PUT')
                                 <div class="modal-body">
                                     <p>Are you sure you want to decline this payout?</p>
                                 </div>

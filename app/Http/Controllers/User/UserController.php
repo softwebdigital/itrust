@@ -26,9 +26,11 @@ class UserController extends Controller
     public function index()
     {
         $user = User::find(auth()->id());
-        $deposits = $user->deposits()->where('status', '!=', 'declined')->sum('actual_amount');
-        $payouts = $user->payouts()->where('status', '!=', 'declined')->sum('actual_amount');
-        $portfolioValue = $deposits - $payouts;
+        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+        $roi = $user->roi()->sum('ROI');
+
+        $portfolioValue = ($deposits + $roi) - $payouts;
         $data = $this->marketCap();
         return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts']));
     }

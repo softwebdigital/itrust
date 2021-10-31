@@ -12,4 +12,9 @@ class MailController extends Controller
     {
         Notification::send($user, new TransactionNotification($data));
     }
+
+    public static function sendInvestmentNotification($user, $data)
+    {
+        Notification::send($user, new TransactionNotification($data));
+    }
 }

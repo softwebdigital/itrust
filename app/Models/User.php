@@ -50,6 +50,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Transaction::class);
     }
 
+    public function investments(): HasMany
+    {
+        return $this->hasMany(Investment::class);
+    }
+
+    public function roi()
+    {
+        return $this->investments()->get();
+    }
+
     public function deposits()
     {
         return $this->transactions()->where('type', 'deposit');
@@ -57,7 +67,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function payouts()
     {
-        return $this->transactions()->where('type', 'payouts');
+        return $this->transactions()->where('type', 'payout');
     }
 
     public function documents(): HasMany
