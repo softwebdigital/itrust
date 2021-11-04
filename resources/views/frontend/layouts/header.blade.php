@@ -42,7 +42,12 @@
             </ul>
           </li>
           <li class="nav-item d-none d-md-block">
-            <a href="{{ route('login') }}" class="btn btn-sm btn-primary">Sign In</a>
+                @auth
+                <a href="{{ route('user.index') }}" class="btn btn-sm btn-primary">Dashboard</a>
+                @endauth
+                @guest
+                <a href="{{ route('login') }}" class="btn btn-sm btn-primary">Login</a>
+                @endguest
           </li>
           <li class="nav-item d-lg-none">
             <div class="navbar-hamburger"><button class="hamburger animate plain" data-toggle="offcanvas-nav"><span></span></button></div>
