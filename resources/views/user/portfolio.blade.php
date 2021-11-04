@@ -18,15 +18,7 @@
 <div class="row">
     <div class="col-md-8">
         <div>
-{{--            <div id="live-chart"></div>--}}
-            <div class="card">
-                <div class="card-body">
-                    <div id="live-chart" class="apex-charts" dir="ltr"></div>
-                </div>
-            </div><!--end card-->
-        </div>
-        <div>
-            <div class="card">
+            <div class="card border border-danger">
                 <div class="card-body">
                     @if($user->passport == null || $user->drivers_license == null || $user->state_id == null)
                         <h6>Verify Your Identity</h6>
@@ -39,6 +31,14 @@
                 </div>
             </div>
         </div>
+        <div>
+            <div class="card">
+                <div class="card-body">
+                    <div id="live-chart" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
+        </div>
+
         <div>
             <h4>News</h4>
             <hr>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="col-10 align-self-center d-flex justify-content-between">
                                 <div class="mt-4 mt-sm-0">
-                                    <p class="mb-1">{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></p>
+                                    <p class="mb-1">{{ ucfirst($info->title)  }} <small class="text-info">{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></p>
                                     <h6>{{ ucfirst($info->heading) }}</h6>
                                 </div>
                                 <div class="align-self-auto my-auto"><a href="javascript:void(0)" onclick="showReward({{ $info->id }})">Read More <i class="mdi mdi-arrow-down"></i></a></div>
@@ -96,36 +96,33 @@
             <div class="card-body">
                 <div class="table">
                     <table class="table table-borderless">
-                        <tr class="text-center">
-                            <td>BTC</td>
+                        @foreach ($assets as $asset)
+
+                        <tr class="text-">
+                            <td>{{ ucwords(str_replace('_', ' ', $asset->type)) }}</td>
+                            <td>${{ $asset->amount }}</td>
+                        </tr>
+                        @endforeach
+                        {{-- <tr class="text-center">
                             <td>BTC</td>
                             <td>$20000</td>
                         </tr>
                         <tr class="text-center">
                             <td>BTC</td>
+                            <td>$20000</td>
+                        </tr>
+                        <tr class="text-center">
                             <td>BTC</td>
                             <td>$20000</td>
                         </tr>
                         <tr class="text-center">
                             <td>BTC</td>
-                            <td>BTC</td>
                             <td>$20000</td>
                         </tr>
                         <tr class="text-center">
                             <td>BTC</td>
-                            <td>BTC</td>
                             <td>$20000</td>
-                        </tr>
-                        <tr class="text-center">
-                            <td>BTC</td>
-                            <td>BTC</td>
-                            <td>$20000</td>
-                        </tr>
-                        <tr class="text-center">
-                            <td>BTC</td>
-                            <td>BTC</td>
-                            <td>$20000</td>
-                        </tr>
+                        </tr> --}}
                     </table>
                 </div>
             </div>

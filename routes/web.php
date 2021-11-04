@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Auth\AdminForgotPasswordController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminResetPasswordController;
+use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
@@ -25,15 +27,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//FE
+Route::get('/', [FrontEndController::class, 'home'])->name('frontend.home');
+Route::get('/stocks-and-funds', [FrontEndController::class, 'stocks'])->name('frontend.stocks');
+Route::get('/crypto', [FrontEndController::class, 'crypto'])->name('frontend.crypto');
+Route::get('/gold', [FrontEndController::class, 'gold'])->name('frontend.gold');
+Route::get('/options', [FrontEndController::class, 'options'])->name('frontend.options');
+Route::get('/investor-relations', [FrontEndController::class, 'investor_relations'])->name('frontend.investor_relations');
+Route::get('/our-commitments', [FrontEndController::class, 'commitments'])->name('frontend.commitments');
+Route::get('/about', [FrontEndController::class, 'about'])->name('frontend.about');
+Route::get('/blog', [FrontEndController::class, 'blog'])->name('frontend.blog');
+Route::get('/privacy', [FrontEndController::class, 'privacy'])->name('frontend.privacy');
+Route::get('/terms-and-conditions', [FrontEndController::class, 'terms'])->name('frontend.terms');
+Route::get('/faq', [FrontEndController::class, 'faq'])->name('frontend.faq');
+Route::get('/contact', [FrontEndController::class, 'contact'])->name('frontend.contact');
+Route::get('/how-to-invest', [FrontEndController::class, 'invest'])->name('frontend.invest');
+Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('frontend.cash');
+
 
 Route::get('/cap', [UserController::class, 'marketCap'])->name('cap');
 
 Auth::routes(['verify' => true]);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login');
@@ -50,7 +66,7 @@ Route::get('/email/verified', function () {
     return view('auth.verified');
 });
 Route::group(['middleware' => ['auth', 'lock']], function () {
-    Route::get('/', [UserController::class, 'index'])->name('user.index');
+    Route::get('/dashboard', [UserController::class, 'index'])->name('user.index');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('user.profile.update');
     Route::post('/password/update', [UserController::class, 'updatePassword'])->name('user.password.update');
@@ -108,10 +124,16 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
 
     Route::get('/blogs', [BlogController::class, 'index'])->name('admin.blog');
     Route::get('/blogs/add', [BlogController::class, 'create'])->name('admin.blog.create');
-    // Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->name('admin.news.edit');
+    Route::get('/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('admin.blog.edit');
     Route::post('/blogs/store', [BlogController::class, 'store'])->name('admin.blog.store');
-    // Route::put('/news/{news}/update', [NewsController::class, 'update'])->name('admin.news.update');
-    // Route::delete('/news/{news}/destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
+    Route::put('/blogs/{blog}/update', [BlogController::class, 'update'])->name('admin.blog.update');
+    Route::delete('/blogs/{blog}/destroy', [BlogController::class, 'destroy'])->name('admin.blog.destroy');
+
+    Route::get('/blogcategory', [BlogCategoryController::class, 'index'])->name('admin.blogCategory');
+    Route::get('/blogcategory/add', [BlogCategoryController::class, 'create'])->name('admin.blogCategory.create');
+    Route::post('/blogcategory/store', [BlogCategoryController::class, 'store'])->name('admin.blogCategory.store');
+    Route::post('/blogcategory/update/{id}', [BlogCategoryController::class, 'update'])->name('admin.blogCategory.update');
+    Route::delete('/blogcategory/{id}/destroy', [BlogCategoryController::class, 'destroy'])->name('admin.blogCategory.destroy');
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('admin.documents');
     Route::post('/documents', [DocumentController::class, 'store'])->name('admin.documents.store');

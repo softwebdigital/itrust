@@ -262,6 +262,13 @@
                         </a>
                     </li>
 
+                    <li class="{{ Route::currentRouteNamed(['admin.blogCategory']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.blogCategory') }}">
+                            <i data-feather="book-open"></i>
+                            <span data-key="t-news">Blog Category</span>
+                        </a>
+                    </li>
+
                     <li class="{{ Route::currentRouteNamed(['admin.documents']) ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.documents') }}">
                             <i data-feather="file"></i>

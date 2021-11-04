@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Investment;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -64,7 +65,8 @@ class TransactionController extends Controller
 
     public function userStatements()
     {
-        return view('user.statement');
+        $investments = Investment::orderBy('id', 'desc')->get();
+        return view('user.statement', compact('investments'));
     }
 
     public function userTransactions()
@@ -115,7 +117,7 @@ class TransactionController extends Controller
 
     public function userWithdrawStore(Request $request): RedirectResponse
     {
-        
+
         $user = User::find(auth()->id());
         $validator = Validator::make($request->all(), [
             'w_method' => 'required|string',
@@ -123,7 +125,9 @@ class TransactionController extends Controller
             'bank_name' => 'required_if:w_method,bank',
             'acct_name' => 'required_if:w_method,bank',
             'acct_no' => 'required_if:w_method,bank',
-            'w_amount' => 'required_if:w_method,bitcoin'
+            'info' => 'required_if:w_method,bank',
+            'w_amount' => 'required_if:w_method,bitcoin',
+            'btc_wallet' => 'required_if:w_method,bitcoin'
         ], [], $this->attributes());
         if ($validator->fails()) return back()->with(['validation' => true, 'w_method' => $request['w_method']])->withErrors($validator)->withInput();
 
@@ -136,7 +140,7 @@ class TransactionController extends Controller
             if($request['bank_amount'] > $portfolioValue){
                 return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Unsufficient Funds, try again'])->withInput();
             }
-            if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount']])) {
+            if ($user->transactions()->create(['method' => 'bank', 'info' => $request['info'], 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount'], 'bank_name' => $request['bank_name'], 'acct_name' => $request['acct_name'], 'acct_no' => $request['acct_no']])) {
                 $msg = 'Withdrawal successful and is pending confirmation';
                 $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
             }
@@ -147,7 +151,7 @@ class TransactionController extends Controller
                 return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Unsufficient Funds, try again'])->withInput();
             }
             $amount = round((float) $request['w_amount'] / 44000, 8);
-            if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount']])) {
+            if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount']])) {
                 $msg = 'Withdrawal successful and is pending confirmation';
                 $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
             }

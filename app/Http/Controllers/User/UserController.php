@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Document;
+use App\Models\Investment;
 use App\Models\News;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +33,20 @@ class UserController extends Controller
 
         $portfolioValue = ($deposits + $roi) - $payouts;
         $data = $this->marketCap();
-        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts']));
+        $stocks_and_funds = Investment::where(['user_id' => auth()->id(), 'type' => 'stocks_and_funds'])->first()->amount ?? 0;
+        $crypto = Investment::where(['user_id' => auth()->id(), 'type' => 'crypto'])->first()->amount ?? 0;
+        $gold = Investment::where(['user_id' => auth()->id(), 'type' => 'gold'])->first()->amount ?? 0;
+        $cash_management = Investment::where(['user_id' => auth()->id(), 'type' => 'cash_management'])->first()->amount ?? 0;
+        $options = Investment::where(['user_id' => auth()->id(), 'type' => 'options'])->first()->amount ?? 0;
+        $assets = [
+            'stocks_and_funds' => $stocks_and_funds,
+            'crypto' => $crypto,
+            'gold' => $gold,
+            'cash_management' => $cash_management,
+            'options' => $options
+        ];
+
+        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets']));
     }
 
     public function portfolio()
@@ -52,7 +66,8 @@ class UserController extends Controller
             } else $categories[$day] = $deposit->actual_amount;
         }
         foreach ($categories as $category) $data[] = $category;
-        return view('user.portfolio', compact('news', 'user', 'data', 'days'));
+        $assets = Investment::where('user_id', Auth::id())->get();
+        return view('user.portfolio', compact('news', 'user', 'data', 'days', 'assets'));
     }
 
     public function downloadDocument(Document $document): BinaryFileResponse
@@ -283,7 +298,7 @@ class UserController extends Controller
 
     public function marketCap()
     {
-        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,XRP'); //&ids=BTC,ETH,XRP
+        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO'); //&ids=BTC,ETH,XRP
         $data = json_decode($data, true);
         foreach ($data as $key => $datum) {
             $data[$key]['market_cap'] = $this->cap($datum['market_cap']);

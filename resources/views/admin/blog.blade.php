@@ -22,9 +22,9 @@
             <thead>
             <tr>
                 <th>Title</th>
+                <th>Category</th>
                 <th>Body</th>
                 <th>Image</th>
-                <th>Date Range</th>
                 <th>Date Added</th>
                 <th></th>
             </tr>
@@ -33,9 +33,10 @@
             @foreach($news as $info)
                 <tr>
                     <td>{{ $info->title }}</td>
+                    <td>{{ $info->category }}</td>
                     <td>{!! strlen($info->body) > 30 ? substr($info->body, 0, 30).'...' : $info->body !!}</td>
                     <td><img src="{{ $info->image ? asset($info->image) : '' }}" width="50" alt=""></td>
-                    <td>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</td>
+                    {{-- <td>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</td> --}}
                     <td>{{ \Carbon\Carbon::make($info->created_at)->format('Y/m/d') }}</td>
                     <td>
                         <div class="btn-group">
@@ -47,7 +48,7 @@
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-view-{{ $info->id }}">View</a>
-                                <a class="dropdown-item" href="{{ route('admin.Blog.edit', $info->id) }}">Edit</a>
+                                <a class="dropdown-item" href="{{ route('admin.blog.edit', $info->id) }}">Edit</a>
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $info->id }}">Delete</a>
                             </div>
                         </div>
@@ -66,17 +67,23 @@
                                     <input type="text" class="form-control-plaintext" value="{{ $info->title ?? '-----' }}">
                                 </div>
                                 <div class="form-group">
+                                    <label for="">Category</label>
+                                    <input type="text" class="form-control-plaintext" value="{{ $info->category ?? '-----' }}">
+                                </div>
+                                <div class="form-group">
                                     <label for="">Heading</label>
                                     <input type="text" class="form-control-plaintext" value="{{ $info->heading ?? '-----' }}">
                                 </div>
-                                <div class="form-group">
+
+
+                                {{-- <div class="form-group">
                                     <label for="">Url</label>
                                     <input type="text" class="form-control-plaintext" value="{{ $info->url ?? '-----' }}">
-                                </div>
-                                <div class="form-group">
+                                </div> --}}
+                                {{-- <div class="form-group">
                                     <label for="">Date</label>
                                     <input type="datetime-local" class="form-control-plaintext" value="{{ \Carbon\Carbon::make($info->date_range)->format('Y-m-d').'T'.\Carbon\Carbon::make($info->date_range)->format('H:i:s') }}">
-                                </div>
+                                </div> --}}
                                 <div class="form-group">
                                     <label for="">Body</label>
                                     <textarea name="" id="" cols="30" rows="3" class="form-control-plaintext">{!! $info->body ?? '-----' !!}</textarea>
@@ -99,7 +106,7 @@
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Blog Delete</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('admin.Blog.destroy', $info->id) }}" method="post">@csrf @method('DELETE')
+                            <form action="{{ route('admin.blog.destroy', $info->id) }}" method="post">@csrf @method('DELETE')
                                 <div class="modal-body">
                                     <p>Are you sure you want to delete this Blog?</p>
                                 </div>

@@ -30,9 +30,17 @@ class InvestmentController extends Controller
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
 
-        if (Investment::create(['type' => $request['type'], 'amount' => (float) $request['amount'], 'user_id' => $user_id])){
-            $msg = 'You have invested $'. $request['amount'];
-        }
+        $amount = 0;
+
+        $inv = Investment::firstOrNew(['user_id' => $user_id, 'type' => $request['type']]);
+
+        $amount = $inv->amount;
+
+        $inv->amount = (float) $request['amount'] + $amount;
+
+        $inv->save();
+
+        $msg = 'You have invested $'. $request['amount'];
 
         $mail = [
             'name' => $user->name,
@@ -49,14 +57,18 @@ class InvestmentController extends Controller
     public function addRoi(Request $request, $investment_id)
     {
         $investment = Investment::find($investment_id);
-        
+
+        if($investment->status == 'closed' && $request['status'] == 'closed') return back()->with('error', 'You can\'t update a closed investment');
+
         if (!$investment) return back()->with('error', 'Investment not found');
         $validator = Validator::make($request->all(), [
             'amount' => 'required|string',
+            'investment' => 'required|string',
+            'status' => 'required|string',
         ]);
-        if ($validator->fails()) return back()->withErrors($validator)->withInput();
+        if ($validator->fails()) return back()->with('error', $validator->errors()->first());
 
-        if ($investment->update(['ROI' => $request['amount']])) return back()->with('success', 'ROI successfully added');
+        if ($investment->update(['ROI' => $request['amount'], 'amount' => $request['investment'], 'status' => $request['status']])) return back()->with('success', 'Investment successfully updated');
 
         return back()->with('error', 'An error occurred, try again.');
 

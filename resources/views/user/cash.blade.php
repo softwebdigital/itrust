@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-    <div class="card-body border col-md-6">
+    <div class="card-body border col-md-6 mb-3">
         <div class="tab-content">
             <div class="tab-pane active" id="buy-tab" role="tabpanel">
                 <button class="d-none" id="staticBackdrop-btn" data-bs-toggle="modal"
@@ -49,6 +49,7 @@
                             @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
                             @enderror
                         </div>
+
 
                         <div class="card bg-light mt-2 mb-3">
                             <div class="container-fluid">
@@ -144,14 +145,26 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                {{-- <label class="input-group-text" for="btc_wallet"><strong>$</strong></label> --}}
+                                <input type="text" id="btc_wallet" step="any" name="btc_wallet"
+                                    value="{{ old('btc_wallet') }}"
+                                    class="form-control @error('btc_wallet') is-invalid @enderror" placeholder="Btc Wallet"
+                                    onkeyup="calcEquiv(this)">
+                            </div>
+                            @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                            @enderror
+                        </div>
+
                         <div class="card bg-light mt-2 mb-3">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-4">
-                                        <p class="mt-3"><strong>Wallet Address:</strong></p>
+                                        {{-- <p class="mt-3"><strong>Wallet Address:</strong></p> --}}
                                     </div>
                                     <div class="col-8">
-                                        <p class="mt-3">67hds67e6787wedgie38e87dcy</p>
+                                        {{-- <p class="mt-3">{{ Auth()->user()->btc_wallet ?? '67hds67e6787wedgie38e87dcy' }}</p> --}}
                                     </div>
                                     <div class="col-4">
                                         <p><strong>Amount:</strong></p>
@@ -178,7 +191,7 @@
                         </div>
                         <div class="form-group">
                             <div class="input-group mb-3">
-                                <label class="input-group-text" for="bank_name">$</label>
+                                {{-- <label class="input-group-text" for="bank_name">$</label> --}}
                                 <input type="text" step="any" class="form-control @error('bank_name') is-invalid @enderror"
                                     name="bank_name" value="{{ old('bank_name') }}" id="bank_name" placeholder="Bank Name">
                             </div>
@@ -187,7 +200,7 @@
                         </div>
                         <div class="form-group">
                             <div class="input-group mb-3">
-                                <label class="input-group-text" for="acct_name">$</label>
+                                {{-- <label class="input-group-text" for="acct_name">$</label> --}}
                                 <input type="text" step="any" class="form-control @error('acct_name') is-invalid @enderror"
                                     name="acct_name" value="{{ old('acct_name') }}" id="acct_name" placeholder="Account Name">
                             </div>
@@ -196,9 +209,19 @@
                         </div>
                         <div class="form-group">
                             <div class="input-group mb-3">
-                                <label class="input-group-text" for="acct_no">$</label>
+                                {{-- <label class="input-group-text" for="acct_no">$</label> --}}
                                 <input type="number" step="any" class="form-control @error('acct_no') is-invalid @enderror"
                                     name="acct_no" value="{{ old('acct_no') }}" id="acct_no" placeholder="Account Number">
+                            </div>
+                            @error('acct_no') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                {{-- <label class="input-group-text" for="acct_no">$</label> --}}
+                                {{-- <input type="number" step="any"
+                                    name="acct_no" id="acct_no" placeholder="Account Number"> --}}
+                                    <textarea name="info" class="form-control @error('acct_no') is-invalid @enderror" id="info" cols="30" rows="4" placeholder="Additional Info">{{ old('info') }}</textarea>
                             </div>
                             @error('acct_no') <strong class="text-danger" role="alert">{{ $message }}</strong>
                             @enderror

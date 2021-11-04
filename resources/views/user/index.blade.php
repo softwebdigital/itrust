@@ -172,14 +172,15 @@
                 });
             }, 10000)
 
+
             let options = {
-                series: [{{ $deposits }}, {{ $payouts }}],
-                chart: {width: 320, height: 320, type: "pie"},
-                labels: ["Deposits", "Withdrawals"],
+                series: [{{ $assets['stocks_and_funds'] }}, {{ $assets['crypto'] }}, {{ $assets['gold'] }}, {{ $assets['cash_management'] }}, {{ $assets['options'] }}],
+                chart: {width: 320, height: 350, type: "pie"},
+                labels: ["Stocks and Funds", "Crypto", "Gold", "Cash Management", "Options"],
                 colors: ["#777aca", "#098738"],
                 stroke: {width: 1},
                 legend: {show: !0},
-                responsive: [{breakpoint: 480, options: {chart: {width: 200}}}]
+                responsive: [{breakpoint: 500, options: {chart: {width: 200}}}]
             };
             (chart = new ApexCharts(document.querySelector("#wallet-balance"), options)).render();
         });

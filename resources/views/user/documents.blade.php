@@ -23,9 +23,11 @@
                     <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" width="40">
                 </div>
                 <div class="col-10 align-self-center d-flex justify-content-between">
-                    <div class="mt-4 mt-sm-0">
+                    <div class="mt-4 mt-sm-0 pull-left">
                         <h6><a href="{{ $document->file ? asset($document->file) : 'javascript:void(0)' }}" target="_blank">{{ $document->title }}</a></h6>
+                        <p>{{ ucfirst($document->type) }}</p>
                     </div>
+                    <p class="pull-right">{{ \Carbon\Carbon::parse( $document->created_at )->diffForHumans() }}</p>
                     <div class="align-self-auto my-auto"><a href="{{ route('user.documents.download', $document->id) }}" title="Download"><i class="icon" data-feather="download"></i></a></div>
                 </div>
             </div>

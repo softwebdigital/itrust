@@ -22,6 +22,8 @@
             <th>Email</th>
             <th>Amount</th>
             <th>ROI</th>
+            <th>Asset</th>
+            <th>Status</th>
             <th>Investment Date</th>
             <th></th>
         </tr>
@@ -34,6 +36,11 @@
                 <td>{{ $investment->user->email }}</td>
                 <td>{{ $investment->amount }}</td>
                 <td>{{ $investment->ROI }}</td>
+                <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
+                <td> <span class="badge
+                    {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
+                    {{ $investment->status == 'open' ? 'bg-success' : '' }}
+                        ">{{ ucwords($investment->status) }}</td>
                 <td>{{ date('d/M/Y', strtotime($investment->created_at)) }}</td>
                 <td>
                     <div class="btn-group">
@@ -44,7 +51,7 @@
                             </svg>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
-                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-roi-{{ $investment->id }}">Add ROI</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-roi-{{ $investment->id }}">Edit Investment</a>
                         </div>
                     </div>
                 </td>
@@ -63,12 +70,30 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <div class="input-group mb-3">
-                                        <label class="input-group-text" for="amount">$</label>
+                                        <label class="input-group-text" for="investment">$</label>
+                                        <input type="investment" step="any" class="form-control @error('investment') is-invalid @enderror"
+                                            name="investment" value="{{ $investment->amount }}" id="investment" placeholder="ROI">
+                                    </div>
+                                    @error('investment') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="amount">ROI</label>
                                         <input type="amount" step="any" class="form-control @error('amount') is-invalid @enderror"
-                                            name="amount" value="{{ old('amount') }}" id="amount" placeholder="ROI">
+                                            name="amount" value="{{ $investment->ROI }}" id="amount" placeholder="ROI">
                                     </div>
                                     @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
+                                </div>
+                                <div class="form-group mb-3">
+                                    <select class="form-select @error('status') is-invalid @enderror" name="status" id="status"
+                                        onchange="showMethodwithdraw(this)">
+                                        <option value="">Select Status</option>
+                                        <option value="open" {{ $investment->status == 'open' ? 'selected' : '' }}>Open</option>
+                                        <option value="closed" {{ $investment->status == 'closed' ? 'selected' : '' }}>Closed</option>
+                                    </select>
+                                    @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                                 </div>
                             </div>
                             <div class="modal-footer">
