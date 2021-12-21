@@ -4,40 +4,50 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Settings;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
 
-//Host: 41.203.16.246
-//U: lushgetqre
-//P: ob3Sv53L5d3RlVGioK7d
+    //Host: 41.203.16.246
+    //U: lushgetqre
+    //P: ob3Sv53L5d3RlVGioK7d
     public function index()
     {
         $admin = auth('admin')->user();
         $deposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->sum('actual_amount');
-        $totalDeposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-').'1', now()->format('Y-m-').now()->format('t')])->get();
+        $totalDeposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . now()->format('t')])->get();
         $payouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->sum('actual_amount');
-        $totalPayouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-').'1', now()->format('Y-m-').now()->format('t')])->get();
+        $totalPayouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . now()->format('t')])->get();
         $depositArr = $depositData = $payoutArr = $payoutData = $days = [];
         for ($i = 1; $i <= now()->format('t'); $i++) {
-            $days[] = $i.now()->format('-M');
+            $days[] = $i . now()->format('-M');
             $depositArr[$i] = 0;
             $payoutArr[$i] = 0;
         }
         foreach ($totalDeposits as $deposit) {
             $day = Carbon::make($deposit->created_at)->format('d');
+            $day = Carbon::make($deposit->created_at)->format('d');
+            $first_letter = substr($day, 0, 1);
+            if ($first_letter == 0) {
+                $day = $first_letter = substr($day, 1, 2);
+            }
             if (array_key_exists($day, $depositArr)) {
                 $depositArr[$day] = $depositArr[$day] + $deposit->actual_amount;
             } else $depositArr[$day] = $deposit->actual_amount;
         }
+        // dd($depositArr);
         $amount = $this->formatAmount($deposits);
         $depositAmount = $amount[0];
         $depositUnit = $amount[1];
@@ -58,7 +68,9 @@ class AdminController extends Controller
         $amount = $this->formatAmount($payouts);
         $payoutAmount = $amount[0];
         $payoutUnit = $amount[1];
+        // dd($depositData);
 
+        // dd($days);
         return view('admin.index', compact(['admin', 'depositData', 'days', 'depositAmount', 'depositUnit', 'payoutAmount', 'payoutUnit', 'payoutData', 'investedAmount', 'investedUnit', 'deposits', 'payouts', 'investments']));
     }
 
@@ -73,16 +85,24 @@ class AdminController extends Controller
         return view('admin.user-info', compact('user'));
     }
 
+    public function deleteUser(User $user)
+    {
+        if (!$user) return back()->with('error', 'User not found');
+        if ($user->delete()) return back()->with('success', 'User deleted successfully');
+        return back()->with('error', 'An error occurred, try again.');
+    }
+
     public function userAccountAction(User $user, $action): RedirectResponse
     {
         if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
         if (!$user) return back()->with('error', 'User not found');
-        if ($user->update(['status' => $action])) return back()->with('success', 'User account '.$action.' successfully');
+        if ($user->update(['status' => $action])) return back()->with('success', 'User account ' . $action . ' successfully');
         return back()->with('error', 'An error occurred, try again.');
     }
 
     public function userAccountActionwithBTCWallet(User $user, $action, Request $request): RedirectResponse
     {
+        // dd($action);
         $validator = Validator::make($request->all(), [
             'btc_wallet' => 'required|string',
         ]);
@@ -91,8 +111,71 @@ class AdminController extends Controller
 
         if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
         if (!$user) return back()->with('error', 'User not found');
-        if ($user->update(['status' => $action, 'btc_wallet' => $request['btc_wallet']])) return back()->with('success', 'User account '.$action.' successfully');
+        if ($user->update(['status' => $action, 'btc_wallet' => $request['btc_wallet']])) return back()->with('success', 'User account ' . $action . ' successfully');
         return back()->with('error', 'An error occurred, try again.');
+    }
+
+    public function userBTCWallet(User $user, Request $request): RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'btc_wallet' => 'required|string',
+        ]);
+        if ($validator->fails()) return back()->with('error', $validator->errors()->first())->withInput();
+
+
+        // if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
+        if (!$user) return back()->with('error', 'User not found');
+        if ($user->update(['btc_wallet' => $request['btc_wallet']])) return back()->with('success', 'User account Wallet Successfully Updated');
+        return back()->with('error', 'An error occurred, try again.');
+    }
+
+
+    public function addTransaction(Request $request, $type)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'user' => 'required',
+            'amount' => 'required',
+            'method' => 'required',
+            'account' => 'required',
+            'date' => 'required'
+        ]);
+
+        if ($validator->fails()) return back()->withErrors($validator)->withInput();
+        $user_id = $request->input('user');
+        $user = User::find($user_id);
+
+        if($type == 'payout'){
+        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+        $inv = $user->roi()->sum('amount');
+        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+        $withdrawable = ($deposits - $payouts) + $inv;
+    }
+
+        if ($request['method'] == 'bank') {
+            $amount = $request['amount'];
+        } else
+            $amount = $request['amount'] / 44000;
+
+        $data = [
+            'method' => $request['method'],
+            'amount' => $amount,
+            'actual_amount' => (float) $request['amount'],
+            'type' => $type,
+            'status' => 'approved',
+            'acct_type' => $request['account'],
+            'created_at' => $request['date']
+        ];
+
+        // if($type == 'payout')
+        // if ((float) $request['amount'] > $withdrawable) {
+        //     return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
+        // }
+
+        if ($user->transactions()->create($data)) {
+            return back()->with('success', ucfirst($type) . ' Created Successfully');
+        } else
+            return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
     }
 
     public function profile()
@@ -112,7 +195,7 @@ class AdminController extends Controller
         if ($validator->fails()) return back()->withErrors($validator)->withInput();
 
         if ($image = $request->file('photo')) {
-            $name = time().$image->getClientOriginalName();
+            $name = time() . $image->getClientOriginalName();
             $admin['photo'] = $image->move('img/avatar', $name);
         }
 
@@ -140,8 +223,22 @@ class AdminController extends Controller
 
     public function settings()
     {
-        $admin = auth('admin')->user();
-        return view('admin.settings', compact('admin'));
+        $setting = Settings::first();
+
+        return view('admin.settings', compact(['setting']));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        $settings = Settings::count();
+        if ($settings == 0) {
+            Settings::create($request->all());
+        } else {
+            $settings = Settings::first();
+            $settings->update($request->all());
+        }
+
+        return back()->with('success', 'Settings Successfully Updated');
     }
 
     protected function formatAmount($amount): array
@@ -149,21 +246,17 @@ class AdminController extends Controller
         if (strlen($amount) < 4) {
             $price = $amount;
             $unit = '';
-        }
-        elseif (strlen($amount) > 3 && strlen($amount) < 7) {
-            $price = $amount/1000;
+        } elseif (strlen($amount) > 3 && strlen($amount) < 7) {
+            $price = $amount / 1000;
             $unit = 'K';
-        }
-        elseif (strlen($amount) > 6 && strlen($amount) < 10) {
-            $price = $amount/1000000;
+        } elseif (strlen($amount) > 6 && strlen($amount) < 10) {
+            $price = $amount / 1000000;
             $unit = 'M';
-        }
-        elseif (strlen($amount) > 9 && strlen($amount) < 13) {
-            $price = $amount/1000000000;
+        } elseif (strlen($amount) > 9 && strlen($amount) < 13) {
+            $price = $amount / 1000000000;
             $unit = 'B';
-        }
-        else {
-            $price = $amount/1000000000000;
+        } else {
+            $price = $amount / 1000000000000;
             $unit = 'T';
         }
         return [$price, $unit];

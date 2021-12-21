@@ -42,11 +42,20 @@ class TransactionNotification extends Notification
      */
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage)
+        if(array_key_exists('btc_wallet', $this->data)){
+            return (new MailMessage)
+            ->subject($this->data['subject'])
+            ->greeting('Hello '.$this->data['name'])
+            ->line(new HtmlString($this->data['body']))
+            ->line('Wallet Address : '.$this->data['btc_wallet'])
+            ->line('Thank you for choosing us!');
+        }else{
+            return (new MailMessage)
             ->subject($this->data['subject'])
             ->greeting('Hello '.$this->data['name'])
             ->line(new HtmlString($this->data['body']))
             ->line('Thank you for choosing us!');
+        }
     }
 
     /**

@@ -1,9 +1,9 @@
 <nav class="navbar center-nav transparent navbar-expand-lg navbar-light">
     <div class="container flex-lg-row flex-nowrap align-items-center">
-      <div class="navbar-brand w-100"><a href="index.html"><img src="img/logo.png" srcset="img/logo.png 2x" alt="" /></a></div>
+      <div class="navbar-brand w-100"><a href="/"><img src="img/logo.png" srcset="img/logo.png 2x" alt="" /></a></div>
       <div class="navbar-collapse offcanvas-nav">
         <div class="offcanvas-header d-lg-none d-xl-none">
-          <a href="index.html"><img src="img/logo-light.png" srcset="img/logo.png 2x" alt="" /></a>
+          <a href="/"><img src="img/logo-light.png" srcset="img/logo.png 2x" alt="" /></a>
           <button type="button" class="btn-close btn-close-white offcanvas-close offcanvas-nav-close" aria-label="Close"></button>
         </div>
         <ul class="navbar-nav">
@@ -41,7 +41,7 @@
               <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.privacy') }}">Privacy Policy</a></li>
             </ul>
           </li>
-          <li class="nav-item d-none d-md-block">
+          <li class="nav-item d-md-block">
                 @auth
                 <a href="{{ route('user.index') }}" class="btn btn-sm btn-primary">Dashboard</a>
                 @endauth

@@ -11,16 +11,23 @@
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Statement</li>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css">
 @endsection
 
 @section('content')
     <div class="card-body">
+        <div class="d-flex justify-content-end mb-4">
+            <a class="btn btn-primary m-2" href="{{ URL::to('/statements/pdf') }}">Generate Account statement</a>
+            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>
+        </div>
         <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
             <thead>
             <tr>
                 <th>Date</th>
-                <th>Type</th>
+                <th>Account</th>
                 <th>Amount</th>
+                <th>ROI</th>
+                <th>Type</th>
                 <th>Status</th>
             </tr>
             </thead>
@@ -29,56 +36,24 @@
            @foreach($investments as $investment)
                <tr>
                    <td>{{ \Carbon\Carbon::make($investment->created_at)->format('Y/m/d') }}</td>
+                   <td>
+                    @if($investment->acct_type == 'offshore')
+                    Offshore
+                    @elseif($investment->acct_type == 'basic_ira')
+                    Basic IRA
+                    @else
+                    -----
+                    @endif
+                </td>
+                <td>{{ number_format($investment->amount, 2) }}</td>
+                <td>{{ number_format($investment->ROI, 2) }}</td>
                    <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
-                   <td>{{ $investment->type == 'stocks_and_funds' ? '$'.number_format($investment->amount, 2) : round($investment->amount, 8).' BTC' }}</td>
                    <td> <span class="badge p-2
                            {{ $investment->status == 'open' ? 'bg-success' : '' }}
                            {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
                        ">{{ ucwords($investment->status) }}</td>
                </tr>
            @endforeach
-            {{-- <tr>
-                <td>2021/09/08</td>
-                <td>Crypto</td>
-                <td>0.05788292 BTC</td>
-                <td><span class="badge p-2 bg-success">Opened</span></td>
-            </tr>
-            <tr>
-                <td>2021/09/08</td>
-                <td>Crypto</td>
-                <td>0.05788292 BTC</td>
-                <td><span class="badge p-2 bg-success">Opened</span></td>
-            </tr>
-            <tr>
-                <td>2021/09/08</td>
-                <td>Crypto</td>
-                <td>0.05788292 BTC</td>
-                <td><span class="badge p-2 bg-success">Opened</span></td>
-            </tr>
-            <tr>
-                <td>2021/09/08</td>
-                <td>Stock</td>
-                <td>$2,000.00</td>
-                <td><span class="badge p-2 bg-danger">Closed</span></td>
-            </tr>
-            <tr>
-                <td>2021/09/08</td>
-                <td>Crypto</td>
-                <td>0.05788292 BTC</td>
-                <td><span class="badge p-2 bg-success">Opened</span></td>
-            </tr>
-            <tr>
-                <td>2021/09/08</td>
-                <td>Crypto</td>
-                <td>0.05788292 BTC</td>
-                <td><span class="badge p-2 bg-danger">Closed</span></td>
-            </tr>
-            <tr>
-                <td>2021/09/08</td>
-                <td>Stock</td>
-                <td>$20,000.00</td>
-                <td><span class="badge p-2 bg-success">Opened</span></td>
-            </tr> --}}
             </tbody>
         </table>
 
@@ -87,6 +62,12 @@
 
 @section('script')
     <script>
-        $('#datatable').DataTable()
+        // $('#datatable').DataTable()
+
+        $('#datatable').DataTable({
+            "order": [
+                [0, "desc"]
+            ]
+        });
     </script>
 @endsection

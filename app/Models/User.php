@@ -57,12 +57,47 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function roi()
     {
-        return $this->investments()->get();
+        return $this->investments()->where('status', 'open');
+    }
+
+    public function all_roi()
+    {
+        return $this->investments();
+    }
+
+    public function ira_roi()
+    {
+        return $this->investments()->where(['acct_type' => 'basic_ira']);
+    }
+
+    public function offshore_roi()
+    {
+        return $this->investments()->where(['acct_type' => 'offshore']);
     }
 
     public function deposits()
     {
         return $this->transactions()->where('type', 'deposit');
+    }
+
+    public function ira_deposit()
+    {
+        return $this->transactions()->where(['acct_type' => 'basic_ira', 'type' => 'deposit']);
+    }
+
+    public function ira_payout()
+    {
+        return $this->transactions()->where(['acct_type' => 'basic_ira', 'type' => 'payout']);
+    }
+
+    public function offshore_deposit()
+    {
+        return $this->transactions()->where(['acct_type' => 'offshore', 'type' => 'deposit']);
+    }
+
+    public function offshore_payout()
+    {
+        return $this->transactions()->where(['acct_type' => 'offshore', 'type' => 'payout']);
     }
 
     public function payouts()

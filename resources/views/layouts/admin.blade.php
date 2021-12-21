@@ -102,7 +102,7 @@
                     </div>
                 </div>
 
-                <div class="dropdown d-none d-sm-inline-block">
+                {{-- <div class="dropdown d-none d-sm-inline-block">
                     <button type="button" class="btn header-item" id="mode-setting-btn" onclick="setTheme('dark' === document.getElementsByTagName('body')[0].getAttribute('data-layout-mode') ? 'light' : 'dark')">
                         <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
                         <i data-feather="sun" class="icon-lg layout-mode-light"></i>
@@ -159,7 +159,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="dropdown d-inline-block">
                     <button type="button" class="btn header-item right-bar-toggle me-2">
@@ -324,8 +324,8 @@
 
         <footer class="footer">
             <div class="mt-4 mt-md-5 text-center">
-                <p class="mb-4">© <script>document.write(new Date().getFullYear())</script>
-                    {{ env('APP_NAME') }} . Crafted with <i class="mdi mdi-heart text-danger"></i> by Soft-Web Digital</p>
+                <p class="mb-4">Copyright © <script>document.write(new Date().getFullYear())</script>
+                    {{ env('APP_NAME') }} . All rights reserved</p>
             </div>
         </footer>
     </div>

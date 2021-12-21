@@ -14,260 +14,65 @@
 @endsection
 
 @section('content')
-    <div class="card-body border col-md-6 mb-3">
+<style>
+    button{
+        width: 100%;
+    }
+</style>
+    {{-- <div class="card-body border col-md-6 mb-3">
         <div class="tab-content">
             <div class="tab-pane active" id="buy-tab" role="tabpanel">
-                <button class="d-none" id="staticBackdrop-btn" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop"></button>
-                <div class="float-end ms-2">
-                </div>
-                <h5 class="font-size-14 mb-4">Add Cash</h5>
-                <form action="{{ route('user.deposit.store') }}" method="post">
-                    @csrf
-                    <div class="form-group mb-3">
-                        <label for="method">Payment Method :</label>
-                        <select class="form-select @error('method') is-invalid @enderror" name="method" id="method"
-                            onchange="showMethod(this)">
-                            <option value="">Select Payment Method</option>
-                            <option value="bank" {{ old('method') == 'bank' ? 'selected' : '' }}>Direct Bank Payment
-                            </option>
-                            <option value="bitcoin" {{ old('method') == 'bitcoin' ? 'selected' : '' }}>Bitcoin</option>
-                        </select>
-                        @error('method') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                    </div>
+                <h5 class="font-size-14 mb-4 float-start">Add Cash</h5>
+                <button onclick="location.href='{{ route('user.deposit') }}';" class="btn btn-primary" id="staticBackdrop-btn" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop">Deposit</button>
 
-                    <div style="display: none;" id="crypto-method">
-                        <label>Add Amount in USD:</label>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="amount"><strong>$</strong></label>
-                                <input type="number" id="amount" step="any" name="btc_amount"
-                                    value="{{ old('btc_amount') }}"
-                                    class="form-control @error('amount') is-invalid @enderror" placeholder="Amount"
-                                    onkeyup="calcEquiv(this)">
-                            </div>
-                            @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-
-
-                        <div class="card bg-light mt-2 mb-3">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <p class="mt-3"><strong>Wallet Address:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="mt-3">67hds67e6787wedgie38e87dcy</p>
-                                    </div>
-                                    <div class="col-4">
-                                        <p><strong>Amount:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p id="crypto-amount">0.00 BTC</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success w-md">Deposit</button>
-                        </div>
-                    </div>
-                    <div style="display: none" id="bank-method">
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="amount">$</label>
-                                <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
-                                    name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
-                            </div>
-                            @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        <div class="card bg-light mt-2 mb-3">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <p class="mt-3"><strong>Bank Name:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="mt-3">Test Bank</p>
-                                    </div>
-                                    <div class="col-4">
-                                        <p><strong>Account Number:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p>3367252168</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success w-md">Deposit</button>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
+    <br><br><br>
     <div class="card-body border col-md-6">
         <div class="tab-content">
             <div class="tab-pane active" id="buy-tab" role="tabpanel">
-                <button class="d-none" id="staticBackdrop-btn" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop"></button>
-                <div class="float-end ms-2">
-                </div>
-                <h5 class="font-size-14 mb-4">Withdraw Cash</h5>
-                <form action="{{ route('user.withdraw.store') }}" method="post">
-                    @csrf
-                    <div class="form-group mb-3">
-                        <label for="w_method">Withdrawal Method :</label>
-                        <select class="form-select @error('w_method') is-invalid @enderror" name="w_method" id="w_method"
-                            onchange="showMethodwithdraw(this)">
-                            <option value="">Select Withdrawal Method</option>
-                            <option value="bank" {{ old('w_method') == 'bank' ? 'selected' : '' }}>Direct Bank Payment
-                            </option>
-                            <option value="bitcoin" {{ old('w_method') == 'bitcoin' ? 'selected' : '' }}>Bitcoin</option>
-                        </select>
-                        @error('w_method') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                    </div>
+                <h5 class="font-size-14 mb-4 float-start">Withdraw Cash</h5>
+                <button onclick="location.href='{{ route('user.withdraw') }}';" class="btn btn-secondary" id="staticBackdrop-btn" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop">Withdraw</button>
 
-                    <div style="display: none;" id="crypto-method-withdraw">
-                        <label>Add Amount in USD:</label>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="w_amount"><strong>$</strong></label>
-                                <input type="number" id="w_amount" step="any" name="w_amount"
-                                    value="{{ old('w_amount') }}"
-                                    class="form-control @error('w_amount') is-invalid @enderror" placeholder="Amount"
-                                    onkeyup="calcEquivWithdraw(this)">
-                            </div>
-                            @error('w_amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                {{-- <label class="input-group-text" for="btc_wallet"><strong>$</strong></label> --}}
-                                <input type="text" id="btc_wallet" step="any" name="btc_wallet"
-                                    value="{{ old('btc_wallet') }}"
-                                    class="form-control @error('btc_wallet') is-invalid @enderror" placeholder="Btc Wallet"
-                                    onkeyup="calcEquiv(this)">
-                            </div>
-                            @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-
-                        <div class="card bg-light mt-2 mb-3">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-4">
-                                        {{-- <p class="mt-3"><strong>Wallet Address:</strong></p> --}}
-                                    </div>
-                                    <div class="col-8">
-                                        {{-- <p class="mt-3">{{ Auth()->user()->btc_wallet ?? '67hds67e6787wedgie38e87dcy' }}</p> --}}
-                                    </div>
-                                    <div class="col-4">
-                                        <p><strong>Amount:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p id="crypto-amount-withdraw">0.00 BTC</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success w-md">Withdraw</button>
-                        </div>
-                    </div>
-                    <div style="display: none" id="bank-method-withdraw">
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <label class="input-group-text" for="bank_amount">$</label>
-                                <input type="bank_amount" step="any" class="form-control @error('bank_amount') is-invalid @enderror"
-                                    name="bank_amount" value="{{ old('bank_amount') }}" id="bank_amount" placeholder="Amount">
-                            </div>
-                            @error('bank_amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                {{-- <label class="input-group-text" for="bank_name">$</label> --}}
-                                <input type="text" step="any" class="form-control @error('bank_name') is-invalid @enderror"
-                                    name="bank_name" value="{{ old('bank_name') }}" id="bank_name" placeholder="Bank Name">
-                            </div>
-                            @error('bank_name') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                {{-- <label class="input-group-text" for="acct_name">$</label> --}}
-                                <input type="text" step="any" class="form-control @error('acct_name') is-invalid @enderror"
-                                    name="acct_name" value="{{ old('acct_name') }}" id="acct_name" placeholder="Account Name">
-                            </div>
-                            @error('acct_name') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                {{-- <label class="input-group-text" for="acct_no">$</label> --}}
-                                <input type="number" step="any" class="form-control @error('acct_no') is-invalid @enderror"
-                                    name="acct_no" value="{{ old('acct_no') }}" id="acct_no" placeholder="Account Number">
-                            </div>
-                            @error('acct_no') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                {{-- <label class="input-group-text" for="acct_no">$</label> --}}
-                                {{-- <input type="number" step="any"
-                                    name="acct_no" id="acct_no" placeholder="Account Number"> --}}
-                                    <textarea name="info" class="form-control @error('acct_no') is-invalid @enderror" id="info" cols="30" rows="4" placeholder="Additional Info">{{ old('info') }}</textarea>
-                            </div>
-                            @error('acct_no') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                            @enderror
-                        </div>
-                        {{-- <div class="card bg-light mt-2 mb-3">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <p class="mt-3"><strong>Bank Name:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="mt-3">Test Bank</p>
-                                    </div>
-                                    <div class="col-4">
-                                        <p><strong>Account Number:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p>3367252168</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success w-md">Withdraw</button>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Info</h5>
+    </div> --}}
+
+
+    <div class="col-md-8 order-md-1">
+        <div class="card-body mb-3 border">
+            <div class="row align-items-center reward" id="reward-1">
+                <div class="col">
+                    <img src="{{ asset('svg/deposit_new.jpg') }}" alt="" width="70">
                 </div>
-                <div class="modal-body">
-                    <p>Your account is pending approval, please make sure you have verified your identity</p>
+                <div class="col-10 align-self-center d-flex justify-content-between">
+                    <div class="mt-4 mt-sm-0">
+                        <p class="mb-1">Add Cash</p>
+                        <h6>Deposit cash via Bank or Cryptocurrencies.</h6>
+                    </div>
+                    <div class="align-self-auto my-auto" style="font-weight: bolder;"><a href="{{ route('user.deposit') }}" class="btn btn-primary" onclick="showReward(1)">Deposit <i class="mdi mdi-arrow-right"></i></a></div>
                 </div>
-                <div class="modal-footer">
-                    <a type="button" href="{{ route('user.portfolio') }}" class="btn btn-primary">Ok</a>
+            </div>
+        </div>
+        <div class="card-body mb-3 border">
+            <div class="row align-items-center reward" id="reward-2">
+                <div class="col">
+                    <img src="{{ asset('svg/add_money.webp') }}" alt="" width="70">
+                </div>
+                <div class="col-10 align-self-center d-flex justify-content-between">
+                    <div class="mt-4 mt-sm-0">
+                        <p class="mb-1">Withdrawal</p>
+                        <h6>Withdraw funds from your portfolio to your personal Bank Account or Crypto wallet.</h6>
+                    </div>
+                    <div class="align-self-auto my-auto" style="font-weight: bolder;"><a href="{{ route('user.withdraw') }}" class="btn btn-primary" onclick="showReward(2)">Withdraw <i class="mdi mdi-arrow-right"></i></a></div>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('script')

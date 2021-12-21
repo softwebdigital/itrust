@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Investment;
 use App\Models\News;
+use App\Models\Settings;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -24,50 +27,209 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = User::find(auth()->id());
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
         $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
-        $roi = $user->roi()->sum('ROI');
+        $closed_roi = $user->investments()->where('status', '=', 'closed')->sum('ROI');
+        // dd($closed_roi);
+        $open_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
+        // $closed_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
+        $withdrawable = ($deposits - $payouts - $open_inv) + $closed_roi;
+        // dd($withdrawable);
 
-        $portfolioValue = ($deposits + $roi) - $payouts;
-        $data = $this->marketCap();
-        $stocks_and_funds = Investment::where(['user_id' => auth()->id(), 'type' => 'stocks_and_funds'])->first()->amount ?? 0;
-        $crypto = Investment::where(['user_id' => auth()->id(), 'type' => 'crypto'])->first()->amount ?? 0;
-        $gold = Investment::where(['user_id' => auth()->id(), 'type' => 'gold'])->first()->amount ?? 0;
-        $cash_management = Investment::where(['user_id' => auth()->id(), 'type' => 'cash_management'])->first()->amount ?? 0;
-        $options = Investment::where(['user_id' => auth()->id(), 'type' => 'options'])->first()->amount ?? 0;
+        // $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        // $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        // $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        // $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        // $ira_roi = $user->ira_roi()->where('status', '=', 'open')->sum('ROI');
+        // $ira_amount = $user->ira_roi()->where('status', '=', 'open')->sum('amount');
+        // $offshore_amount = $user->offshore_roi()->where('status', '=', 'open')->sum('amount');
+        // $offshore_roi = $user->offshore_roi()->where('status', '=', 'open')->sum('ROI');
+        // $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi + $offshore_amount;
+        // $ira = ($ira_deposit - $ira_payout) + $ira_roi + $ira_amount;
+
+
+
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->where('status', '=', 'open')->sum('ROI');
+        $ira_amount = $user->ira_roi()->where('status', '=', 'open')->sum('amount');
+        $offshore_amount = $user->offshore_roi()->where('status', '=', 'open')->sum('amount');
+        $offshore_roi = $user->offshore_roi()->where('status', '=', 'open')->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi;
+        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
+
+        $portfolioValue = ($ira + $offshore);
+        // dd($portfolioValue, $withdrawable);
+        $data = $this->marketCap($request);
+        $stocks_data = $this->stock($request);
+        $stocks = Investment::where(['user_id' => auth()->id(), 'type' => 'stocks', 'status' => 'open'])->sum('amount') ?? 0;
+        $stocks_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'stocks', 'status' => 'open'])->sum('ROI') ?? 0;
+        $fixed = Investment::where(['user_id' => auth()->id(), 'type' => 'Fixed income(bonds)', 'status' => 'open'])->sum('amount') ?? 0;
+        $fixed_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'Fixed income(bonds)', 'status' => 'open'])->sum('ROI') ?? 0;
+        $Properties = Investment::where(['user_id' => auth()->id(), 'type' => 'Properties', 'status' => 'open'])->sum('amount') ?? 0;
+        $Properties_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'Properties', 'status' => 'open'])->sum('ROI') ?? 0;
+        $Cryptocurrencies = Investment::where(['user_id' => auth()->id(), 'type' => 'Cryptocurrencies', 'status' => 'open'])->sum('amount') ?? 0;
+        $Cryptocurrencies_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'Cryptocurrencies', 'status' => 'open'])->sum('ROI') ?? 0;
+        $gold = Investment::where(['user_id' => auth()->id(), 'type' => 'gold', 'status' => 'open'])->sum('amount') ?? 0;
+        $gold_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'gold', 'status' => 'open'])->sum('ROI') ?? 0;
+        $Cash = Investment::where(['user_id' => auth()->id(), 'type' => 'Cash', 'status' => 'open'])->sum('amount') ?? 0;
+        $Cash_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'Cash', 'status' => 'open'])->sum('ROI') ?? 0;
+        $EFT’S = Investment::where(['user_id' => auth()->id(), 'type' => 'EFT’S', 'status' => 'open'])->sum('amount') ?? 0;
+        $EFT’S_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'EFT’S', 'status' => 'open'])->sum('ROI') ?? 0;
+        $NFT’S = Investment::where(['user_id' => auth()->id(), 'type' => 'NFT’S', 'status' => 'open'])->sum('amount') ?? 0;
+        $NFT’S_roi = Investment::where(['user_id' => auth()->id(), 'type' => 'NFT’S', 'status' => 'open'])->sum('ROI') ?? 0;
+
         $assets = [
-            'stocks_and_funds' => $stocks_and_funds,
-            'crypto' => $crypto,
-            'gold' => $gold,
-            'cash_management' => $cash_management,
-            'options' => $options
+            'stocks' => ['label' => 'Stocks', 'value' => $stocks + $stocks_roi, 'color' => "#62d9d7"],
+            'fixed' => ['label' => 'Fixed', 'value' => $fixed + $fixed_roi, 'color' => "#0d1189"],
+            'properties' => ['label' => 'properties', 'value' => $Properties + $Properties_roi, 'color' => "#deb2d2"],
+            'crypto' => ['label' => 'crypto', 'value' => $Cryptocurrencies + $Cryptocurrencies_roi, 'color' => "#69382c"],
+            'gold' => ['label' => 'gold', 'value' => $gold + $gold_roi, 'color' => "#6c96d3"],
+            'cash' => ['label' => 'cash', 'value' => $withdrawable, 'color' => "#90bcbc"],
+            'EFT’S' => ['label' => 'EFT’S', 'value' => $EFT’S + $EFT’S_roi, 'color' => "#ff0000"],
+            'NFT’S' => ['label' => 'NFT’S', 'value' => $NFT’S + $NFT’S_roi, 'color' => "#ffff00"],
+            // 'fixed' => ['label' => 'Fixed', 'value' => $fixed],
+            // 'crypto' => $Cryptocurrencies,
+            // 'gold' => $gold,
+            // 'cash' => $Cash,
+            // 'EFT’S' => $EFT’S,
+            // 'NFT’S' => $NFT’S
         ];
+        // dd($assets);
+        $new_assets = [];
+        foreach ($assets as $asset) {
+            // dd();
+            if ($asset['value'] != 0) {
+                $new_assets[$asset['label']] = $asset;
+            }
+        }
+        $assets = $new_assets;
+        // dd($assets, $new_assets);
+        $total_assets = Investment::count();
 
-        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets']));
+        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data']));
     }
 
     public function portfolio()
     {
         $user = User::find(Auth::id());
         $news = News::query()->orderByDesc('date_range')->get();
-        $deposits = $user->deposits()->whereBetween('created_at', [now()->format('Y-m-').'1', now()->format('Y-m-').now()->format('t')])->get();
+
+        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+        $closed_roi = $user->investments()->where('status', '=', 'closed')->sum('ROI');
+        // dd($closed_roi);
+        $open_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
+        // $closed_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
+        $withdrawable = ($deposits - $payouts - $open_inv) + $closed_roi;
         $categories = $data = $days = [];
-        for ($i = 1; $i <= now()->format('t'); $i++) {
-            $categories[$i] = 0;
-            $days[] = $i.now()->format('-M');
+        $assets = DB::table('investments')
+            ->where('user_id', '=', $user->id)
+            ->where('status', '=', 'open')
+            ->select('type', DB::raw('count(*) as total'), DB::raw('sum(amount) as amount'), DB::raw('sum(ROI) as ROI'))
+            ->groupBy('type')
+            ->get();
+        $cash = $withdrawable;
+        $total_assets_amount = Investment::where(['user_id' => Auth::id(), 'status' => 'open'])->sum('amount');
+        $total_assets_roi = Investment::where(['user_id' => Auth::id(), 'status' => 'open'])->sum('ROI');
+        $total_assets = $total_assets_amount + $total_assets_roi + $cash;
+        $setting = Settings::first();
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $ira_amount = $user->ira_roi()->sum('amount');
+        $offshore_amount = $user->offshore_roi()->sum('amount');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+        // dd($ira, $offshore);
+        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+
+        $deposits = Transaction::query()->where('acct_type', 'basic_ira')->where('status', '!=', 'declined')->sum('actual_amount');
+        $totalDeposits = Transaction::query()->where('acct_type', 'basic_ira')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . (now()->format('d') + 1)])->get();
+        $payouts = Transaction::query()->where('acct_type', 'offshore')->where('status', '!=', 'declined')->sum('actual_amount');
+        $totalPayouts = Transaction::query()->where('acct_type', 'offshore')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . (now()->format('d') + 1)])->get();
+
+        $depositArr = $depositData = $payoutArr = $payoutData = $days = $full_days = [];
+        for ($i = 1; $i <= (now()->format('d') + 1); $i++) {
+            $days[] = $i . now()->format('-M');
+            $full_days[] = now()->format('Y-m-') . $i;
         }
-        foreach ($deposits as $deposit) {
-            $day = Carbon::make($deposit->created_at)->format('d');
-            if (array_key_exists($day, $categories)) {
-                $categories[$day] = $categories[$day] + $deposit->actual_amount;
-            } else $categories[$day] = $deposit->actual_amount;
+        $user_id = $user->id;
+
+        foreach ($full_days as $key => $full_day) {
+            $dep = Transaction::where(['status' => 'approved', 'user_id' => $user_id, 'acct_type' => 'basic_ira', 'type' => 'deposit'])
+                ->whereBetween('created_at', [now()->format('Y-m-') . '1', $full_day])
+                ->sum('actual_amount');
+            $with = Transaction::where(['status' => 'approved', 'user_id' => $user_id, 'acct_type' => 'basic_ira', 'type' => 'payout'])
+                ->whereBetween('created_at', [now()->format('Y-m-') . '1', $full_day])
+                ->sum('actual_amount');
+            $roi = Investment::where(['user_id' => $user_id, 'acct_type' => 'basic_ira'])
+                ->whereBetween('created_at', [now()->format('Y-m-') . '1', $full_day])
+                ->sum('ROI');
+            $total = ($dep - $with) + $roi;
+            $depositArr[$key] = $total;
         }
-        foreach ($categories as $category) $data[] = $category;
-        $assets = Investment::where('user_id', Auth::id())->get();
-        return view('user.portfolio', compact('news', 'user', 'data', 'days', 'assets'));
+
+        $amount = $this->formatAmount($deposits);
+        $depositAmount = $amount[0];
+        $depositUnit = $amount[1];
+        foreach ($depositArr as $category) $iraData[] = $category;
+
+        $investments = 0;
+        $amount = $this->formatAmount($investments);
+        $investedAmount = $amount[0];
+        $investedUnit = $amount[1];
+
+        foreach ($full_days as $key => $full_day) {
+            $offshore_dep = Transaction::where(['status' => 'approved', 'user_id' => $user_id, 'acct_type' => 'offshore', 'type' => 'deposit'])
+                ->whereBetween('created_at', [now()->format('Y-m-') . '1', $full_day])
+                ->sum('actual_amount');
+            $offshore_with = Transaction::where(['status' => 'approved', 'user_id' => $user_id, 'acct_type' => 'offshore', 'type' => 'payout'])
+                ->whereBetween('created_at', [now()->format('Y-m-') . '1', $full_day])
+                ->sum('actual_amount');
+            $roi = Investment::where(['user_id' => $user_id, 'acct_type' => 'offshore'])
+                ->whereBetween('created_at', [now()->format('Y-m-') . '1', $full_day])
+                ->sum('ROI');
+            $total = ($offshore_dep - $offshore_with) + $roi;
+            $payoutArr[$key] = $total;
+        }
+        foreach ($payoutArr as $arr) $offshoreData[] = $arr;
+        // dd($offshoreData);
+        $amount = $this->formatAmount($payouts);
+        $payoutAmount = $amount[0];
+        $payoutUnit = $amount[1];
+
+
+        return view('user.portfolio', compact('news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
+    }
+
+    protected function formatAmount($amount): array
+    {
+        if (strlen($amount) < 4) {
+            $price = $amount;
+            $unit = '';
+        } elseif (strlen($amount) > 3 && strlen($amount) < 7) {
+            $price = $amount / 1000;
+            $unit = 'K';
+        } elseif (strlen($amount) > 6 && strlen($amount) < 10) {
+            $price = $amount / 1000000;
+            $unit = 'M';
+        } elseif (strlen($amount) > 9 && strlen($amount) < 13) {
+            $price = $amount / 1000000000;
+            $unit = 'B';
+        } else {
+            $price = $amount / 1000000000000;
+            $unit = 'T';
+        }
+        return [$price, $unit];
     }
 
     public function downloadDocument(Document $document): BinaryFileResponse
@@ -84,7 +246,7 @@ class UserController extends Controller
         if (!in_array($request['type'], ['passport', 'drivers_license', 'state_id']))
             return response()->json(['msg' => 'Invalid file option, refresh the page and try again'], 400);
         if ($file = $request->file('file')) {
-            $loc = $file->move('files/'.$request['type'], time().mt_rand(100,999).'.'.$file->getClientOriginalExtension());
+            $loc = $file->move('files/' . $request['type'], time() . mt_rand(100, 999) . '.' . $file->getClientOriginalExtension());
             if ($request['type'] == 'passport') $user['passport'] = $loc;
             if ($request['type'] == 'drivers_license') $user['drivers_license'] = $loc;
             if ($request['type'] == 'state_id') $user['state_id'] = $loc;
@@ -101,7 +263,8 @@ class UserController extends Controller
 
     public function cash()
     {
-        return view('user.cash');
+        $user = User::find(Auth::id());
+        return view('user.cash', compact('user'));
     }
 
     public function documents()
@@ -150,6 +313,7 @@ class UserController extends Controller
         $user = auth()->user();
         $banks = json_decode(Http::get('api.paystack.co/bank'), true);
         $banks = $banks['status'] ? $banks['data'] : [];
+
         return view('user.profile', compact('user', 'banks'));
     }
 
@@ -159,7 +323,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
-            'username' => ['required', 'string', Rule::unique('users')->where(function ($q) use($request) { return $q->where('id', '!=', auth()->id())->where('username', $request['username']); })],
+            'username' => ['required', 'string', Rule::unique('users')->where(function ($q) use ($request) {
+                return $q->where('id', '!=', auth()->id())->where('username', $request['username']);
+            })],
             'photo' => ['sometimes', 'file', 'mimes:jpg,jpeg,png', 'max:1024']
         ], ['photo.max' => 'Photo must not be greater than 1MB']);
         if ($validator->fails()) return back()->withInput()->withErrors($validator);
@@ -194,6 +360,22 @@ class UserController extends Controller
     {
         session()->put('expire_time', now());
         return view('auth.passwords.confirm');
+    }
+
+    private function _stateCountryIDForCountryName($country_name)
+    {
+        return DB::table('countries')->where("name", "$country_name")->first()->id;
+    }
+
+    public function getState($country_name)
+    {
+        $country_name = urldecode($country_name);
+        $country_id = $this->_stateCountryIDForCountryName($country_name);
+        $states = DB::table("states")
+            ->where("country_id", $country_id)
+            ->get('name', 'id');
+
+        return json_encode($states);
     }
 
     public function signIn(): RedirectResponse
@@ -263,7 +445,8 @@ class UserController extends Controller
                 return response()->json([
                     'success' => true,
                     'msg' => 'Device removed',
-                    'count' => count($this->devices())]);
+                    'count' => count($this->devices())
+                ]);
             return response()->json(['success' => false, 'msg' => 'Could not remove device'], 422);
         } else return response()->json(['success' => false, 'msg' => 'Password is invalid'], 422);
     }
@@ -285,7 +468,8 @@ class UserController extends Controller
                 'location' => $request['loc'],
                 'created_at' => $session->created_at ?? now(),
                 'updated_at' => $session->updated_at ?? now()
-            ])) return response()->json(['success' => true]);
+            ])
+        ) return response()->json(['success' => true]);
         else return response()->json(['success' => false, 'msg' => 'Not found'], 404);
     }
 
@@ -296,30 +480,81 @@ class UserController extends Controller
             ->get()->reverse();
     }
 
-    public function marketCap()
+    public function marketCap($request)
     {
-        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO'); //&ids=BTC,ETH,XRP
+        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO,BCH,TRX,XLM,MANA,UST,VET,ICP,EGLD,FIL,ATOM,THETA,DAI,ETC,HBAR,FTM,NEAR,XTZ,XMR,GRT,MIOTA,EOS,KLAY,GALA,LRC,STX,LEO,AAVE,CAKE,FTETH,1INCH,IOT,GALA,AAVE'); //&ids=BTC,ETH,XRP
         $data = json_decode($data, true);
+        // DD($data);
         foreach ($data as $key => $datum) {
+            // dd($datum);
             $data[$key]['market_cap'] = $this->cap($datum['market_cap']);
         }
+
+        // $total=count($data);
+        // // dd($total);
+        // $per_page = 50;
+        // $current_page = $request->input("page") ?? 1;
+
+        // $starting_point = ($current_page * $per_page) - $per_page;
+
+        // $data = array_slice($data, $starting_point, $per_page, true);
+        // $data = new Paginator($data, $per_page, $current_page, [
+        //     'path' => $request->url(),
+        //     'query' => $request->query(),
+        // ]);
+        // dd($data);
         return $data;
+    }
+
+    public function stock($request)
+    {
+        // $array = ['DXLG', 'IBM', 'TGLS', 'LWLG', 'CAR', 'DDS', 'RRD', 'SGML', 'NOTV', 'CLMT','CAR', 'ZIM', 'SLI'];
+        // $base_url = 'https://cloud.iexapis.com/';
+        $stocks = [];
+        // foreach($array as $stock){
+        $data = Http::get('https://cloud.iexapis.com/stable/stock/market/list/mostactive?token=pk_cc0d743e69ec47eeb4a9edf281793933&listLimit=50'); //&ids=BTC,ETH,XRP
+        // }
+        $data = $data->json();
+        // dd($data);
+        foreach ($data as $key => $datum) {
+            // dd($datum);
+            $data[$key]['marketCap'] = $this->cap($datum['marketCap']);
+        }
+
+        foreach ($data as $key => $datum) {
+            $symbol = $datum['symbol'];
+            $logo = Http::get("https://cloud.iexapis.com/stable/stock/$symbol/logo?token=pk_cc0d743e69ec47eeb4a9edf281793933"); //&ids=BTC,ETH,XRP
+            // dd();
+            $data[$key]['logo'] = $logo->json()['url'];
+        }
+
+        // $total=count($data);
+        // // dd($total);
+        // $per_page = 50;
+        // $current_page = $request->input("page") ?? 1;
+
+        // $starting_point = ($current_page * $per_page) - $per_page;
+
+        // $data = array_slice($data, $starting_point, $per_page, true);
+        // $data = new Paginator($data, $per_page, $current_page, [
+        //     'path' => $request->url(),
+        //     'query' => $request->query(),
+        // ]);
+        // dd($data);
+        // return $data;
     }
 
     public static function cap($str): string
     {
         $string = $str;
         if (strlen($str) > 12) {
-            $string = number_format($str/1000000000000, 2)."T";
-        }
-        else if (strlen($str) > 9) {
-            $string = number_format($str/1000000000, 2)."B";
-        }
-        else if (strlen($str)  > 6) {
-            $string = number_format($str/1000000, 2)."M";
-        }
-        else if (strlen($str)  > 3) {
-            $string = number_format($str/1000, 2)."K";
+            $string = number_format($str / 1000000000000, 2) . "T";
+        } else if (strlen($str) > 9) {
+            $string = number_format($str / 1000000000, 2) . "B";
+        } else if (strlen($str)  > 6) {
+            $string = number_format($str / 1000000, 2) . "M";
+        } else if (strlen($str)  > 3) {
+            $string = number_format($str / 1000, 2) . "K";
         }
 
         return $string;

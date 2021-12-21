@@ -22,6 +22,10 @@
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
+    <link
+     rel="stylesheet"
+     href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+   />
     <style>
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -32,7 +36,13 @@
             -moz-appearance: textfield;
         }
         .choices { margin-bottom: 0 !important; }
+
+        .iti{
+            display: block !important;
+        }
     </style>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
 </head>
 
 <body>
@@ -46,14 +56,14 @@
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
                             <div class="mb-4 mb-md-5 text-center">
-                                <a href="#" class="d-block auth-logo">
+                                <a href="/" class="d-block auth-logo">
                                     <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="28"> <span class="logo-txt">{{ env('APP_NAME') }}</span>
                                 </a>
                             </div>
                             @yield('content')
                             <div class="mt-4 mt-md-5 text-center">
-                                <p class="mb-0">© <script>document.write(new Date().getFullYear())</script>
-                                    {{ env('APP_NAME') }}   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Soft-Web Digital</p>
+                                <p class="mb-4">Copyright © <script>document.write(new Date().getFullYear())</script>
+                                    {{ env('APP_NAME') }} . All rights reserved</p>
                             </div>
                         </div>
                     </div>
@@ -78,6 +88,23 @@
 <script src="{{ asset('assets/js/pages/pass-addon.init.js') }}"></script>
 <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
 @yield('script')
+<script>
+    const phoneInputField = document.querySelector("#phone");
+    const phoneInput = window.intlTelInput(phoneInputField, {
+      separateDialCode: true,
+      preferredCountries:["in"],
+      hiddenInput: "phone",
+      utilsScript:
+        "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+    });
+
+    $("form").submit(function() {
+    var full_number = phoneInput.getNumber(intlTelInputUtils.numberFormat.E164);
+
+     $("input[name='phone'").val(full_number);
+
+    });
+  </script>
 <script>
     const status = {!! json_encode(session('status')) !!};
     const resent = {!! json_encode(session('resent')) !!};
@@ -133,8 +160,8 @@
         })
     }
     let n = document.getElementsByTagName("body")[0]
-    const theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
-    theme === "light" ? (document.body.setAttribute("data-layout-mode", "light"), document.body.setAttribute("data-topbar", "light"), document.body.setAttribute("data-sidebar", "light"), n.hasAttribute("data-layout") && "horizontal" === n.getAttribute("data-layout") || document.body.setAttribute("data-sidebar", "light"), s("topbar-color-light"), s("sidebar-color-light"), s("topbar-color-light")) : (document.body.setAttribute("data-layout-mode", "dark"), document.body.setAttribute("data-topbar", "dark"), document.body.setAttribute("data-sidebar", "dark"), n.hasAttribute("data-layout") && "horizontal" === n.getAttribute("data-layout") || document.body.setAttribute("data-sidebar", "dark"), s("layout-mode-dark"), s("sidebar-color-dark"), s("topbar-color-dark"))
+    // const theme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'light';
+    // theme === "light" ? (document.body.setAttribute("data-layout-mode", "light"), document.body.setAttribute("data-topbar", "light"), document.body.setAttribute("data-sidebar", "light"), n.hasAttribute("data-layout") && "horizontal" === n.getAttribute("data-layout") || document.body.setAttribute("data-sidebar", "light"), s("topbar-color-light"), s("sidebar-color-light"), s("topbar-color-light")) : (document.body.setAttribute("data-layout-mode", "dark"), document.body.setAttribute("data-topbar", "dark"), document.body.setAttribute("data-sidebar", "dark"), n.hasAttribute("data-layout") && "horizontal" === n.getAttribute("data-layout") || document.body.setAttribute("data-sidebar", "dark"), s("layout-mode-dark"), s("sidebar-color-dark"), s("topbar-color-dark"))
 </script>
 </body>
 

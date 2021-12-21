@@ -11,4 +11,10 @@ class Blog extends Model
 
 
     protected $guarded = [];
+
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'post_id', 'id')->orderBy('created_at', 'DESC');
+    }
 }

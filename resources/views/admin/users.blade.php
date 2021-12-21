@@ -18,6 +18,7 @@
     <table id="datatable" class="table table-borderless table-striped table-responsive nowrap w-100">
         <thead>
         <tr>
+            <th>S/N</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
@@ -28,8 +29,9 @@
         </thead>
 
         <tbody>
-        @foreach($users as $user)
+        @foreach($users as $index => $user)
             <tr>
+                <td>{{ $index +  1 }}</td>
                 <td>{{ $user->full_name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->phone }}</td>
@@ -50,6 +52,12 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
                             <a class="dropdown-item" href="{{ route('admin.users.show', $user->id) }}">View User</a>
+
+                            @if($user->btc_wallet != null)
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
+                            @else
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Add Wallet</a>
+                            @endif
                             @if($user->isWaitingApproval())
                             @if($user->btc_wallet != '')
                             <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
@@ -68,6 +76,7 @@
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-suspend-{{ $user->id }}">Suspend User</a>
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-invest-{{ $user->id }}">Invest</a>
                             @endif
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $user->id }}">Delete User</a>
                         </div>
                     </div>
                 </td>
@@ -96,7 +105,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
+                            <h5 class="modal-title" id="staticBackdropLabel">Add Wallet</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{{ route('admin.users.accountBtcWallet', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
@@ -105,16 +114,45 @@
                                     <div class="input-group mb-3">
                                         <label class="input-group-text" for="btc_wallet">₿</label>
                                         <input type="text" step="any" class="form-control @error('btc_wallet') is-invalid @enderror"
-                                            name="btc_wallet" value="{{ old('btc_wallet') }}" id="btc_wallet" placeholder="BTC Wallet">
+                                            name="btc_wallet" value="{{ $user->btc_wallet ?? old('btc_wallet') }}" id="btc_wallet" placeholder="BTC Wallet">
                                     </div>
                                     @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
                                 </div>
-                                <p>Are you sure you want to approve this user?</p>
+                                {{-- <p>Are you sure you want to approve this user?</p> --}}
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Approve</button>
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="staticBackdrop-editwallet-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Edit Wallet</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.userBTCWallet', $user->id) }}" method="post">@csrf @method('PUT')
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="btc_wallet">₿</label>
+                                        <input type="text" step="any" class="form-control @error('btc_wallet') is-invalid @enderror"
+                                            name="btc_wallet" value="{{ $user->btc_wallet ?? old('btc_wallet') }}" id="btc_wallet" placeholder="BTC Wallet">
+                                    </div>
+                                    @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+                                </div>
+                                {{-- <p>Are you sure you want to approve this user?</p> --}}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -153,6 +191,26 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-danger">Suspend</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="staticBackdrop-delete-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.delete', $user->id) }}" method="post">@csrf @method('POST')
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this user?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
                             </div>
                         </form>
                     </div>

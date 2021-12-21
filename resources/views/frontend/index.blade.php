@@ -49,7 +49,7 @@
                         <h4>Manage Your Portfolio</h4>
                         <p class="mb-2">Keep your portfolio in your pocket. Everything you need to
                             manage your assets is available in a single app.</p>
-                        <a href="#" class="more hover link-violet">Learn More</a>
+                        <a href="/portfolio" class="more hover link-violet">Learn More</a>
                         <p></p>
                     </div>
                     <!--/.card-body -->
@@ -66,7 +66,7 @@
                         <p class="mb-2">Our goal is to make investing in financial markets more
                             affordable, more intuitive, and more fun, no matter how much experience you have (or
                             don’t have).</p>
-                        <a href="#" class="more hover link-aqua">Learn More</a>
+                        <a href="/dashboard" class="more hover link-aqua">Learn More</a>
                     </div>
                     <!--/.card-body -->
                 </div>
@@ -81,7 +81,7 @@
                         <p class="mb-2">Set up customized news and notifications to stay on top of
                             your assets as casually or as relentlessly as you like. Controlling the flow of info
                             is up to you.</p>
-                        <a href="#" class="more hover link-red">Learn More</a>
+                        <a href="/transactions" class="more hover link-red">Learn More</a>
                     </div>
                     <!--/.card-body -->
                 </div>
@@ -468,7 +468,7 @@
     <!-- /.container -->
 </section>
 <!-- /section -->
-<section class="wrapper bg-soft-primary">
+{{-- <section class="wrapper bg-soft-primary">
     <div class="container pt-10 pb-15 py-lg-17 py-xl-20 py-xxl-22 position-relative">
         <img class="position-lg-absolute col-12 col-lg-12 mt-lg-n50p mb-3 mb-md-10 mb-lg-0"
             src="img/photos/devices2.png" srcset="img/photos/devices2@2x.png 2x" data-cue="fadeIn" alt=""
@@ -493,7 +493,7 @@
         <!-- /.row -->
     </div>
     <!-- /.container -->
-</section>
+</section> --}}
 
 
 @endsection
