@@ -15,11 +15,12 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('bank_name');
-            $table->string('acct_name');
-            $table->string('acct_no');
-            $table->string('other_details');
-            $table->string('btc_wallet');
+            $table->string('bank_name')->nullable();
+            $table->string('acct_name')->nullable();
+            $table->string('acct_no')->nullable();
+            $table->string('other_details')->nullable();
+            $table->string('btc_wallet')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }

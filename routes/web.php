@@ -48,7 +48,7 @@ Route::get('/how-to-invest', [FrontEndController::class, 'invest'])->name('front
 Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('frontend.cash');
 
 
-Route::get('/cap', [UserController::class, 'marketCap'])->name('cap');
+Route::get('/cap', UserController::marketCap())->name('cap');
 
 Auth::routes(['verify' => true]);
 Route::get('/email/change', [VerificationController::class, 'changeEmail']);

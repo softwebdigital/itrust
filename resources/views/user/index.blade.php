@@ -83,18 +83,6 @@
                                         </tr>
                                     @endforeach
                                     </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Symbol</th>
-                                            <th>Price</th>
-                                            <th>Market Cap</th>
-                                            <th>1H Change</th>
-                                            <th>1D Change</th>
-                                            <th>30D Change</th>
-                                        </tr>
-                                        </thead>
                                 </table>
                                 {{-- <nav aria-label="...">
                                     <ul class="pagination pagination-lg">
@@ -125,27 +113,26 @@
                                     </thead>
                                     <tbody id="">
                                         {{-- {{ dd($stocks) }} --}}
-                                    {{-- @foreach($stocks_data as $key => $market)
+                                     @foreach($stocks_data as $key => $market)
                                         <tr>
                                             <th>{{ $key + 1 }}</th>
-                                            <td><img src="{{ $market['logo'] ?? '' }}" alt="" height="20"> {{ $market['companyName'] }}</td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <img src="{{ $market['logo'] ?? '' }}" alt="" height="20">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        {{ $market['companyName'] }}
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td>{{ $market['symbol'] }}</td>
                                             <td>${{ number_format($market['iexRealtimePrice'], 2) }}</td>
                                             <td>${{ $market['marketCap'] ?? '' }}</td>
                                             <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
                                         </tr>
-                                    @endforeach --}}
+                                    @endforeach
                                     </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Symbol</th>
-                                            <th>Price</th>
-                                            <th>Market Cap</th>
-                                            <th>Change</th>
-                                        </tr>
-                                        </thead>
                                 </table>
                                 {{-- <nav aria-label="...">
                                     <ul class="pagination pagination-lg">
@@ -166,13 +153,13 @@
         </div>
 
         <div class="col-md-4 order-md-last order-first">
-            <div class="card">
-                @if($total_assets > 0)
-                <div class="card-body px-0 mx-auto">
-                    <div id="wallet-balance" class="apex-charts"></div>
+            @if($portfolioValue > 0)
+                <div class="card">
+                    <div class="card-body px-0 mx-auto">
+                        <div id="wallet-balance" class="apex-charts"></div>
+                    </div>
                 </div>
-                @endif
-            </div>
+            @endif
 
             {{-- <div class="card">
                 <div class="card-body px-0 mx-auto">
@@ -256,10 +243,10 @@
    `<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
    <script>
        let options = {
-                series: [@foreach ($assets as $asset){{ $asset['value'] }}@endforeach],
+                series: [@foreach ($assets as $key => $asset){{ $asset['value'] }} {{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
                 chart: {width: '320px', height: '500px !important', type: "pie"},
-                labels: [@foreach ($assets as $asset)"{{ $asset['label'] }}"@endforeach],
-                colors: [@foreach ($assets as $asset)"{{ $asset['color'] }}"@endforeach],
+                labels: [@foreach ($assets as $key => $asset)"{{ $asset['label'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
+                colors: [@foreach ($assets as $key => $asset)"{{ $asset['color'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
                 stroke: {width: 1},
                 legend: {show: !0},
                 responsive: [{breakpoint: 500, options: {chart: {width: 200}}}]
@@ -282,7 +269,7 @@
             }, 10000)
 
 
-            
+
         });
 
         function appendHTML(data) {

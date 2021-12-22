@@ -87,7 +87,6 @@ class AdminController extends Controller
 
     public function deleteUser(User $user)
     {
-        if (!$user) return back()->with('error', 'User not found');
         if ($user->delete()) return back()->with('success', 'User deleted successfully');
         return back()->with('error', 'An error occurred, try again.');
     }
@@ -95,7 +94,6 @@ class AdminController extends Controller
     public function userAccountAction(User $user, $action): RedirectResponse
     {
         if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
-        if (!$user) return back()->with('error', 'User not found');
         if ($user->update(['status' => $action])) return back()->with('success', 'User account ' . $action . ' successfully');
         return back()->with('error', 'An error occurred, try again.');
     }
@@ -110,7 +108,6 @@ class AdminController extends Controller
 
 
         if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
-        if (!$user) return back()->with('error', 'User not found');
         if ($user->update(['status' => $action, 'btc_wallet' => $request['btc_wallet']])) return back()->with('success', 'User account ' . $action . ' successfully');
         return back()->with('error', 'An error occurred, try again.');
     }
@@ -124,7 +121,6 @@ class AdminController extends Controller
 
 
         // if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
-        if (!$user) return back()->with('error', 'User not found');
         if ($user->update(['btc_wallet' => $request['btc_wallet']])) return back()->with('success', 'User account Wallet Successfully Updated');
         return back()->with('error', 'An error occurred, try again.');
     }

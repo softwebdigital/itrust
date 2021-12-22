@@ -159,9 +159,11 @@ class InvestmentController extends Controller
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
         $user = User::find($user_id);
+        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+        $portfolioValue = $deposits +  $payouts;
 
         if ((float) $request['amount'] > $portfolioValue) return back()->with('error', 'Insufficient Funds, try again');
-
 
         $amount = 0;
 

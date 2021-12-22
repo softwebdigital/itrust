@@ -318,9 +318,7 @@
         </div>
     </div>
     @php
-    if ($total_assets == 0) {
-        $total_assets = 1;
-    }
+      if ($total_assets == 0) $total_assets = 1;
     @endphp
     <div class="row">
         <div class="col-md-8">
@@ -501,10 +499,7 @@
                                         case 'Fixed income(bonds)':
                                             $color = '#0d1189';
                                             break;
-                                        case 'Cash':
-                                            $color = '#deb2d2';
-                                            break;
-                                        case 'Properties':
+                                        case 'Properties': case 'Cash':
                                             $color = '#deb2d2';
                                             break;
                                         case 'Cryptocurrencies':

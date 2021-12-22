@@ -40,7 +40,7 @@ class TransactionController extends Controller
 
     public function depositAction(Transaction $transaction, $action): RedirectResponse
     {
-        if (!$transaction || $transaction['type'] != 'deposit') return back()->with('warning', 'Please check that you are taking action on the right deposit.');
+        if ($transaction['type'] != 'deposit') return back()->with('warning', 'Please check that you are taking action on the right deposit.');
         if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
 
         if ($transaction->update(['status' => $action])) {
@@ -72,7 +72,7 @@ class TransactionController extends Controller
 
     public function payoutAction(Transaction $transaction, $action): RedirectResponse
     {
-        if (!$transaction || $transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
+        if ($transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
         if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
 
         if ($transaction->update(['status' => $action])) {
@@ -113,11 +113,8 @@ class TransactionController extends Controller
         if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
 
         if ($transaction->update(['status' => $action])) {
-            //
+            return back()->with('success', 'Transaction '.$action.' successfully');
         } else return back()->with('error', 'An error occurred, try again.');
-
-
-        return back()->with('success', 'Transaction '.$action.' successfully');
     }
 
 
@@ -134,7 +131,7 @@ class TransactionController extends Controller
         $user = Auth::user();
         $array = [
             'inv' => $investments,
-            'user' => $user->email
+            'user' => $user['email']
         ];
 
 
@@ -344,8 +341,8 @@ class TransactionController extends Controller
         $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
 
         $withdrawable = ($deposits - $payouts) - $inv;
-        
-        
+
+
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
         $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
@@ -359,7 +356,7 @@ class TransactionController extends Controller
         // dd($portfolioValue, $request['investment']);
         // dd($ira, $offshore);
 
-        
+
 
 
         if ($request['w_method'] == 'bank' && (float) $request['bank_amount'] > 0) {
@@ -387,7 +384,7 @@ class TransactionController extends Controller
             // if($request['w_amount'] > $withdrawable){
             //     return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Insufficient Funds, try again'])->withInput();
             // }
-            
+
              if($request['acct_type'] == 'offshore'){
                 $withdrawable = $offshore;
                 if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
