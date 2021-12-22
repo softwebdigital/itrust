@@ -35,14 +35,14 @@
                     <div class="w-100">
                         <div class="d-flex flex-column h-100">
                             <div class="mb-4 mb-md-5 text-center">
-                                <a href="#" class="d-block auth-logo">
+                                <a href="/" class="d-block auth-logo">
                                     <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="28"> <span class="logo-txt">{{ env('APP_NAME') }}</span>
                                 </a>
                             </div>
                             @yield('content')
                             <div class="mt-4 mt-md-5 text-center">
-                                <p class="mb-0">© <script>document.write(new Date().getFullYear())</script>
-                                    {{ env('APP_NAME') }}   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Soft-Web Digital</p>
+                                <p class="mb-4">Copyright © <script>document.write(new Date().getFullYear())</script>
+                                    {{ env('APP_NAME') }} . All rights reserved</p>
                             </div>
                         </div>
                     </div>

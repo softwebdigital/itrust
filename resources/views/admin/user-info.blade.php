@@ -73,7 +73,7 @@
                 <h4 class="text-center">Documents Uploaded</h4>
                 <hr>
                 <br>
-                <h4 class="text-center">Passport</h4>
+                <h4 class="text-center">ID/ Driver's License / Passport</h4>
                 <div class="text-center user-info">
                     @if($user->passport != null)
                         <img src="{{ asset($user->passport) }}" width="200" height="" alt="avatar">
@@ -84,7 +84,7 @@
                 <br>
                 <hr>
                 <br>
-                <h4 class="text-center">Driver's License</h4>
+                {{-- <h4 class="text-center">Driver's License</h4>
 
                 <div class="text-center user-info">
                     @if($user->drivers_license != null)
@@ -95,8 +95,8 @@
                 </div>
                 <br>
                 <hr>
-                <br>
-                <h4 class="text-center">State ID</h4>
+                <br> --}}
+                <h4 class="text-center">Proof of Address</h4>
 
                 <div class="text-center user-info">
                     @if($user->state_id != null)
@@ -205,7 +205,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label>Wallet Address </label>
+                                                            <input type="text" class="form-control mb-4" name="nationality" value="{{ $user->btc_wallet }}" readonly="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Nationality </label>
                                                             <input type="text" class="form-control mb-4" name="nationality" value="{{ $user->nationality }}" readonly="">

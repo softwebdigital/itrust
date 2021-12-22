@@ -12,7 +12,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <form action="#" id="registration-form" method="post">@csrf
+                <form action="/register" id="registration-form" method="post">@csrf
                 <div id="progrss-wizard" class="twitter-bs-wizard">
                     <ul class="twitter-bs-wizard-nav nav nav-pills nav-justified">
                         <li class="nav-item">
@@ -142,9 +142,9 @@
                                     <p class="card-title-desc">Please provide your contact information.</p>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-12">
                                         <div class="mb-3">
-                                            <label for="phone" class="form-label">Phone <strong class="text-danger">*</strong></label>
+                                            <label for="phone" class="form-label">Phone <strong class="text-danger">*</strong></label><br>
                                             <input type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" id="phone" placeholder="Enter phone" value="{{ old('phone') }}">
                                             @error('phone')
                                             <span class="invalid-feedback" role="alert">
@@ -158,40 +158,6 @@
                                             <label for="address">Residential Address <strong class="text-danger">*</strong></label>
                                             <textarea id="address" class="form-control @error('address') is-invalid @enderror" name="address" rows="2">{{ old('address') }}</textarea>
                                             @error('address')
-                                            <span class="invalid-feedback d-block" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="city">City  <strong class="text-danger">*</strong></label>
-                                            <input type="text" class="form-control @error('city') is-invalid @enderror" name="city" id="city" value="{{ old('city') }}">
-                                            @error('city')
-                                            <span class="invalid-feedback d-block" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="state">State/Province  <strong class="text-danger">*</strong></label>
-                                            <select class="form-select @error('state') is-invalid @enderror" data-trigger name="state" id="state">
-                                                <option selected value="">Select State</option>
-                                                @foreach(\App\Models\State::query()->orderBy('name')->get() as $state)
-                                                    <option value="{{ $state->name }}" @if(old('state') == $state->name) selected @endif>{{ ucwords($state->name) }}</option>
-                                                @endforeach
-{{--                                                @foreach(\App\Models\Country::query()->orderBy('name')->get() as $country)--}}
-{{--                                                    <optgroup label="{{ ucwords($country->name) }}">--}}
-{{--                                                        @foreach($country->states()->orderBy('name')->get() as $state)--}}
-{{--                                                            <option value="{{ $state->name }}" @if(old('state') == $state->name) selected @endif>{{ ucwords($state->name) }}</option>--}}
-{{--                                                        @endforeach--}}
-{{--                                                    </optgroup>--}}
-{{--                                                @endforeach--}}
-                                            </select>
-                                            @error('state')
                                             <span class="invalid-feedback d-block" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -214,6 +180,40 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    {{-- <div class="form-group">
+                                        <label for="title">Select state:</label>
+                                        <select name="state" class="form-control">
+                                        </select>
+                                    </div> --}}
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="state">State/Province  <strong class="text-danger">*</strong></label>
+                                            <select class="form-select @error('state') is-invalid @enderror" name="state" id="state">
+                                                {{-- <option selected value="">Select State</option> --}}
+                                                {{-- @foreach(\App\Models\State::query()->orderBy('name')->get() as $state)
+                                                    <option value="{{ $state->name }}" @if(old('state') == $state->name) selected @endif>{{ ucwords($state->name) }}</option>
+                                                @endforeach --}}
+                                            </select>
+                                            @error('state')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="city">City  <strong class="text-danger">*</strong></label>
+                                            <input type="text" class="form-control @error('city') is-invalid @enderror" name="city" id="city" value="{{ old('city') }}">
+                                            @error('city')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="zip_code">Zip Code</label>
@@ -341,7 +341,10 @@
                                 </div>
                                 <ul class="pager wizard twitter-bs-wizard-pager-link">
                                     <li class="previous"><a href="javascript: void(0);" class="btn btn-primary" onclick="nextTab()"><i class="bx bx-chevron-left me-1"></i> Previous</a></li>
-                                    <li class="float-end"><a href="javascript: void(0);" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".confirmModal">Submit</a></li>
+                                    <li class="float-end">
+                                        {{-- <a href="javascript: void(0);" class="btn btn-primary">Submit</a> --}}
+                                        <input type="submit" id="submit-btn" class="btn btn-primary">
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -351,7 +354,7 @@
                 </form>
             </div>
             <!-- end card body -->
-            <div class="modal fade confirmModal" tabindex="-1" aria-hidden="true">
+            {{-- <div class="modal fade confirmModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header border-bottom-0">
@@ -372,7 +375,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
 {{--        <div class="mt-4 pt-2 text-center">--}}
@@ -439,4 +442,33 @@
             $("#confirm-password-btn").on("click",function(){0<$(this).siblings("input").length&&("password"==$(this).siblings("input").attr("type")?$(this).siblings("input").attr("type","input"):$(this).siblings("input").attr("type","password"))});
         })
     </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        $('select[name="country"]').on('change', function() {
+            $("select").attr("data-trigger", "");
+            var countryID = $(this).val();
+            console.log(countryID);
+                if(countryID) {
+                $.ajax({
+                    url: '/getStates/'+encodeURI(countryID),
+                    type: "GET",
+                    dataType: "json",
+                    success:function(data) {
+                        console.log(data);
+                        // $('#state').removeAttr('data-trigger');
+                    $('select[name="state"]').empty();
+                    $.each(data, function(key, value) {
+                        // console.log(value.name, key);
+                        $('select[name="state"]').append('<option value="'+ value.name +'">'+ value.name.charAt(0).toUpperCase() + value.name.slice(1) +'</option>');
+                        });
+                    }
+
+                });
+
+                }else{
+                $('select[name="state"]').empty();
+                  }
+               });
+            });
+        </script>
 @endsection

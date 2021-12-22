@@ -102,7 +102,7 @@
                     </div>
                 </div>
 
-                <div class="dropdown d-none d-sm-inline-block">
+                {{-- <div class="dropdown d-none d-sm-inline-block">
                     <button type="button" class="btn header-item" id="mode-setting-btn" onclick="setTheme('dark' === document.getElementsByTagName('body')[0].getAttribute('data-layout-mode') ? 'light' : 'dark')">
                         <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
                         <i data-feather="sun" class="icon-lg layout-mode-light"></i>
@@ -159,7 +159,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="dropdown d-inline-block">
                     <button type="button" class="btn header-item right-bar-toggle me-2">
@@ -241,10 +241,31 @@
                         </ul>
                     </li>
 
+                    <li class="{{ Route::currentRouteNamed(['admin.investments']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.investments') }}">
+                            <i data-feather="dollar-sign"></i>
+                            <span data-key="t-news">Investment</span>
+                        </a>
+                    </li>
+
                     <li class="{{ Route::currentRouteNamed(['admin.news', 'admin.news.create', 'admin.news.edit']) ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.news') }}">
                             <i data-feather="book-open"></i>
                             <span data-key="t-news">News</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed(['admin.blog']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.blog') }}">
+                            <i data-feather="book-open"></i>
+                            <span data-key="t-news">Blog</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ Route::currentRouteNamed(['admin.blogCategory']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.blogCategory') }}">
+                            <i data-feather="book-open"></i>
+                            <span data-key="t-news">Blog Category</span>
                         </a>
                     </li>
 
@@ -303,8 +324,8 @@
 
         <footer class="footer">
             <div class="mt-4 mt-md-5 text-center">
-                <p class="mb-4">© <script>document.write(new Date().getFullYear())</script>
-                    {{ env('APP_NAME') }} . Crafted with <i class="mdi mdi-heart text-danger"></i> by Soft-Web Digital</p>
+                <p class="mb-4">Copyright © <script>document.write(new Date().getFullYear())</script>
+                    {{ env('APP_NAME') }} . All rights reserved</p>
             </div>
         </footer>
     </div>

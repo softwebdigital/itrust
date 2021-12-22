@@ -47,9 +47,10 @@
             <div class="mt-4">
                 <p class="text-muted mb-0">Didn't receive an email?</p>
                 <form action="{{ route('verification.resend') }}" method="post">@csrf
-                    <button class="btn btn-primary w-10">Resend email</button>
+                    <button class="btn btn-primary w-10">Resend verification</button>
                 </form>
             </div>
+            <p class="text-muted mb-0 mt-2">Not your email? <a href="/email/change">Change Email</a></p>
         </div>
     </div>
 </div>

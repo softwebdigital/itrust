@@ -43,48 +43,146 @@
     </div><!-- end row -->
 
     <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body px-0">
-                    <div class="table table-responsive">
-                        <table class="table table-borderless table-hover">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Symbol</th>
-                                <th>Price</th>
-                                <th>Market Cap</th>
-                                <th>1H Change</th>
-                                <th>1D Change</th>
-                                <th>30D Change</th>
-                            </tr>
-                            </thead>
-                            <tbody id="cap">
-                            @foreach($data as $key => $market)
-                                <tr>
-                                    <th>{{ $key + 1 }}</th>
-                                    <td><img src="{{ $market['logo_url'] }}" alt="" height="20"> {{ $market['name'] }}</td>
-                                    <td>{{ $market['symbol'] }}</td>
-                                    <td>${{ number_format($market['price'], 2) }}</td>
-                                    <td>${{ $market['market_cap'] }}</td>
-                                    <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
-                                    <td class="{{ isset($market["1d"]) ? ($market["1d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1d"]) ? ($market['1d']['price_change_pct'] * 100).'%' : '' }}</td>
-                                    <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+        <div class="col-md-8 order-md-first order-last">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                  <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Crypto</button>
+                  <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Stocks    </button>
+                  {{-- <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button> --}}
+                </div>
+              </nav>
+              <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card">
+                        <div class="card-body px-0">
+                            <div class="table table-responsive">
+                                <table class="table table-borderless table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Symbol</th>
+                                        <th>Price</th>
+                                        <th>Market Cap</th>
+                                        <th>1H Change</th>
+                                        <th>1D Change</th>
+                                        <th>30D Change</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="cap">
+                                    @foreach($data as $key => $market)
+                                        <tr>
+                                            <th>{{ $key + 1 }}</th>
+                                            <td><img src="{{ $market['logo_url'] }}" alt="" height="20"> {{ $market['name'] }}</td>
+                                            <td>{{ $market['symbol'] }}</td>
+                                            <td>${{ number_format($market['price'], 2) }}</td>
+                                            <td>${{ $market['market_cap'] ?? '' }}</td>
+                                            <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
+                                            <td class="{{ isset($market["1d"]) ? ($market["1d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1d"]) ? ($market['1d']['price_change_pct'] * 100).'%' : '' }}</td>
+                                            <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Symbol</th>
+                                            <th>Price</th>
+                                            <th>Market Cap</th>
+                                            <th>1H Change</th>
+                                            <th>1D Change</th>
+                                            <th>30D Change</th>
+                                        </tr>
+                                        </thead>
+                                </table>
+                                {{-- <nav aria-label="...">
+                                    <ul class="pagination pagination-lg">
+                                      <li class="page-item @if($data->currentPage() == 1) disabled @endif">
+                                        <a class="page-link" href="?page=1" tabindex="-1">1</a>
+                                      </li>
+                                      <li class="page-item @if($data->currentPage() == 2) disabled @endif"><a class="page-link" href="?page=2">2</a></li>
+                                    </ul>
+                                  </nav> --}}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="card">
+                        <div class="card-body px-0">
+                            <div class="table table-responsive">
+                                <table class="table table-borderless table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Symbol</th>
+                                        <th>Price</th>
+                                        <th>Market Cap</th>
+                                        <th>Change</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="">
+                                        {{-- {{ dd($stocks) }} --}}
+                                    {{-- @foreach($stocks_data as $key => $market)
+                                        <tr>
+                                            <th>{{ $key + 1 }}</th>
+                                            <td><img src="{{ $market['logo'] ?? '' }}" alt="" height="20"> {{ $market['companyName'] }}</td>
+                                            <td>{{ $market['symbol'] }}</td>
+                                            <td>${{ number_format($market['iexRealtimePrice'], 2) }}</td>
+                                            <td>${{ $market['marketCap'] ?? '' }}</td>
+                                            <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
+                                        </tr>
+                                    @endforeach --}}
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Symbol</th>
+                                            <th>Price</th>
+                                            <th>Market Cap</th>
+                                            <th>Change</th>
+                                        </tr>
+                                        </thead>
+                                </table>
+                                {{-- <nav aria-label="...">
+                                    <ul class="pagination pagination-lg">
+                                      <li class="page-item @if($data->currentPage() == 1) disabled @endif">
+                                        <a class="page-link" href="?page=1" tabindex="-1">1</a>
+                                      </li>
+                                      <li class="page-item @if($data->currentPage() == 2) disabled @endif"><a class="page-link" href="?page=2">2</a></li>
+                                    </ul>
+                                  </nav> --}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div> --}}
+              </div>
+
+
         </div>
-        <div class="col-md-4">
+
+        <div class="col-md-4 order-md-last order-first">
             <div class="card">
+                @if($total_assets > 0)
                 <div class="card-body px-0 mx-auto">
                     <div id="wallet-balance" class="apex-charts"></div>
                 </div>
+                @endif
             </div>
+
+            {{-- <div class="card">
+                <div class="card-body px-0 mx-auto">
+                    <div>
+                        <h5>Withdrawable funds: ${{ $withdrawable }}</h5>
+                        <h5>Locked funds: </h5>
+                        <h5>Broker cost: </h5>
+                    </div>
+                </div>
+            </div> --}}
         </div>
     </div>
 
@@ -153,10 +251,21 @@
 {{--        </div>--}}
 {{--    </div>--}}
 @endsection
-
 @section('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
    `<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script>
+       let options = {
+                series: [@foreach ($assets as $asset){{ $asset['value'] }}@endforeach],
+                chart: {width: '320px', height: '500px !important', type: "pie"},
+                labels: [@foreach ($assets as $asset)"{{ $asset['label'] }}"@endforeach],
+                colors: [@foreach ($assets as $asset)"{{ $asset['color'] }}"@endforeach],
+                stroke: {width: 1},
+                legend: {show: !0},
+                responsive: [{breakpoint: 500, options: {chart: {width: 200}}}]
+            };
+            (chart = new ApexCharts(document.querySelector("#wallet-balance"), options)).render();
+   </script>
     <script>
         $(document).ready(function () {
             setInterval(function () {
@@ -172,16 +281,8 @@
                 });
             }, 10000)
 
-            let options = {
-                series: [{{ $deposits }}, {{ $payouts }}],
-                chart: {width: 320, height: 320, type: "pie"},
-                labels: ["Deposits", "Withdrawals"],
-                colors: ["#777aca", "#098738"],
-                stroke: {width: 1},
-                legend: {show: !0},
-                responsive: [{breakpoint: 480, options: {chart: {width: 200}}}]
-            };
-            (chart = new ApexCharts(document.querySelector("#wallet-balance"), options)).render();
+
+            
         });
 
         function appendHTML(data) {

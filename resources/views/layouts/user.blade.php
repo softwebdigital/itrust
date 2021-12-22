@@ -103,7 +103,7 @@
                     </div>
                 </div>
 
-                <div class="dropdown d-sm-inline-block">
+                {{-- <div class="dropdown d-sm-inline-block">
                     <button type="button" class="btn header-item" id="mode-setting-btn" onclick="window.localStorage.setItem('theme', ('dark' === document.getElementsByTagName('body')[0].getAttribute('data-layout-mode')) ? 'light' : 'dark')">
                         <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
                         <i data-feather="sun" class="icon-lg layout-mode-light"></i>
@@ -160,7 +160,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 @php $user = App\Models\User::find(auth()->id()); @endphp
                 <div class="dropdown d-inline-block">
@@ -231,9 +231,9 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-clipboard-text-outline font-size-16 align-middle me-1"></i> Application Status</a>
-                        <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-chat-question-outline font-size-16 align-middle me-1"></i> Help</a>
-                        <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-chat-processing-outline font-size-16 align-middle me-1"></i> Contact Us</a>
+                        <a class="dropdown-item" href="{{ route('user.settings') }}"><i class="mdi mdi-clipboard-text-outline font-size-16 align-middle me-1"></i> Application Status</a>
+                        {{-- <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-chat-question-outline font-size-16 align-middle me-1"></i> Help</a> --}}
+                        <a class="dropdown-item" href="{{ route('frontend.contact') }}"><i class="mdi mdi-chat-processing-outline font-size-16 align-middle me-1"></i> Contact Us</a>
                         <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
                         <a class="dropdown-item" href="{{ route('user.lock') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>
                         <div class="dropdown-divider"></div>
@@ -276,6 +276,18 @@
 
                             </div>
                         </li>
+
+                        {{-- <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
+                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-history" role="button">
+                                <i data-feather="dollar-sign"></i><span data-key="t-history">Cash</span> <div class="arrow-down"></div>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="topnav-pages">
+
+                                <a href="{{ route('user.deposit') }}" class="dropdown-item" data-key="t-calendar">Deposit</a>
+                                <a href="{{ route('user.withdraw') }}" class="dropdown-item" data-key="t-chat">Withdrawal</a>
+
+                            </div>
+                        </li> --}}
 
                         <li class="nav-item dropdown {{ Route::currentRouteNamed('user.cash') ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.cash') }}" id="topnav-cash" role="button">
@@ -339,8 +351,8 @@
 
         <footer class="footer">
             <div class="mt-4 mt-md-5 text-center">
-                <p class="mb-4">© <script>document.write(new Date().getFullYear())</script>
-                    {{ env('APP_NAME') }} . Crafted with <i class="mdi mdi-heart text-danger"></i> by Soft-Web Digital</p>
+                <p class="mb-4">Copyright © <script>document.write(new Date().getFullYear())</script>
+                    {{ env('APP_NAME') }} . All rights reserved</p>
             </div>
         </footer>
     </div>
