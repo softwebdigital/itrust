@@ -43,7 +43,7 @@
     </div><!-- end row -->
 
     <div class="row">
-        <div class="col-md-8 order-md-first order-last">
+        <div class="col-lg-8 order-lg-first order-last">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                   <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Crypto</button>
@@ -152,7 +152,7 @@
 
         </div>
 
-        <div class="col-md-4 order-md-last order-first">
+        <div class="col-lg-4 order-lg-last order-first">
             @if($portfolioValue > 0)
                 <div class="card">
                     <div class="card-body px-0 mx-auto">
@@ -244,12 +244,29 @@
    <script>
        let options = {
                 series: [@foreach ($assets as $key => $asset){{ $asset['value'] }} {{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
-                chart: {width: '320px', height: '500px !important', type: "pie"},
+                chart: {width: '320px', height: '320px !important', type: "pie"},
                 labels: [@foreach ($assets as $key => $asset)"{{ $asset['label'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
                 colors: [@foreach ($assets as $key => $asset)"{{ $asset['color'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
                 stroke: {width: 1},
-                legend: {show: !0},
-                responsive: [{breakpoint: 500, options: {chart: {width: 200}}}]
+                legend: {
+                    show: true,
+                    showForSingleSeries: false,
+                    position: 'bottom',
+                    horizontalAlign: 'center',
+                    // floating: false,
+                    // fontSize: '14px',
+                    // fontFamily: 'Helvetica, Arial',
+                    // fontWeight: 400,
+                    // formatter: undefined,
+                    // inverseOrder: false,
+                    // width: undefined,
+                    // height: undefined,
+                    // tooltipHoverFormatter: undefined,
+                    // customLegendItems: [],
+                    offsetX: 0,
+                    offsetY: 0,
+                },
+                responsive: [{breakpoint: 500, options: {chart: {width: 320}}}]
             };
             (chart = new ApexCharts(document.querySelector("#wallet-balance"), options)).render();
    </script>

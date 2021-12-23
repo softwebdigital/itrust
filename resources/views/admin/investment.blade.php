@@ -233,6 +233,8 @@
 
 @section('script')
     <script>
-        $('#datatable').DataTable()
+        $('#datatable').DataTable({
+            "order": [[ 0, "desc" ]]
+        })
     </script>
 @endsection

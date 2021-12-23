@@ -9,6 +9,7 @@ use App\Models\News;
 use App\Models\Settings;
 use App\Models\Transaction;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,16 +67,16 @@ class UserController extends Controller
         $data = self::marketCap();
         $stocks_data = self::stock();
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
-        $stocks = $investment->where('type', 'stocks')->sum('amount');
-        $stocks_roi = $investment->where('type', 'stocks')->sum('ROI');
-        $fixed = $investment->where('type', 'Fixed income(bonds)')->sum('amount');
-        $fixed_roi = $investment->where('type', 'Fixed income(bonds)')->sum('ROI');
-        $Properties = $investment->where('type', 'Properties')->sum('amount');
-        $Properties_roi = $investment->where('type', 'Properties')->sum('ROI');
-        $Cryptocurrencies = $investment->where('type', 'Cryptocurrencies')->sum('amount');
-        $Cryptocurrencies_roi = $investment->where('type', 'Cryptocurrencies')->sum('ROI');
-        $gold = $investment->where('type', 'gold')->sum('amount');
-        $gold_roi = $investment->where('type', 'gold')->sum('ROI');
+        $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
+        $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('ROI');
+        $fixed = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Fixed income(bonds)')->sum('amount');
+        $fixed_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Fixed income(bonds)')->sum('ROI');
+        $Properties = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Properties')->sum('amount');
+        $Properties_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Properties')->sum('ROI');
+        $Cryptocurrencies = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('amount');
+        $Cryptocurrencies_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('ROI');
+        $gold = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'gold')->sum('amount');
+        $gold_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'gold')->sum('ROI');
         $Cash = $investment->where('type', 'Cash')->sum('amount');
         $Cash_roi = $investment->where('type', 'Cash')->sum('ROI');
         $EFT = Investment::query()->where('type', 'EFT’S')->where('user_id', auth()->id())->where('status', 'open')->sum('amount');
@@ -84,14 +85,14 @@ class UserController extends Controller
         $NFT_roi = Investment::query()->where('type', 'NFT’S')->where('user_id', auth()->id())->where('status', 'open')->sum('ROI');
 
         $assets = [
-            'stocks' => ['label' => 'Stocks', 'value' => $stocks + $stocks_roi, 'color' => "#62d9d7"],
-            'fixed' => ['label' => 'Fixed', 'value' => $fixed + $fixed_roi, 'color' => "#0d1189"],
-            'properties' => ['label' => 'properties', 'value' => $Properties + $Properties_roi, 'color' => "#deb2d2"],
-            'crypto' => ['label' => 'crypto', 'value' => $Cryptocurrencies + $Cryptocurrencies_roi, 'color' => "#69382c"],
-            'gold' => ['label' => 'gold', 'value' => $gold + $gold_roi, 'color' => "#6c96d3"],
-            'cash' => ['label' => 'cash', 'value' => $withdrawable, 'color' => "#90bcbc"],
-            'EFT’S' => ['label' => 'EFT’S', 'value' => $EFT + $EFT_roi, 'color' => "#ff0000"],
-            'NFT’S' => ['label' => 'NFT’S', 'value' => $NFT + $NFT_roi, 'color' => "#ffff00"]
+            'stocks' => ['label' => 'Stocks', 'value' => round($stocks + $stocks_roi, 2), 'color' => "#62d9d7"],
+            'fixed' => ['label' => 'Fixed', 'value' => round($fixed + $fixed_roi, 2), 'color' => "#0d1189"],
+            'properties' => ['label' => 'properties', 'value' => round($Properties + $Properties_roi, 2), 'color' => "#deb2d2"],
+            'crypto' => ['label' => 'crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#69382c"],
+            'gold' => ['label' => 'gold', 'value' => round($gold + $gold_roi, 2), 'color' => "#6c96d3"],
+            'cash' => ['label' => 'cash', 'value' => round($withdrawable, 2), 'color' => "#90bcbc"],
+            'EFT’S' => ['label' => 'EFT’S', 'value' => round($EFT + $EFT_roi, 2), 'color' => "#ff0000"],
+            'NFT’S' => ['label' => 'NFT’S', 'value' => round($NFT + $NFT_roi, 2), 'color' => "#ffff00"]
         ];
 //         dd($assets);
 //        $new_assets = [];
@@ -178,7 +179,7 @@ class UserController extends Controller
                 ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
                 ->sum('ROI');
             $total = ($dep - $with) + $roi;
-            $depositArr[$key] = $total;
+            $depositArr[$key] = round($total, 2);
         }
 
         $amount = self::formatAmount($deposits);
@@ -209,7 +210,7 @@ class UserController extends Controller
                 ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
                 ->sum('ROI');
             $total = ($offshore_dep - $offshore_with) + $roi;
-            $payoutArr[$key] = $total;
+            $payoutArr[$key] = round($total, 2, );
         }
         foreach ($payoutArr as $arr) $offshoreData[] = $arr;
         $amount = self::formatAmount($payouts);
@@ -223,13 +224,13 @@ class UserController extends Controller
         if (strlen($amount) < 4) {
             $price = $amount;
             $unit = '';
-        } elseif (strlen($amount) > 3 && strlen($amount) < 7) {
+        } elseif (strlen($amount) < 7) {
             $price = $amount / 1000;
             $unit = 'K';
-        } elseif (strlen($amount) > 6 && strlen($amount) < 10) {
+        } elseif (strlen($amount) < 10) {
             $price = $amount / 1000000;
             $unit = 'M';
-        } elseif (strlen($amount) > 9 && strlen($amount) < 13) {
+        } elseif (strlen($amount) < 13) {
             $price = $amount / 1000000000;
             $unit = 'B';
         } else {
@@ -489,8 +490,6 @@ class UserController extends Controller
 
     public static function marketCap()
     {
-//        $data = Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO,BCH,TRX,XLM,MANA,UST,VET,ICP,EGLD,FIL,ATOM,THETA,DAI,ETC,HBAR,FTM,NEAR,XTZ,XMR,GRT,MIOTA,EOS,KLAY,GALA,LRC,STX,LEO,AAVE,CAKE,FTETH,1INCH,IOT,GALA,AAVE'); //&ids=BTC,ETH,XRP
-//        $data = json_decode($data, true);
         $data = json_decode(file_get_contents(public_path('data.json')), true);
         foreach ($data as $key => $datum)
             $data[$key]['market_cap'] = self::cap($datum['market_cap']);
@@ -517,7 +516,6 @@ class UserController extends Controller
         // $base_url = 'https://cloud.iexapis.com/';
         $stocks = [];
         // foreach($array as $stock){
-//        $data = Http::get('https://cloud.iexapis.com/stable/stock/market/list/mostactive?token=pk_cc0d743e69ec47eeb4a9edf281793933&listLimit=50'); //&ids=BTC,ETH,XRP
         $data = json_decode(file_get_contents(public_path('stock.json')), true);
         // }
 //        $data = $data->json();
@@ -678,5 +676,25 @@ class UserController extends Controller
         }
 
         return $exp;
+    }
+
+    public static function updateMarketCap() {
+        try {
+            $data = json_decode(Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO,BCH,TRX,XLM,MANA,UST,VET,ICP,EGLD,FIL,ATOM,THETA,DAI,ETC,HBAR,FTM,NEAR,XTZ,XMR,GRT,MIOTA,EOS,KLAY,GALA,LRC,STX,LEO,AAVE,CAKE,FTETH,1INCH,IOT,GALA,AAVE'), true);
+            if (count($data) > 1)
+                file_put_contents(public_path('data.json'), json_encode($data));
+        } catch (Exception $e) {
+
+        }
+    }
+
+    public static function updateStock() {
+        try {
+            $data = json_decode(Http::get('https://cloud.iexapis.com/stable/stock/market/list/mostactive?token=pk_cc0d743e69ec47eeb4a9edf281793933&listLimit=50'), true);
+            if (count($data) > 1)
+                file_put_contents(public_path('stock.json'), json_encode($data));
+        } catch (Exception $e) {
+
+        }
     }
 }

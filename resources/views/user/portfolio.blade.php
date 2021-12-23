@@ -519,7 +519,7 @@
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">{{ ucwords(str_replace('_', ' ', $asset->type)) }}</td>
 
-                                    <td class="float-end">${{ $asset->amount + $asset->ROI }}</td>
+                                    <td class="float-end">${{ number_format($asset->amount + $asset->ROI, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="6">
@@ -829,7 +829,6 @@
         const user = {!! json_encode(auth()->user()) !!};
         if (user['status'] === 'pending') $('#staticBackdrop-btn').click()
 
-        console.log({!! json_encode(session()) !!})
         const validation = {!! json_encode(session('validation')) !!};
         const method = {!! json_encode(session('method')) !!};
         const w_method = {!! json_encode(session('w_method')) !!};

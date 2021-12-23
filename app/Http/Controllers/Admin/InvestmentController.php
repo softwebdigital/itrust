@@ -15,7 +15,7 @@ class InvestmentController extends Controller
 
     public function index()
     {
-        $investments = Investment::query()->orderByDesc('created_at')->get();
+        $investments = Investment::query()->latest()->get();
         $users = User::query()->orderBy('first_name', 'asc')->get();
         return view('admin.investment', compact('investments', 'users'));
     }
