@@ -88,10 +88,10 @@ class UserController extends Controller
             'stocks' => ['label' => 'Stocks', 'value' => round($stocks + $stocks_roi, 2), 'color' => "#62d9d7"],
             'fixed' => ['label' => 'Fixed', 'value' => round($fixed + $fixed_roi, 2), 'color' => "#0d1189"],
             'properties' => ['label' => 'properties', 'value' => round($Properties + $Properties_roi, 2), 'color' => "#deb2d2"],
-            'crypto' => ['label' => 'crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#69382c"],
-            'gold' => ['label' => 'gold', 'value' => round($gold + $gold_roi, 2), 'color' => "#6c96d3"],
+            'crypto' => ['label' => 'crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#6c96d3"],
+            'gold' => ['label' => 'gold', 'value' => round($gold + $gold_roi, 2), 'color' => "#69382c"],
             'cash' => ['label' => 'cash', 'value' => round($withdrawable, 2), 'color' => "#90bcbc"],
-            'EFT’S' => ['label' => 'EFT’S', 'value' => round($EFT + $EFT_roi, 2), 'color' => "#ff0000"],
+            'EFT’S' => ['label' => 'EFT’S', 'value' => round($EFT + $EFT_roi, 2), 'color' => "#ef6b6b"],
             'NFT’S' => ['label' => 'NFT’S', 'value' => round($NFT + $NFT_roi, 2), 'color' => "#ffff00"]
         ];
 //         dd($assets);
@@ -156,7 +156,7 @@ class UserController extends Controller
 
         $depositArr = $depositData = $payoutArr = $payoutData = $days = $full_days = [];
         for ($i = 1; $i <= ((int) now()->format('d')); $i++) {
-            $days[] = $i . now()->format('-M');
+            $days[] = $i;// . now()->format('-M');
             $full_days[] = now()->format('Y-m-') . (strlen($i) < 2 ? '0'.$i : $i);
         }
         $user_id = $user->id;

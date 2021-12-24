@@ -503,13 +503,13 @@
                                             $color = '#deb2d2';
                                             break;
                                         case 'Cryptocurrencies':
-                                            $color = '#69382c';
+                                            $color = '#6c96d3';
                                             break;
                                         case 'EFT’S':
-                                            $color = '#ff0000';
+                                            $color = '#ef6b6b';
                                             break;
                                         case 'gold':
-                                            $color = '#6c96d3';
+                                            $color = '#69382c';
                                             break;
                                         default:
                                             $color = '#ffff00';
