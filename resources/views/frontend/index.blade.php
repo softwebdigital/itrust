@@ -1,13 +1,22 @@
 @extends('frontend.layouts.app')
 
+@section('styles')
+    <style>
+        .mockup { width: 60%; margin-bottom: 15px }
+
+        @media (max-width: 992px) {
+            .mockup { width: 100% }
+        }
+    </style>
+@endsection
+
 @section('content')
 
 
 <section class="wrapper bg-soft-primary">
     <div class="container pt-5 pb-15 py-lg-17 py-xl-19 pb-xl-20 position-relative">
-        <img class="position-lg-absolute col-12 col-lg-10 col-xl-11 col-xxl-10 px-lg-5 px-xl-0 ms-n5 ms-sm-n8 ms-md-n10 ms-lg-0 mb-md-4 mb-lg-0"
-            src="img/photos/devices.png" srcset="img/photos/devices@2x.png 2x" data-cue="fadeIn" alt=""
-            style="top: -1%; left: -21%;" />
+        <img class="position-lg-absolute mockup" src="img/photos/Mockup-1.png" srcset="img/photos/Mockup-1.png 2x"
+             data-cue="fadeIn" alt="" style="top: 8%; left: -1%;" />
         <div class="row gx-0 align-items-center">
             <div class="col-md-10 offset-md-1 col-lg-5 offset-lg-7 offset-xxl-6 ps-xxl-12 mt-md-n9 text-center text-lg-start"
                 data-cues="slideInDown" data-group="page-title" data-delay="600">
@@ -97,7 +106,7 @@
         <br>
         <div class="row gx-lg-8 gx-xl-10 mb-lg-19 mb-xl-1 align-items-center">
             <div class="col-lg-5">
-                <figure><img src="img/photos/device.png" srcset="img/photos/device@2x.png 2x" data-cue="fadeIn"
+                <figure><img src="img/photos/Mockup-2.png" srcset="img/photos/Mockup-2.png 2x" data-cue="fadeIn"
                         alt="" /></figure>
             </div>
             <!-- /column -->
@@ -110,7 +119,7 @@
                             class="icon btn btn-circle btn-lg btn-soft-purple disabled mb-4"><span
                                 class="number">01</span></span>
                         <h4 class="mb-1">Invest Any Amount</h4>
-                        <p>Choose how much you want to invest, and we’ll convertfrom dollars to parts of a whole
+                        <p>Choose how much you want to invest, and we’ll convert from dollars to parts of a whole
                             share.</p>
                     </div>
                     <!--/column -->
@@ -148,7 +157,7 @@
         <div class="row">
             <div class="row align-items-center">
                 <div class="col-lg-10">
-                    <h2 class="display-5 mb-7">Our Products 1</h2>
+                    <h2 class="display-5 mb-7">Our Products</h2>
                     <ul class="nav nav-tabs nav-pills">
                         <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab"
                                 href="#tab1-1"><i class="uil uil-bitcoin pe-1"></i><span>Crypto</span></a> </li>

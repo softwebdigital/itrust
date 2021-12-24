@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/plugins.css">
     <link rel="stylesheet" href="css/theme/purple.css">
     <link rel="preload" href="css/font/thicccboi.css" as="style" onload="this.rel='stylesheet'">
+    @yield('styles')
 </head>
 
 <body>
