@@ -183,7 +183,7 @@ class TransactionController extends Controller
         $name = $user->name.'StatementOFAccount'.rand(10, 190718);
         $url = "public/pdf/$name.pdf";
         $public = "storage/pdf/$name.pdf";
-        Storage::put($url, $pdf->output());
+        Storage::put($public, $pdf->output());
         $data = [
             'user' => $user,
             'pdf' => $public
