@@ -69,8 +69,8 @@ class UserController extends Controller
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
         $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
         $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('ROI');
-        $fixed = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Fixed income(bonds)')->sum('amount');
-        $fixed_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Fixed income(bonds)')->sum('ROI');
+        $fixed = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Bonds(Fixed Income)')->sum('amount');
+        $fixed_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Bonds(Fixed Income)')->sum('ROI');
         $Properties = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Properties')->sum('amount');
         $Properties_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Properties')->sum('ROI');
         $Cryptocurrencies = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('amount');
@@ -79,20 +79,23 @@ class UserController extends Controller
         $gold_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'gold')->sum('ROI');
         $Cash = $investment->where('type', 'Cash')->sum('amount');
         $Cash_roi = $investment->where('type', 'Cash')->sum('ROI');
-        $EFT = Investment::query()->where('type', 'EFT’S')->where('user_id', auth()->id())->where('status', 'open')->sum('amount');
-        $EFT_roi = Investment::query()->where('type', 'EFT’S')->where('user_id', auth()->id())->where('status', 'open')->sum('ROI');
+        $ETF = Investment::query()->where('type', 'ETF’S')->where('user_id', auth()->id())->where('status', 'open')->sum('amount');
+        $ETF_roi = Investment::query()->where('type', 'ETF’S')->where('user_id', auth()->id())->where('status', 'open')->sum('ROI');
         $NFT = Investment::query()->where('type', 'NFT’S')->where('user_id', auth()->id())->where('status', 'open')->sum('amount');
         $NFT_roi = Investment::query()->where('type', 'NFT’S')->where('user_id', auth()->id())->where('status', 'open')->sum('ROI');
+        $options = Investment::query()->where('type', 'Options')->where('user_id', auth()->id())->where('status', 'open')->sum('amount');
+        $options_roi = Investment::query()->where('type', 'Options')->where('user_id', auth()->id())->where('status', 'open')->sum('ROI');
 
         $assets = [
             'stocks' => ['label' => 'Stocks', 'value' => round($stocks + $stocks_roi, 2), 'color' => "#62d9d7"],
             'fixed' => ['label' => 'Fixed', 'value' => round($fixed + $fixed_roi, 2), 'color' => "#0d1189"],
             'properties' => ['label' => 'properties', 'value' => round($Properties + $Properties_roi, 2), 'color' => "#deb2d2"],
-            'crypto' => ['label' => 'crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#6c96d3"],
-            'gold' => ['label' => 'gold', 'value' => round($gold + $gold_roi, 2), 'color' => "#69382c"],
-            'cash' => ['label' => 'cash', 'value' => round($withdrawable, 2), 'color' => "#90bcbc"],
-            'EFT’S' => ['label' => 'EFT’S', 'value' => round($EFT + $EFT_roi, 2), 'color' => "#ef6b6b"],
-            'NFT’S' => ['label' => 'NFT’S', 'value' => round($NFT + $NFT_roi, 2), 'color' => "#ffff00"]
+            'crypto' => ['label' => 'Crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#6c96d3"],
+            'gold' => ['label' => 'Gold', 'value' => round($gold + $gold_roi, 2), 'color' => "#69382c"],
+            'cash' => ['label' => 'Cash', 'value' => round($withdrawable, 2), 'color' => "#90bcbc"],
+            'ETF’S' => ['label' => 'ETF’S', 'value' => round($ETF + $ETF_roi, 2), 'color' => "#ef6b6b"],
+            'NFT’S' => ['label' => 'NFT’S', 'value' => round($NFT + $NFT_roi, 2), 'color' => "#ffff00"],
+            'Options' => ['label' => 'Options', 'value' => round($options + $options_roi, 2), 'color' => "#076262"]
         ];
 //         dd($assets);
 //        $new_assets = [];
@@ -161,6 +164,24 @@ class UserController extends Controller
         }
         $user_id = $user->id;
 
+        $dep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', 'basic_ira')
+            ->where('type', 'deposit')
+            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->sum('actual_amount');
+        $with = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', 'basic_ira')
+            ->where('type', 'payout')
+            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->sum('actual_amount');
+        $roi = $user->investments()
+            ->where('acct_type', 'basic_ira')
+            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->sum('ROI');
+        $oldTotal = ($dep - $with) + $roi;
+
         foreach ($full_days as $key => $full_day) {
             $dep = $user->transactions()
                 ->where('status', 'approved')
@@ -179,7 +200,7 @@ class UserController extends Controller
                 ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
                 ->sum('ROI');
             $total = ($dep - $with) + $roi;
-            $depositArr[$key] = round($total, 2);
+            $depositArr[$key] = round($total + $oldTotal, 2);
         }
 
         $amount = self::formatAmount($deposits);
@@ -191,6 +212,26 @@ class UserController extends Controller
         $amount = self::formatAmount($investments);
         $investedAmount = $amount[0];
         $investedUnit = $amount[1];
+
+
+
+        $dep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', 'offshore')
+            ->where('type', 'deposit')
+            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->sum('actual_amount');
+        $with = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', 'offshore')
+            ->where('type', 'payout')
+            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->sum('actual_amount');
+        $roi = $user->investments()
+            ->where('acct_type', 'offshore')
+            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->sum('ROI');
+        $oldTotal = ($dep - $with) + $roi;
 
         foreach ($full_days as $key => $full_day) {
             $offshore_dep = $user->transactions()
@@ -210,7 +251,7 @@ class UserController extends Controller
                 ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
                 ->sum('ROI');
             $total = ($offshore_dep - $offshore_with) + $roi;
-            $payoutArr[$key] = round($total, 2, );
+            $payoutArr[$key] = round($total + $oldTotal, 2, );
         }
         foreach ($payoutArr as $arr) $offshoreData[] = $arr;
         $amount = self::formatAmount($payouts);
@@ -680,7 +721,7 @@ class UserController extends Controller
 
     public static function updateMarketCap() {
         try {
-            $data = json_decode(Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO,BCH,TRX,XLM,MANA,UST,VET,ICP,EGLD,FIL,ATOM,THETA,DAI,ETC,HBAR,FTM,NEAR,XTZ,XMR,GRT,MIOTA,EOS,KLAY,GALA,LRC,STX,LEO,AAVE,CAKE,FTETH,1INCH,IOT,GALA,AAVE'), true);
+            $data = json_decode(Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO,BCH,TRX,XLM,MANA,UST,VET,ICP,EGLD,FIL,ATOM,THETA,DAI,ETC,HBAR,FTM,NEAR,XTZ,XMR,GRT,MIOTA,EOS,KLAY,GALA,LRC,STX,LEO,AAVE,CAKE,FTETH,1INCH,IOT,GALA,AAVE'), true) ?? [];
             if (count($data) > 1)
                 file_put_contents(public_path('data.json'), json_encode($data));
         } catch (Exception $e) {
@@ -690,7 +731,7 @@ class UserController extends Controller
 
     public static function updateStock() {
         try {
-            $data = json_decode(Http::get('https://cloud.iexapis.com/stable/stock/market/list/mostactive?token=pk_cc0d743e69ec47eeb4a9edf281793933&listLimit=50'), true);
+            $data = json_decode(Http::get('https://cloud.iexapis.com/stable/stock/market/list/mostactive?token=pk_cc0d743e69ec47eeb4a9edf281793933&listLimit=50'), true) ?? [];
             if (count($data) > 1)
                 file_put_contents(public_path('stock.json'), json_encode($data));
         } catch (Exception $e) {

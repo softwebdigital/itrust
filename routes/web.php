@@ -47,6 +47,7 @@ Route::get('/contact', [FrontEndController::class, 'contact'])->name('frontend.c
 Route::get('/how-to-invest', [FrontEndController::class, 'invest'])->name('frontend.invest');
 Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('frontend.cash');
 
+Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('image.upload');
 
 Route::get('/cap', UserController::marketCap())->name('cap');
 
@@ -84,27 +85,27 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
 
     Route::group(['middleware' => 'verified'], function () {
         Route::get('/dashboard', [UserController::class, 'index'])->name('user.index');
-        Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio');
+        Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio')->middleware('approved');
         Route::get('/documents/{document}/download', [UserController::class, 'downloadDocument'])->name('user.documents.download');
         Route::post('/portfolio', [UserController::class, 'uploadDocument'])->name('user.documents.upload')->middleware('throttle:3,1');
 
         Route::get('/rewards', [UserController::class, 'rewards'])->name('user.rewards');
-        Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements');
+        Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements')->middleware('approved');
         Route::get('/statements/pdf', [TransactionController::class, 'createStatementsPDF']);
-        Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions');
+        Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions')->middleware('approved');
         Route::get('/transactions/pdf', [TransactionController::class, 'createHistoryPDF']);
         Route::get('/invoice/pdf/{type}', [TransactionController::class, 'createInvoicePDF']);
 
-        Route::get('/cash', [UserController::class, 'cash'])->name('user.cash')->middleware('approved');
+        Route::get('/cash', [UserController::class, 'cash'])->name('user.cash')->middleware('approved')->middleware('approved');
         Route::get('/cash/deposit', [TransactionController::class, 'deposit'])->name('user.deposit')->middleware('approved');
         Route::post('/cash/deposit/post', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store')->middleware('approved');
         Route::get('/cash/withdraw', [TransactionController::class, 'withdraw'])->name('user.withdraw')->middleware('approved');
         Route::post('/cash/withdraw/post', [TransactionController::class, 'userWithdrawStore'])->name('user.withdraw.store')->middleware('approved');
 
-        Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices');
+        Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices')->middleware('approved');
         Route::post('/invoices', [UserController::class, 'storeInvoice'])->name('user.invoices.store');
 
-        Route::get('/documents', [UserController::class, 'documents'])->name('user.documents');
+        Route::get('/documents', [UserController::class, 'documents'])->name('user.documents')->middleware('approved');
         Route::get('/settings', [UserController::class, 'settings'])->name('user.settings');
     });
 });
@@ -119,7 +120,9 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::put('/users/{user}/wallet/account', [AdminController::class, 'userBTCWallet'])->name('admin.users.userBTCWallet');
     Route::post('/users/invest', [InvestmentController::class, 'investUser'])->name('admin.users.invest');
     Route::post('/users/add_transaction/{type}', [AdminController::class, 'addTransaction'])->name('admin.users.addtransaction');
+    Route::put('/transactions/{id}/update/{type}', [AdminController::class, 'editTransaction'])->name('admin.transactions.edit');
     Route::post('/users/invest/new', [InvestmentController::class, 'newInvestUser'])->name('admin.users.newInvest');
+    Route::post('/users/update/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/users/delete/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 
     Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');

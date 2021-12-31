@@ -46,7 +46,7 @@
         <div class="col-lg-10 mx-auto">
           <div class="blog single mt-n17">
             <div class="card">
-              <figure class="card-img-top "><img class="img align-self-center justify-content-between" src="{{ env('APP_URL').'/'.$blog_post->image }}" alt="" /></figure>
+              <figure class="card-img-top "><img class="img align-self-center justify-content-between" src="{{ asset($blog_post->image) }}" alt="" /></figure>
               <div class="card-body">
                 <div class="classic-view">
                   <article class="post">
@@ -149,7 +149,7 @@
                   <div class="item">
                     <article>
                       <figure class="overlay overlay1 hover-scale rounded mb-5"><a href="{{ route('frontend.blogview', $blog->id) }}"> <img
-                            src="{{ env('APP_URL').'/'.$blog->image }}" alt="" /></a>
+                            src="{{ asset($blog->image) }}" alt="" /></a>
                         <figcaption>
                           <h5 class="from-top mb-0">Read More</h5>
                         </figcaption>

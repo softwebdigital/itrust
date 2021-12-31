@@ -346,6 +346,27 @@
                 @yield('content')
             </div>
             <!-- container-fluid -->
+
+            <button type="button" class="btn btn-primary waves-effect waves-light d-none" id="alert-btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Static backdrop modal
+            </button>
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Account not verified</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="msg"></p>
+                        </div>
+{{--                        <div class="modal-footer">--}}
+{{--                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>--}}
+{{--                            <button type="button" class="btn btn-primary">Understood</button>--}}
+{{--                        </div>--}}
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- End Page-content -->
 

@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-<div>
+<div style="min-height: 500px">
     <div class="d-flex justify-content-end mb-3">
         {{-- <a href="{{ route('admin.inv.create') }}" type="button" c>Add Investment</a> --}}
         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add" class="btn btn-primary">Add Investment</a>
@@ -41,8 +41,8 @@
                 <td>{{ date('d/M/Y', strtotime($investment->created_at)) }}</td>
                 <td>{{ $investment->user->full_name }}</td>
                 <td>{{ $investment->user->email }}</td>
-                <td>{{ $investment->amount }}</td>
-                <td>{{ $investment->ROI }}</td>
+                <td>{{ number_format($investment->amount, 2) }}</td>
+                <td>{{ number_format($investment->ROI, 2) }}</td>
                 <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
                 <td>
                     @if($investment->acct_type == 'offshore')
@@ -88,7 +88,7 @@
                                 <div class="form-group">
                                     <div class="input-group mb-3">
                                         <label class="input-group-text" for="investment">$</label>
-                                        <input type="investment" step="any" class="form-control @error('investment') is-invalid @enderror"
+                                        <input type="number" step="any" class="form-control @error('investment') is-invalid @enderror"
                                             name="investment" value="{{ $investment->amount }}" id="investment" placeholder="ROI">
                                     </div>
                                     @error('investment') <strong class="text-danger" role="alert">{{ $message }}</strong>
@@ -97,10 +97,17 @@
                                 <div class="form-group">
                                     <div class="input-group mb-3">
                                         <label class="input-group-text" for="amount">ROI</label>
-                                        <input type="amount" step="any" class="form-control @error('amount') is-invalid @enderror"
+                                        <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
                                             name="amount" value="{{ $investment->ROI }}" id="amount" placeholder="ROI">
                                     </div>
                                     @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="date">Date <span class="text-danger">*</span></label>
+                                    <input type="date" step="any" class="form-control required @error('date') is-invalid @enderror"
+                                           name="date" value="{{ old('date') ?? \Carbon\Carbon::make($investment['created_at'])->format('Y-m-d') }}" id="date" placeholder="Date">
+                                    @error('date') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
                                 </div>
 
@@ -154,78 +161,82 @@
                 <h5 class="modal-title" id="staticBackdropLabel">Add Investment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form class="form" method="post" enctype="multipart/form-data" action="{{ route('admin.users.newInvest') }}">
                 <div class="modal-body">
-                        <form class="form" method="post" enctype="multipart/form-data" action="{{ route('admin.users.newInvest') }}">
-                            @csrf
-                            @method('POST')
-                            <div class="form-group mb-3">
-                                <label for="">User <span class="text-danger">*</span></label>
-                                <select class="form-select @error('user') is-invalid @enderror" name="user" id="user">
-                                    <option value="">Select User</option>
-                                    @foreach ($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('user') ==  $user->id  ? 'selected' : '' }}>{{ $user->username }}</option>
-                                    @endforeach
-                                </select>
-                                @error('user') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                            </div>
-                            <div class="form-group mb-3">
-                                    <label for="">Amount <span class="text-danger">*</span></label>
-                                    <input type="amount" step="any" class="form-control @error('amount') is-invalid @enderror"
-                                        name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount Invested">
-                                @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                @enderror
-                            </div>
-                            <div class="form-group mb-3">
-                                    <label for="">ROI <span class="text-danger">*</span></label>
-                                    <input type="amount" step="any" class="form-control @error('ROI') is-invalid @enderror"
-                                        name="ROI" value="{{ old('ROI') }}" id="ROI" placeholder="ROI">
-                                @error('ROI') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                @enderror
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="">Status <span class="text-danger">*</span></label>
-                                <select class="form-select @error('status') is-invalid @enderror" name="status" id="user">
-                                    <option value="">Select Status</option>
-                                    <option value="open">Open</option>
-                                    <option value="closed">Closed</option>
-                                </select>
-                                @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="">Product <span class="text-danger">*</span></label>
-                                <select class="form-select @error('type') is-invalid @enderror" name="type" id="type">
-                                    <option value="">Select Product Type</option>
-                                    <option value="stocks" {{ old('type') == 'stocks' ? 'selected' : '' }}>Stocks</option>
-                                    <option value="Fixed income(bonds)" {{ old('type') == 'Fixed income(bonds)' ? 'selected' : '' }}>Fixed income(bonds)</option>
-                                    <option value="Properties" {{ old('type') == 'Properties' ? 'selected' : '' }}>Properties</option>
-                                    <option value="Cryptocurrencies" {{ old('type') == 'Cryptocurrencies' ? 'selected' : '' }}>Cryptocurrencies</option>
-                                    <option value="EFT’S" {{ old('type') == 'EFT’S' ? 'selected' : '' }}>EFT’S</option>
-                                    <option value="gold" {{ old('type') == 'gold' ? 'selected' : '' }}>Gold</option>
-                                    <option value="NFT’S" {{ old('type') == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
-                                </select>
-                                @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                            </div>
-                            {{-- @if($offshore != 0) --}}
-                                        <div class="form-group mb-3">
-                                            <label for="acct_type">Account :</label>
-                                            <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
-                                                id="acct_type">
-                                                <option value="">Select Account</option>
-                                                <option value="basic_ira">Basic IRA (current account)</option>
-                                                <option value="offshore"> Offshore Account </option>
-                                            </select>
-                                            @error('acct_type') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong> @enderror
-                                        </div>
-                                        {{-- @else --}}
-                                        {{-- <input type="hidden" name="acct_type" value="basic_ira"> --}}
-                                        {{-- @endif --}}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Create</button>
-                        </div>
-                    </form>
+                    @csrf
+                    @method('POST')
+                    <div class="form-group mb-3">
+                        <label for="">User <span class="text-danger">*</span></label>
+                        <select class="form-select @error('user') is-invalid @enderror" name="user" id="user">
+                            <option value="">Select User</option>
+                            @foreach ($users as $user)
+                            <option value="{{ $user->id }}" {{ old('user') ==  $user->id  ? 'selected' : '' }}>{{ $user->username }}</option>
+                            @endforeach
+                        </select>
+                        @error('user') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                            <label for="">Amount <span class="text-danger">*</span></label>
+                            <input type="amount" step="any" class="form-control @error('amount') is-invalid @enderror"
+                                name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount Invested">
+                        @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                        @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                            <label for="">ROI <span class="text-danger">*</span></label>
+                            <input type="amount" step="any" class="form-control @error('ROI') is-invalid @enderror"
+                                name="ROI" value="{{ old('ROI') }}" id="ROI" placeholder="ROI">
+                        @error('ROI') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                        @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="">Status <span class="text-danger">*</span></label>
+                        <select class="form-select @error('status') is-invalid @enderror" name="status" id="user">
+                            <option value="">Select Status</option>
+                            <option value="open">Open</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="">Product <span class="text-danger">*</span></label>
+                        <select class="form-select @error('type') is-invalid @enderror" name="type" id="type">
+                            <option value="">Select Product Type</option>
+                            <option value="stocks" {{ old('type') == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                            <option value="Bonds(Fixed Income)" {{ old('type') == 'Bonds(Fixed Income)' ? 'selected' : '' }}>Bonds(Fixed Income)</option>
+                            <option value="Properties" {{ old('type') == 'Properties' ? 'selected' : '' }}>Properties</option>
+                            <option value="Cryptocurrencies" {{ old('type') == 'Cryptocurrencies' ? 'selected' : '' }}>Cryptocurrencies</option>
+                            <option value="ETF’S" {{ old('type') == 'ETF’S' ? 'selected' : '' }}>ETF’S</option>
+                            <option value="gold" {{ old('type') == 'gold' ? 'selected' : '' }}>Gold</option>
+                            <option value="NFT’S" {{ old('type') == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
+                            <option value="Options" {{ old('type') == 'Options' ? 'selected' : '' }}>Options</option>
+                        </select>
+                        @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="acct_type">Account :</label>
+                        <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
+                            id="acct_type">
+                            <option value="">Select Account</option>
+                            <option value="basic_ira">Basic IRA (current account)</option>
+                            <option value="offshore"> Offshore Account </option>
+                        </select>
+                        @error('acct_type') <strong class="text-danger"
+                            role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="date">Date <span class="text-danger">*</span></label>
+                        <input type="date" step="any" class="form-control required @error('date') is-invalid @enderror"
+                               name="date" value="{{ old('date') ?? now()->format('Y-m-d') }}" id="date" placeholder="Date">
+                        @error('date') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

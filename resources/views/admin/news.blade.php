@@ -33,7 +33,7 @@
             @foreach($news as $info)
                 <tr>
                     <td>{{ $info->title }}</td>
-                    <td>{!! strlen($info->body) > 30 ? substr($info->body, 0, 30).'...' : $info->body !!}</td>
+                    <td>{{ strlen($info->body) > 30 ? substr($info->body, 0, 30).'...' : $info->body }}</td>
                     <td><img src="{{ $info->image ? asset($info->image) : '' }}" width="50" alt=""></td>
                     <td>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</td>
                     <td>{{ \Carbon\Carbon::make($info->created_at)->format('Y/m/d') }}</td>

@@ -35,6 +35,9 @@
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
     @yield('style')
+    <style>
+        .dropdown-menu { min-width: 0 !important; }
+    </style>
 </head>
 
 <body>

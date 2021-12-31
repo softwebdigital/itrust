@@ -56,8 +56,8 @@
                         <!-- <i class="display-1 uil uil-chart"></i> -->
                         <p></p>
                         <h4>Manage Your Portfolio</h4>
-                        <p class="mb-2">Keep your portfolio in your pocket. Everything you need to
-                            manage your assets is available in a single app.</p>
+                        <p class="mb-2">Keep your portfolio in your pocket. Everything you need to manage your assets is available
+                            in one platform.</p>
                         <a href="/portfolio" class="more hover link-violet">Learn More</a>
                         <p></p>
                     </div>
@@ -178,8 +178,11 @@
                         <div class="tab-pane fade show active" id="tab1-1">
                             <p>Tap into the cryptocurrency market to buy, HODL, and sell Bitcoin, Ethereum,
                                 Dogecoin, and more, 24/7 with Itrust Crypto.</p>
+                            <a href="{{ route('frontend.crypto') }}" type="button" class="btn btn-primary btn-icon btn-icon-start rounded me-2">Learn More</a>
                             <ul class="icon-list bullet-bg bullet-soft-primary">
                                 <li><i class="uil uil-check"></i></li>
+                            </ul>
+                            <ul class="dropdown-menu">
                             </ul>
                         </div>
                         <!--/.tab-pane -->
@@ -189,21 +192,25 @@
                             </p>
                             <p>Earn 13.30% APY* on your uninvested cash and get more flexibility with your
                                 brokerage account.</p>
+                            <a href="{{ route('frontend.cash') }}" type="button" class="btn btn-primary btn-icon btn-icon-start rounded me-2">Learn More</a>
                         </div>
                         <!--/.tab-pane -->
                         <div class="tab-pane fade" id="tab1-3">
                             <p>Get mobile access to the markets. Invest commission-free in individual companies
                                 or bundles of investments (ETFs).</p>
+                            <a href="{{ route('frontend.stocks') }}" type="button" class="btn btn-primary btn-icon btn-icon-start rounded me-2">Learn More</a>
                         </div>
                         <!--/.tab-pane -->
                         <div class="tab-pane fade" id="tab1-4">
                             <p>Be bullish on stocks you believe in and bearish on the ones you don’t. It’s your
                                 call.</p>
+                            <a href="{{ route('frontend.options') }}" type="button" class="btn btn-primary btn-icon btn-icon-start rounded me-2">Learn More</a>
                         </div>
                         <!--/.tab-pane -->
                         <div class="tab-pane fade" id="tab1-5">
                             <p>Access research reports, trade on margin at a 12.5% annual rate, and make bigger
                                 deposits with quicker access to funds—all starting $50 per month.</p>
+                            <a href="{{ route('frontend.gold') }}" type="button" class="btn btn-primary btn-icon btn-icon-start rounded me-2">Learn More</a>
                         </div>
                         <!--/.tab-pane -->
                     </div>

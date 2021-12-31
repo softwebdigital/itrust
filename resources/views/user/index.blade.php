@@ -14,6 +14,13 @@
 {{--@endsection--}}
 
 @section('style')
+    <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css"
+          integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
+@section('style')
     <style>
         @media only screen and (max-width: 720px) {
             #trad { display: none !important; }
@@ -44,6 +51,27 @@
 
     <div class="row">
         <div class="col-lg-8 order-lg-first order-last">
+            <div class="mb-3">
+                @if ($user->passport == null)
+                    <div class="card border border-danger">
+                        <div class="card-body">
+                            <h6>Verify Your Identity</h6>
+                            <p>Kindly complete your profile and upload a photo of your state ID, driver's license or
+                                passport so we can finish processing your application.</p>
+                            <a href="javascript:void(0)" data-bs-toggle="modal"
+                               data-bs-target=".bs-example-modal-center">Upload Document Now</a>
+                        </div>
+                    </div>
+                @else
+                    @if ($user->status != 'approved')
+                        <div class="card border border-success">
+                            <div class="card-body">
+                                <h6>Documents Uploaded</h6>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+            </div>
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                   <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Crypto</button>
@@ -67,6 +95,7 @@
                                         <th>1H Change</th>
                                         <th>1D Change</th>
                                         <th>30D Change</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody id="cap">
@@ -80,18 +109,18 @@
                                             <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
                                             <td class="{{ isset($market["1d"]) ? ($market["1d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1d"]) ? ($market['1d']['price_change_pct'] * 100).'%' : '' }}</td>
                                             <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td>
+                                            <td>
+                                                <div class="d-flex">
+{{--                                                    <button class="btn btn-sm btn-success mx-1" onclick="toggleModal('{{ $market['symbol'] }}', '#buy')">Buy</button>--}}
+{{--                                                    <button class="btn btn-sm btn-danger mx-1" onclick="toggleModal('{{ $market['symbol'] }}', '#sell')">Sell</button>--}}
+                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-success mx-1">Buy</a>
+                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-danger mx-1">Sell</a>
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
-                                {{-- <nav aria-label="...">
-                                    <ul class="pagination pagination-lg">
-                                      <li class="page-item @if($data->currentPage() == 1) disabled @endif">
-                                        <a class="page-link" href="?page=1" tabindex="-1">1</a>
-                                      </li>
-                                      <li class="page-item @if($data->currentPage() == 2) disabled @endif"><a class="page-link" href="?page=2">2</a></li>
-                                    </ul>
-                                  </nav> --}}
                             </div>
                         </div>
                     </div>
@@ -108,7 +137,6 @@
                                         <th>Symbol</th>
                                         <th>Price</th>
                                         <th>Market Cap</th>
-                                        <th>Change</th>
                                     </tr>
                                     </thead>
                                     <tbody id="">
@@ -129,27 +157,23 @@
                                             <td>{{ $market['symbol'] }}</td>
                                             <td>${{ number_format($market['iexRealtimePrice'], 2) }}</td>
                                             <td>${{ $market['marketCap'] ?? '' }}</td>
-                                            <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
+                                            <td>
+                                                <div class="d-flex">
+{{--                                                    <button class="btn btn-sm btn-success mx-1" onclick="toggleModal('{{ $market['symbol'] }}', '#buy')">Buy</button>--}}
+{{--                                                    <button class="btn btn-sm btn-danger mx-1" onclick="toggleModal('{{ $market['symbol'] }}', '#sell')">Sell</button>--}}
+                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-success mx-1">Buy</a>
+                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-danger mx-1">Sell</a>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    @endforeach
+                                     @endforeach
                                     </tbody>
                                 </table>
-                                {{-- <nav aria-label="...">
-                                    <ul class="pagination pagination-lg">
-                                      <li class="page-item @if($data->currentPage() == 1) disabled @endif">
-                                        <a class="page-link" href="?page=1" tabindex="-1">1</a>
-                                      </li>
-                                      <li class="page-item @if($data->currentPage() == 2) disabled @endif"><a class="page-link" href="?page=2">2</a></li>
-                                    </ul>
-                                  </nav> --}}
                             </div>
                         </div>
                     </div>
                 </div>
-                {{-- <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div> --}}
               </div>
-
-
         </div>
 
         <div class="col-lg-4 order-lg-last order-first">
@@ -172,6 +196,148 @@
             </div> --}}
         </div>
     </div>
+
+    <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <img src="{{ asset('svg/upload.svg') }}" alt="">
+                <div class="modal-body">
+                    <p>We need photos of both sides of your passport card, permanent resident card, or state ID in order to
+                        verify your identity.</p>
+                    <div class="form-group">
+                        <label for="doc">Document Type:</label>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="formRadios" id="formRadios1"
+                                   value="Passport" checked>
+                            <label class="form-check-label" for="formRadios1">
+                                ID/ Driver's License / Passport @if ($user->passport) <i class=" fas fa-check-circle text-success"></i> @endif
+                            </label>
+                        </div>
+                    </div>
+                    <button type="button" id="cont-btn" data-bs-dismiss="modal"
+                            onclick="updateModalTitle('#myLargeModalLabel')"
+                            class="btn w-100 btn-block btn-primary waves-effect waves-light" data-bs-toggle="modal"
+                            data-bs-target=".bs-example-modal-lg">Continue</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Upload a photo of your </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" class="" enctype="multipart/form-data">
+                    <input type="hidden" name="type" id="doc-type" value="default">
+                    <div class="modal-body">
+                        Please ensure the entire document is in the frame and information is legible.
+                        <div class="row" id="modalDetails"></div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mt-5">
+                                    <div class="d-none" id="pass-file">
+                                        <input type="file" class="dropify" id="pass-file-field"
+                                               data-default-file="{{ $user->passport ? asset($user->passport) : '' }}"
+                                               data-allowed-file-extensions="png jpg jpeg" data-max-file="1"
+                                               data-max-file-size="1M" required />
+                                    </div>
+                                    {{-- <div class="d-none" id="drv-file">
+                                    <input type="file" class="dropify" id="drv-file-field" data-default-file="{{ $user->drivers_license ? asset($user->drivers_license) : '' }}" data-allowed-file-extensions="png jpg jpeg" data-max-file="1" data-max-file-size="1M" required />
+                                </div> --}}
+                                    <div class="d-none" id="stt-file">
+                                        <input type="file" class="dropify" id="stt-file-field"
+                                               data-default-file="{{ $user->state_id ? asset($user->state_id) : '' }}"
+                                               data-allowed-file-extensions="png jpg jpeg" data-max-file="1"
+                                               data-max-file-size="1M" required />
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <button type="button" id="sub-btn" class="btn btn-primary waves-effect waves-light"
+                                            onclick="submitDoc()">Upload</button>
+                                </div>
+                            </div> <!-- end col -->
+                        </div> <!-- end row -->
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="staticBackdrop-buy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Buy <span class="product"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form" method="post" enctype="multipart/form-data" action="{{ '#' }}">
+                    <div class="modal-body">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group mb-3">
+                            <label for="product">Product</label>
+                            <input type="text" class="form-control" readonly name="product" value="product">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="">Amount <span class="text-danger">*</span></label>
+                            <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
+                                   name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
+                            @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Buy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="staticBackdrop-sell" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Sell <span class="product"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form" method="post" enctype="multipart/form-data" action="{{ '#' }}">
+                    <div class="modal-body">
+                        @csrf
+                        @method('POST')
+                        <div class="form-group mb-3">
+                            <label for="product">Product</label>
+                            <input type="text" class="form-control" readonly name="product" value="product">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="">Amount <span class="text-danger">*</span></label>
+                            <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
+                                   name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
+                            @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Sell</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <button class="d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop-buy" id="buy">Buy</button>
+    <button class="d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop-sell" id="sell">Sell</button>
+
 
     <!-- TradingView Widget BEGIN -->
 
@@ -240,37 +406,169 @@
 @endsection
 @section('script')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-   `<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"
+            integrity="sha512-hJsxoiLoVRkwHNvA5alz/GVA+eWtVxdQ48iy4sFRQLpDrBPn6BFZeUcW4R4kU+Rj2ljM9wHwekwVtsb0RY/46Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
    <script>
-       let options = {
-                series: [@foreach ($assets as $key => $asset){{ $asset['value'] }} {{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
-                chart: {width: '320px', height: '320px !important', type: "pie"},
-                labels: [@foreach ($assets as $key => $asset)"{{ $asset['label'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
-                colors: [@foreach ($assets as $key => $asset)"{{ $asset['color'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
-                stroke: {width: 1},
-                legend: {
-                    show: true,
-                    showForSingleSeries: false,
-                    position: 'bottom',
-                    horizontalAlign: 'center',
-                    // floating: false,
-                    // fontSize: '14px',
-                    // fontFamily: 'Helvetica, Arial',
-                    // fontWeight: 400,
-                    // formatter: undefined,
-                    // inverseOrder: false,
-                    // width: undefined,
-                    // height: undefined,
-                    // tooltipHoverFormatter: undefined,
-                    // customLegendItems: [],
-                    offsetX: 0,
-                    offsetY: 0,
-                },
-                responsive: [{breakpoint: 500, options: {chart: {width: 320}}}]
-            };
+       function toggleModal(el, id) {
+           $('.product').text(el)
+           $(`input[name="product"]`).val(el)
+           $(id).click()
+       }
+
+       function submitDoc() {
+           const formData = new FormData()
+           const type = $('#doc-type').val();
+           formData.append('type', type)
+           if (type === 'passport')
+               formData.append('file', $('#pass-file-field')[0].files[0]);
+           else if (type === 'drivers_license')
+               formData.append('file', $('#drv-file-field')[0].files[0]);
+           else if (type === 'state_id')
+               formData.append('file', $('#stt-file-field')[0].files[0]);
+
+           $.ajax({
+               url: '{{ route('user.documents.upload') }}',
+               type: 'POST',
+               headers: {
+                   "X-CSRF-TOKEN": '{{ csrf_token() }}'
+               },
+               data: formData,
+               contentType: false,
+               processData: false,
+               beforeSend: function() {
+                   $('#sub-btn').attr('disabled', true)
+               },
+               success: function(res) {
+                   $('#sub-btn').attr('disabled', false)
+                   alertify.success(res.msg)
+                   setTimeout(() => location.href = '{{ route('user.index') }}', 1000)
+               },
+               error: function(res) {
+                   $('#sub-btn').attr('disabled', false)
+                   if (res.status === 422)
+                       if (res['responseJSON'].msg['type'])
+                           alertify.error(res['responseJSON'].msg['type'][0]);
+                   if (res['responseJSON'].msg['file'])
+                       alertify.error(res['responseJSON'].msg['file'][0]);
+                   else if (res.status === 429)
+                       alertify.error(res.statusText);
+                   else
+                       alertify.error(res['responseJSON'].msg);
+               }
+           })
+       }
+
+       function updateModalTitle(id) {
+           const value = $('input[type="radio"][name="formRadios"]:checked').val()
+           // console.log(value);
+           if (value == 'Passport') {
+               $(id).html("Upload a photo of your ID/ Driver's License / Passport")
+           } else {
+               $(id).html("Upload a photo of your Proof of Address")
+           }
+           $('input[type="hidden"][name="type"]').val(value)
+
+           if (value === "Passport") {
+               $('#doc-type').val('passport')
+               $('#pass-file').removeClass('d-none')
+               $('#drv-file').addClass('d-none')
+               $('#stt-file').addClass('d-none')
+               $('#modalDetails').html(`
+                    <div class="col-md-6">
+                        Your photo must:<br>
+                        <i class=" fas fa-check-circle text-success"></i> Be a clear, color image<br>
+                        <i class=" fas fa-check-circle text-success"></i> Show the entire page, including your face<br>
+                        <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
+                    </div>
+                    <div class="col-md-6">
+                        We can't accept:<br>
+                        <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
+                        <i class="fas fa-times-circle text-danger"></i> U.S. military ID and trusted traveller cards<br>
+                        <i class="fas fa-times-circle text-danger"></i> Employment authorization documents<br>
+                        <i class="fas fa-times-circle text-danger"></i> Documents not from the U.S. government<br>
+                    </div>
+                `);
+           }
+
+           // if (value === "Driver's License") {
+           //     $('#doc-type').val('drivers_license')
+           //     $('#pass-file').addClass('d-none')
+           //     $('#drv-file').removeClass('d-none')
+           //     $('#stt-file').addClass('d-none')
+           //     $('#modalDetails').html(`
+           //         <div class="col-md-6">
+           //             Your photo must:<br>
+           //             <i class=" fas fa-check-circle text-success"></i> Be a clear, color image<br>
+           //             <i class=" fas fa-check-circle text-success"></i> Be of a valid driver’s license or permit<br>
+           //             <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
+           //         </div>
+           //         <div class="col-md-6">
+           //             We can't accept:<br>
+           //             <i class="fas fa-times-circle text-danger"></i> Printed or temporary licenses<br>
+           //             <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
+           //             <i class="fas fa-times-circle text-danger"></i> Laminated or plastic covered cards<br>
+           //         </div>
+           //     `);
+           // }
+
+           if (value === "State ID") {
+               $('#doc-type').val('state_id')
+               $('#pass-file').addClass('d-none')
+               $('#drv-file').addClass('d-none')
+               $('#stt-file').removeClass('d-none')
+               $('#modalDetails').html(`
+                    <div class="col-md-6">
+                        Your photo must:<br>
+                        <i class=" fas fa-check-circle text-success"></i> Be a clear, colored image<br>
+                        <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
+                    </div>
+                    <div class="col-md-6">
+                        We can't accept:<br>
+                        <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
+                    </div>
+                `);
+           }
+       }
+
+       $('.dropify').dropify({
+           messages: {
+               'default': '<p style="font-size: 18px">Drag and drop a file here or click</p>',
+               'replace': '<p style="font-size: 18px">Drag and drop or click to replace</p>',
+               'remove': 'Remove'
+           },
+       });
+
+        let options = {
+            series: [@foreach ($assets as $key => $asset){{ $asset['value'] }} {{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
+            chart: {width: '320px', height: '320px !important', type: "pie"},
+            labels: [@foreach ($assets as $key => $asset)"{{ $asset['label'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
+            colors: [@foreach ($assets as $key => $asset)"{{ $asset['color'] }}"{{ count($assets) - 1 != $key ? ',' : '' }}@endforeach],
+            stroke: {width: 1},
+            legend: {
+                show: true,
+                showForSingleSeries: false,
+                position: 'bottom',
+                horizontalAlign: 'center',
+                // floating: false,
+                // fontSize: '14px',
+                // fontFamily: 'Helvetica, Arial',
+                // fontWeight: 400,
+                // formatter: undefined,
+                // inverseOrder: false,
+                // width: undefined,
+                // height: undefined,
+                // tooltipHoverFormatter: undefined,
+                // customLegendItems: [],
+                offsetX: 0,
+                offsetY: 0,
+            },
+            responsive: [{breakpoint: 500, options: {chart: {width: 320}}}]
+        };
             (chart = new ApexCharts(document.querySelector("#wallet-balance"), options)).render();
-   </script>
-    <script>
+
         $(document).ready(function () {
             setInterval(function () {
                 $.ajax({
@@ -283,7 +581,7 @@
                         }
                     }
                 });
-            }, 10000)
+            }, 60000)
 
 
 
@@ -308,6 +606,12 @@
                 <td class="${ typeof market["1h"] !== "undefined" ? (parseFloat(market["1h"]["price_change_pct"]) < 0 ? 'text-danger' : 'text-success') : '' }">${typeof market["1h"] !== "undefined" ? roundNumber(market["1h"]["price_change_pct"] * 100, 2)+'%' : '' }</td>
                 <td class="${ typeof market["1d"] !== "undefined" ? (parseFloat(market["1d"]["price_change_pct"]) < 0 ? 'text-danger' : 'text-success') : '' }">${typeof market["1d"] !== "undefined" ? roundNumber(market["1d"]["price_change_pct"] * 100, 2)+'%' : '' }</td>
                 <td class="${ typeof market["30d"] !== "undefined" ? (parseFloat(market["30d"]["price_change_pct"]) < 0 ? 'text-danger' : 'text-success') : '' }">${typeof market["30d"] !== "undefined" ? roundNumber(market["30d"]["price_change_pct"] * 100, 2)+'%' : '' }</td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-success mx-1">Buy</a>
+                        <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-danger mx-1">Sell</a>
+                    </div>
+                </td>
             </tr>
             `
         }

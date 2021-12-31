@@ -63,6 +63,7 @@ class BlogController extends Controller
             'heading' => 'required|string',
             'body' => 'required',
             'category' => 'required',
+            'date' => 'required'
         ]);
         if ($validator->fails()) return back()->withInput()->with('error', $validator->errors()->first());
 
@@ -72,9 +73,9 @@ class BlogController extends Controller
 
             $name = time().$image->getClientOriginalName();
             $pic = $image->move('img/blog', $name);
-        } else $pic = null;
+        } else $pic = $blog['image'];
 
-        if ($blog->update(['title' => $request['title'], 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic]))
+        if ($blog->update(['title' => $request['title'], 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic, 'created_at' => $request['date']]))
             return redirect()->route('admin.blog')->with('success', 'Blog Updated successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }

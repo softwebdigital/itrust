@@ -13,13 +13,6 @@
     <li class="breadcrumb-item active">Portfolio</li>
 @endsection
 
-@section('style')
-    <link href="{{ asset('assets/libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css"
-        integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-@endsection
-
 @section('content')
     <div class="modal fade" id="exampleModalCenterdeposit" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -215,7 +208,7 @@
                                                 <input type="number" step="any"
                                                     class="form-control @error('amount') is-invalid @enderror"
                                                     id="bank_amount" required name="amount" value="{{ old('amount') }}"
-                                                    id="amount" placeholder="Amount">
+                                                    placeholder="Amount">
                                             </div>
                                             @error('amount') <strong class="text-danger"
                                                     role="alert">{{ $message }}</strong>
@@ -322,28 +315,6 @@
     @endphp
     <div class="row">
         <div class="col-md-8">
-            <div>
-                @if ($user->passport == null)
-                    <div class="card border border-danger">
-                        <div class="card-body">
-                            <h6>Verify Your Identity</h6>
-                            <p>Kindly complete your profile and upload a photo of your state ID, driver's license or
-                                passport so we can finish processing your application.</p>
-                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                                data-bs-target=".bs-example-modal-center">Upload Document Now</a>
-                        </div>
-                    </div>
-                @else
-                    @if ($user->status != 'approved')
-                        <div class="card border border-success">
-                            <div class="card-body">
-                                <h6>Documents Uploaded</h6>
-                                {{-- <p></p> --}}
-                            </div>
-                        </div>
-                    @endif
-                @endif
-            </div>
             <div class="row">
                 <div class="col-xl-6 col-md-6">
                     <div class="card card-h-100">
@@ -478,7 +449,7 @@
                             <tr class="text-" style="border: 0 !important;">
                                 <td colspan="4">Cash</td>
 
-                                <td class="float-end">${{ $cash }}</td>
+                                <td class="float-end">${{ number_format($cash, 2) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="6">
@@ -505,11 +476,14 @@
                                         case 'Cryptocurrencies':
                                             $color = '#6c96d3';
                                             break;
-                                        case 'EFT’S':
+                                        case 'ETF’S':
                                             $color = '#ef6b6b';
                                             break;
                                         case 'gold':
                                             $color = '#69382c';
+                                            break;
+                                        case 'Options':
+                                            $color = '#076262';
                                             break;
                                         default:
                                             $color = '#ffff00';
@@ -539,145 +513,11 @@
         </div>
     </div>
 
-    <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Upload Document</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <img src="{{ asset('svg/upload.svg') }}" alt="">
-                <div class="modal-body">
-                    <p>We need photos of both sides of your passport card, permanent resident card, or state ID in order to
-                        verify your identity.</p>
-                    <div class="form-group">
-                        <label for="doc">Document Type:</label>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="formRadios" id="formRadios1"
-                                value="Passport">
-                            <label class="form-check-label" for="formRadios1">
-                                ID/ Driver's License / Passport @if ($user->passport) <i class=" fas fa-check-circle text-success"></i> @endif
-                            </label>
-                        </div>
-                        {{-- <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="formRadios"
-                               id="formRadios2" value="Driver's License">
-                        <label class="form-check-label" for="formRadios2">
-                            Driver's License  @if ($user->drivers_license) <i class=" fas fa-check-circle text-success"></i> @endif
-                        </label>
-                    </div> --}}
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="formRadios" id="formRadios3"
-                                value="State ID">
-                            <label class="form-check-label" for="formRadios3">
-                                Proof Of Address @if ($user->state_id) <i class=" fas fa-check-circle text-success"></i> @endif
-                            </label>
-                        </div>
-                    </div>
-                    <button type="button" id="cont-btn" data-bs-dismiss="modal"
-                        onclick="updateModalTitle('#myLargeModalLabel')" disabled
-                        class="btn w-100 btn-block btn-primary waves-effect waves-light" data-bs-toggle="modal"
-                        data-bs-target=".bs-example-modal-lg">Continue</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="myLargeModalLabel">Upload a photo of your </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="" class="" enctype="multipart/form-data">
-                    <input type="hidden" name="type" id="doc-type" value="default">
-                    <div class="modal-body">
-                        Please ensure the entire document is in the frame and information is legible.
-                        <div class="row" id="modalDetails"></div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="mt-5">
-                                    <div class="d-none" id="pass-file">
-                                        <input type="file" class="dropify" id="pass-file-field"
-                                            data-default-file="{{ $user->passport ? asset($user->passport) : '' }}"
-                                            data-allowed-file-extensions="png jpg jpeg" data-max-file="1"
-                                            data-max-file-size="1M" required />
-                                    </div>
-                                    {{-- <div class="d-none" id="drv-file">
-                                    <input type="file" class="dropify" id="drv-file-field" data-default-file="{{ $user->drivers_license ? asset($user->drivers_license) : '' }}" data-allowed-file-extensions="png jpg jpeg" data-max-file="1" data-max-file-size="1M" required />
-                                </div> --}}
-                                    <div class="d-none" id="stt-file">
-                                        <input type="file" class="dropify" id="stt-file-field"
-                                            data-default-file="{{ $user->state_id ? asset($user->state_id) : '' }}"
-                                            data-allowed-file-extensions="png jpg jpeg" data-max-file="1"
-                                            data-max-file-size="1M" required />
-                                    </div>
-                                </div>
-
-                                <div class="text-center mt-4">
-                                    <button type="button" id="sub-btn" class="btn btn-primary waves-effect waves-light"
-                                        onclick="submitDoc()">Upload</button>
-                                </div>
-                            </div> <!-- end col -->
-                        </div> <!-- end row -->
-                    </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 @endsection
 
 @section('script')
-    <script src="{{ asset('assets/libs/dropzone/min/dropzone.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js"
-        integrity="sha512-hJsxoiLoVRkwHNvA5alz/GVA+eWtVxdQ48iy4sFRQLpDrBPn6BFZeUcW4R4kU+Rj2ljM9wHwekwVtsb0RY/46Q=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        function submitDoc() {
-            const formData = new FormData()
-            const type = $('#doc-type').val();
-            formData.append('type', type)
-            if (type === 'passport')
-                formData.append('file', $('#pass-file-field')[0].files[0]);
-            else if (type === 'drivers_license')
-                formData.append('file', $('#drv-file-field')[0].files[0]);
-            else if (type === 'state_id')
-                formData.append('file', $('#stt-file-field')[0].files[0]);
-
-            $.ajax({
-                url: '{{ route('user.documents.upload') }}',
-                type: 'POST',
-                headers: {
-                    "X-CSRF-TOKEN": '{{ csrf_token() }}'
-                },
-                data: formData,
-                contentType: false,
-                processData: false,
-                beforeSend: function() {
-                    $('#sub-btn').attr('disabled', true)
-                },
-                success: function(res) {
-                    $('#sub-btn').attr('disabled', false)
-                    alertify.success(res.msg)
-                    setTimeout(() => location.href = '{{ route('user.portfolio') }}', 2000)
-                },
-                error: function(res) {
-                    $('#sub-btn').attr('disabled', false)
-                    if (res.status === 422)
-                        if (res['responseJSON'].msg['type'])
-                            alertify.error(res['responseJSON'].msg['type'][0]);
-                    if (res['responseJSON'].msg['file'])
-                        alertify.error(res['responseJSON'].msg['file'][0]);
-                    else if (res.status === 429)
-                        alertify.error(res.statusText);
-                    else
-                        alertify.error(res['responseJSON'].msg);
-                }
-            })
-        }
 
         // (chart = new ApexCharts(document.querySelector("#live-chart"), {
         //     chart: {
@@ -716,91 +556,10 @@
         //     }
         // })).render();
 
-        $('.dropify').dropify({
-            messages: {
-                'default': '<p style="font-size: 18px">Drag and drop a file here or click</p>',
-                'replace': '<p style="font-size: 18px">Drag and drop or click to replace</p>',
-                'remove': 'Remove'
-            },
-        });
-
         $('input[type="radio"][name="formRadios"]').on('change', function() {
             if ($(this).is(':checked')) $('#cont-btn').attr('disabled', false)
         })
 
-        function updateModalTitle(id) {
-            const value = $('input[type="radio"][name="formRadios"]:checked').val()
-            // console.log(value);
-            if (value == 'Passport') {
-                $(id).html("Upload a photo of your ID/ Driver's License / Passport")
-            } else {
-                $(id).html("Upload a photo of your Proof of Address")
-            }
-            $('input[type="hidden"][name="type"]').val(value)
-
-            if (value === "Passport") {
-                $('#doc-type').val('passport')
-                $('#pass-file').removeClass('d-none')
-                $('#drv-file').addClass('d-none')
-                $('#stt-file').addClass('d-none')
-                $('#modalDetails').html(`
-                    <div class="col-md-6">
-                        Your photo must:<br>
-                        <i class=" fas fa-check-circle text-success"></i> Be a clear, color image<br>
-                        <i class=" fas fa-check-circle text-success"></i> Show the entire page, including your face<br>
-                        <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
-                    </div>
-                    <div class="col-md-6">
-                        We can't accept:<br>
-                        <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
-                        <i class="fas fa-times-circle text-danger"></i> U.S. military ID and trusted traveller cards<br>
-                        <i class="fas fa-times-circle text-danger"></i> Employment authorization documents<br>
-                        <i class="fas fa-times-circle text-danger"></i> Documents not from the U.S. government<br>
-                    </div>
-                `);
-            }
-
-            // if (value === "Driver's License") {
-            //     $('#doc-type').val('drivers_license')
-            //     $('#pass-file').addClass('d-none')
-            //     $('#drv-file').removeClass('d-none')
-            //     $('#stt-file').addClass('d-none')
-            //     $('#modalDetails').html(`
-        //         <div class="col-md-6">
-        //             Your photo must:<br>
-        //             <i class=" fas fa-check-circle text-success"></i> Be a clear, color image<br>
-        //             <i class=" fas fa-check-circle text-success"></i> Be of a valid driver’s license or permit<br>
-        //             <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
-        //         </div>
-        //         <div class="col-md-6">
-        //             We can't accept:<br>
-        //             <i class="fas fa-times-circle text-danger"></i> Printed or temporary licenses<br>
-        //             <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
-        //             <i class="fas fa-times-circle text-danger"></i> Laminated or plastic covered cards<br>
-        //         </div>
-        //     `);
-            // }
-
-            if (value === "State ID") {
-                $('#doc-type').val('state_id')
-                $('#pass-file').addClass('d-none')
-                $('#drv-file').addClass('d-none')
-                $('#stt-file').removeClass('d-none')
-                $('#modalDetails').html(`
-                    <div class="col-md-6">
-                        Your photo must:<br>
-                        <i class=" fas fa-check-circle text-success"></i> Be a clear, colored image<br>
-                        <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
-                    </div>
-                    <div class="col-md-6">
-                        We can't accept:<br>
-                        <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
-                    </div>
-                `);
-            }
-        }
-    </script>
-    <script>
         function showReward(i) {
             $('.reward' + i).removeClass('d-none')
             $('.reward-panel' + i).addClass('d-none')
@@ -819,11 +578,7 @@
             link.setSelectionRange(0, 99999); /* For mobile devices */
             navigator.clipboard.writeText(link.value);
         }
-    </script>
 
-
-
-    <script>
         // $('#datatable').DataTable()
         // console.log();
         const user = {!! json_encode(auth()->user()) !!};

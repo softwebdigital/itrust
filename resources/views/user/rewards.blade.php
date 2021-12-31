@@ -87,7 +87,7 @@
                     </div>
                     <div class="col-10 align-self-center d-flex justify-content-between">
                         <div class="mt-4 mt-sm-0">
-                            <p class="mb-1">Expires 21/07/2021. Offered by {{ env('APP_NAME') }} Investments.</p>
+                            <p class="mb-1">Offered by {{ env('APP_NAME') }} Investments.</p>
                             <h6>$250K Crypto Bonus.</h6>
                         </div>
                         <div class="align-self-auto my-auto"><a href="javascript:void(0)" onclick="showReward(2)">Learn more <i class="mdi mdi-arrow-down"></i></a></div>

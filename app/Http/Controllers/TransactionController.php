@@ -9,10 +9,9 @@ use App\Models\User;
 use App\Notifications\SendEmailHistoryOfAccount;
 use App\Notifications\SendEmailStatementOfAccount;
 use App\Notifications\SendLatestInvoiceNotification;
-use Dompdf\Dompdf;
+use PDF;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use PDF;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -41,24 +40,29 @@ class TransactionController extends Controller
     public function depositAction(Transaction $transaction, $action): RedirectResponse
     {
         if ($transaction['type'] != 'deposit') return back()->with('warning', 'Please check that you are taking action on the right deposit.');
-        if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
+        if (!in_array($action, ['approved', 'declined', 'delete'])) return back()->with('error', 'Invalid action');
 
-        if ($transaction->update(['status' => $action])) {
-            $amount = $transaction['method'] == 'bank' ? '$'.number_format($transaction['amount'], 2) : round($transaction['amount'], 8).'BTC';
-            // dd($amount);
+        if ($action == 'delete') {
+            $transaction->delete();
+        }
+        else {
+            if ($transaction->update(['status' => $action])) {
+                $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
+                // dd($amount);
 
-            $mail = [
-                'subject' => 'Deposit '.ucfirst($action),
-                'name' => $transaction->user()->first()->name,
-                'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin').' deposit of '.$amount.' has received
-                and processed.',
-            ];
-            if($action == 'declined'){
-                $mail['body'] = ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin').' deposit of '.$amount.' has been declined. Kindly contact support@itrustinvestment.com for further inquiries !';
-            }
-            MailController::sendActionDepositNotification($transaction->user()->first(), $mail);
-        } else return back()->with('error', 'An error occurred, try again.');
-        return back()->with('success', 'Deposit '.$action.' successfully');
+                $mail = [
+                    'subject' => 'Deposit ' . ucfirst($action),
+                    'name' => $transaction->user()->first()->name,
+                    'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' deposit of ' . $amount . ' has received
+                    and processed.',
+                ];
+                if ($action == 'declined') {
+                    $mail['body'] = ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' deposit of ' . $amount . ' has been declined. Kindly contact support@itrustinvestment.com for further inquiries !';
+                }
+                MailController::sendActionDepositNotification($transaction->user()->first(), $mail);
+            } else return back()->with('error', 'An error occurred, try again.');
+        }
+        return back()->with('success', 'Deposit '.($action == 'delete' ? 'deleted' : $action).' successfully');
     }
 
     public function payouts()
@@ -73,37 +77,39 @@ class TransactionController extends Controller
     public function payoutAction(Transaction $transaction, $action): RedirectResponse
     {
         if ($transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
-        if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
+        if (!in_array($action, ['approved', 'declined', 'delete'])) return back()->with('error', 'Invalid action');
 
-        if ($transaction->update(['status' => $action])) {
-            $amount = $transaction['method'] == 'bank' ? '$'.number_format($transaction['amount'], 2) : round($transaction['amount'], 8).'BTC';
-            // dd($amount);
+        if ($action == 'delete') {
+            $transaction->delete();
+        }
+        else {
+            if ($transaction->update(['status' => $action])) {
+                $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
+                // dd($amount);
 
-            $mail = [
-                'subject' => 'Withdrawal '.ucfirst($action),
-                'name' => $transaction->user()->first()->name,
-                'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin').' withdrawal of '.$amount.' has received
-                and processed. '.$amount.' has been sent to your'.($transaction['method'] == 'bank' ? ' Bank details below:' : ' Bitcoin below:'),
-            ];
-            if($transaction['method'] == 'bitcoin'){
-                $mail['btc_wallet'] = $transaction['btc_wallet'];
-                $mail['type'] = 'btc';
+                $mail = [
+                    'subject' => 'Withdrawal ' . ucfirst($action),
+                    'name' => $transaction->user()->first()->name,
+                    'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' withdrawal of ' . $amount . ' has received
+                and processed. ' . $amount . ' has been sent to your' . ($transaction['method'] == 'bank' ? ' Bank details below:' : ' Bitcoin below:'),
+                ];
+                if ($transaction['method'] == 'bitcoin') {
+                    $mail['btc_wallet'] = $transaction['btc_wallet'];
+                    $mail['type'] = 'btc';
+                } else {
+                    $mail['bank'] = $transaction['bank_name'];
+                    $mail['acct_name'] = $transaction['acct_name'];
+                    $mail['number'] = $transaction['acct_no'];
+                    $mail['type'] = 'bank';
+                }
                 $mail['action'] = $action;
-            }else{
-                $mail['bank'] = $transaction['bank_name'];
-                $mail['acct_name'] = $transaction['acct_name'];
-                $mail['number'] = $transaction['acct_no'];
-                $mail['type'] = 'bank';
-                $mail['action'] = $action;
-            }
-            if($action == 'declined'){
-                $mail['body'] = ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin').' withdrawal of '.$amount.' has been declined. Kindly contact support@itrustinvestment.com for further inquiries !';
-            }
-            MailController::SendActionWithdrawalNotification($transaction->user()->first(), $mail);
-        } else return back()->with('error', 'An error occurred, try again.');
-
-
-        return back()->with('success', 'Payout '.$action.' successfully');
+                if ($action == 'declined') {
+                    $mail['body'] = ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' withdrawal of ' . $amount . ' has been declined. Kindly contact support@itrustinvestment.com for further inquiries !';
+                }
+                MailController::SendActionWithdrawalNotification($transaction->user()->first(), $mail);
+            } else return back()->with('error', 'An error occurred, try again.');
+        }
+        return back()->with('success', 'Payout '.($action != 'delete' ? $action : 'deleted').' successfully');
     }
 
 
@@ -141,10 +147,10 @@ class TransactionController extends Controller
         $pdf->stream('pdf_file.pdf');
         // dd($pdf->output());
 
-        $name = $user->name.'StatementOFAccount'.rand(10, 190718);
+        $name = $user['name'].'StatementOFAccount'.rand(10, 190718);
         $url = "public/pdf/$name.pdf";
         $public = "storage/pdf/$name.pdf";
-        $path = Storage::put($url, $pdf->output());
+        Storage::put($url, $pdf->output());
         $data = [
             'user' => $user,
             'pdf' => $public
@@ -177,7 +183,7 @@ class TransactionController extends Controller
         $name = $user->name.'StatementOFAccount'.rand(10, 190718);
         $url = "public/pdf/$name.pdf";
         $public = "storage/pdf/$name.pdf";
-        $path = Storage::put($url, $pdf->output());
+        Storage::put($url, $pdf->output());
         $data = [
             'user' => $user,
             'pdf' => $public
