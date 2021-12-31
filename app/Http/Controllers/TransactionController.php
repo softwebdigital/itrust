@@ -186,7 +186,8 @@ class TransactionController extends Controller
         Storage::put($url, $pdf->output());
         $data = [
             'user' => $user,
-            'pdf' => $public
+            'link' => $public,
+            'pdf' => $pdf
         ];
 
         // return $pdf->download('invoice.pdf');
@@ -230,7 +231,8 @@ class TransactionController extends Controller
         $path = Storage::put($url, $pdf->output());
         $data = [
             'user' => $user,
-            'pdf' => $public
+            'link' => $public,
+            'pdf' => $pdf
         ];
 
         // return $pdf->download('invoice.pdf');
