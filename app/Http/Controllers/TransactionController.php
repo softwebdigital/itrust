@@ -181,7 +181,7 @@ class TransactionController extends Controller
         // dd($pdf->output());
 
         $name = $user->name.'StatementOFAccount'.rand(10, 190718);
-        $url = base_path()."/../public_html/storage/pdf/$name.pdf";
+        $url = "public/pdf/$name.pdf";
         $public = "storage/pdf/$name.pdf";
         Storage::put($url, $pdf->output());
         $data = [
@@ -225,8 +225,7 @@ class TransactionController extends Controller
         // dd($pdf->output());
 
         $name = $user->name.'LatestInvoice'.rand(10, 190718);
-        $url = base_path()."/../public_html/storage/pdf/$name.pdf";
-//        $url = "public/pdf/$name.pdf";
+        $url = "public/pdf/$name.pdf";
         $public = "storage/pdf/$name.pdf";
         $path = Storage::put($url, $pdf->output());
         $data = [
