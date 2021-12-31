@@ -187,7 +187,6 @@ class TransactionController extends Controller
         $data = [
             'user' => $user,
             'link' => $public,
-            'pdf' => $pdf
         ];
 
         // return $pdf->download('invoice.pdf');
@@ -232,7 +231,6 @@ class TransactionController extends Controller
         $data = [
             'user' => $user,
             'link' => $public,
-            'pdf' => $pdf
         ];
 
         // return $pdf->download('invoice.pdf');
