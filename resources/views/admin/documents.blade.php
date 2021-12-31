@@ -101,7 +101,7 @@
                                         <select name="user" id="" class="form-select @error('user') is-invalid @enderror">
                                             <option value="">Select User</option>
                                             @foreach($users as $user)
-                                                <option value="{{ $user->id }}" {{ old('user') == $user->id || $document->user_id == $user->id ? 'selected' : '' }}>{{ $user->email }}</option>
+                                                <option value="{{ $user->id }}" {{ old('user') == $user->id || $document->user_id == $user->id ? 'selected' : '' }}>{{ $user->first_name.' '.$user->last_name }}</option>
                                             @endforeach
                                         </select>
                                         @error('user') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
@@ -179,7 +179,7 @@
                             <select name="user" id="" class="form-select @error('user') is-invalid @enderror">
                                 <option value="">Select User</option>
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('user') == $user->id ? 'selected' : '' }}>{{ $user->email }}</option>
+                                    <option value="{{ $user->id }}" {{ old('user') == $user->id ? 'selected' : '' }}>{{ $user->first_name.' '.$user->last_name }}</option>
                                 @endforeach
                             </select>
                             @error('user') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror

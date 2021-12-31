@@ -422,7 +422,7 @@
                             <h2 class="accordion-header" id="flush-headingPassport">
                                 <button onclick="$('#passportVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#flush-collapsePassport" aria-expanded="false" aria-controls="flush-collapsePassport">
-                                    Passport <span id="passportVal" style="position: absolute; right: 15px">{{ $user->passport ? 'Uploaded' : '---' }}</span>
+                                        ID/ Driver's License / Passport <span id="passportVal" style="position: absolute; right: 15px">{{ $user->passport ? 'Uploaded' : '---' }}</span>
                                 </button>
                             </h2>
                             <div id="flush-collapsePassport" class="accordion-collapse collapse" aria-labelledby="flush-headingPassport">
@@ -448,7 +448,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
+                        {{-- <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingLicense">
                                 <button onclick="$('#driversLicenceVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#flush-collapseLicense" aria-expanded="false" aria-controls="flush-collapseLicense">
@@ -477,12 +477,12 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingStateID">
                                 <button onclick="$('#stateIDVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#flush-collapseStateID" aria-expanded="false" aria-controls="flush-collapseStateID">
-                                    State ID <span id="stateIDVal" style="position: absolute; right: 15px">{{ $user->state_id ? 'Uploaded' : '---' }}</span>
+                                        Proof Of Address <span id="stateIDVal" style="position: absolute; right: 15px">{{ $user->state_id ? 'Uploaded' : '---' }}</span>
                                 </button>
                             </h2>
                             <div id="flush-collapseStateID" class="accordion-collapse collapse" aria-labelledby="flush-headingStateID">

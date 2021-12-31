@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Hizbul\SmsVerification\SmsVerification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class VerificationController extends Controller
 {
@@ -103,4 +105,27 @@ class VerificationController extends Controller
         }
         return false;
     }
+
+    public function changeEmail()
+    {
+        return view('auth.email_change');
+    }
+
+
+
+    public function postChangeEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users,email'
+        ]);
+        if ($validator->fails()) return back()->with(['validation' => true, 'error' => 'The email has already been taken.'])->withInput()->withErrors($validator);
+
+        $user = User::find(Auth::id());
+        if ($user->update(['email' => $request->input('email')])){
+            $user->sendEmailVerificationNotification();
+        }
+        return redirect()->route('user.portfolio')->with('success', 'Email Changed Successfully');
+    }
+
+
 }
