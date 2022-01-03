@@ -45,8 +45,8 @@
                     -----
                     @endif
                 </td>
-                <td>{{ number_format($investment->amount, 2) }}</td>
-                <td>{{ number_format($investment->ROI, 2) }}</td>
+                <td>${{ number_format($investment->amount, 2) }}</td>
+                <td>${{ number_format($investment->ROI, 2) }}</td>
                    <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
                    <td> <span class="badge p-2
                            {{ $investment->status == 'open' ? 'bg-success' : '' }}
