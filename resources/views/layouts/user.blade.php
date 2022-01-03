@@ -187,7 +187,7 @@
                                     <a href="{{ route('user.notifications.show', $notis->id) }}#{{ $notis->id }}" class="text-reset notification-item">
                                         <div class="d-flex {{ $notis->read_at == null ? 'bg-light' : '' }}">
                                             <div class="flex-shrink-0 me-3">
-                                                <img src="{{ asset($notis->data['image'] ?? 'assets/images/logo-sm.svg') }}" class="rounded-circle avatar-sm" alt="user-pic">
+                                                <img src="{{ asset($notis->data['image'] ?? 'img/avatar.png') }}" class="rounded-circle avatar-sm" alt="user-pic">
                                             </div>
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1">{{ ucwords($notis->data['title']) }}</h6>
