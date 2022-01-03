@@ -45,8 +45,8 @@ class SendLatestInvoiceNotification extends Notification
         ->subject('Latest Invoice')
         ->greeting('Hello '.$this->data['user']['name'])
         ->line('Please find the attached PDF to this email.')
-        ->attachData($this->data['pdf'], $this->data['user']['name'].'.pdf')
-        ->action('Download Statement', url($this->data['pdf']))
+//        ->attachData($this->data['pdf'], $this->data['user']['name'].'.pdf')
+        ->action('Download Statement', url($this->data['link']))
         ->line('Thank you for choosing us!');
     }
 
