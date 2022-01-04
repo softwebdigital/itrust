@@ -160,10 +160,10 @@
                           <!-- /nav -->
                       </div>
                       <!-- /column -->
-                      <aside class="col-lg-4 sidebar mt-8 mt-lg-6">
+                      <div class="col-lg-4 sidebar mt-8 mt-lg-6">
 
                           <!-- /.widget -->
-                          <div class="widget">
+                          <div class="widget mb-3">
                               <h4 class="widget-title mb-3">Popular Posts</h4>
                               <ul class="image-list">
                                   @foreach($popular_blogs as $blog)
@@ -177,7 +177,7 @@
                                               <h6 class="mb-2"> <a class="link-dark" href="{{  route('frontend.blogview', $blog->title) }}">{{ $blog->title }}</a> </h6>
                                               <ul class="post-meta">
                                                   <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
-                                                  <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>3</a></li>
+                                                  <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}</a></li>
                                               </ul>
                                               <!-- /.post-meta -->
                                           </div>
@@ -195,7 +195,7 @@
                                   @endforeach
                               </ul>
                           </div>
-                      </aside>
+                      </div>
                       <!-- /column .sidebar -->
                   </div>
                   <!-- /.row -->
