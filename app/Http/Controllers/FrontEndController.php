@@ -55,7 +55,7 @@ class FrontEndController extends Controller
     {
         $blogCategories = BlogCategory::all();
         $blogs = Blog::orderBy('id', 'desc')->paginate(5);
-        $popular_blogs = Blog::orderBy('id', 'desc')->whereHas('comments')->take(5)->get();
+        $popular_blogs = Blog::orderBy('id', 'desc')->take(5)->get();
 
         $first_blog = Blog::orderBy('id', 'desc')->first();
 
