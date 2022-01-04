@@ -50,7 +50,14 @@
       <!--/.row -->
       <hr class="mt-13 mt-md-15 mb-7" />
       <div class="d-md-flex align-items-center justify-content-between">
-        <p class="mb-2 mb-lg-0">© 2021 Itrust Investment. All rights reserved.</p>
+        <p class="mb-2 mb-lg-0">© 2021 Itrust Investment. All rights reserved.<br>
+            Itrust means Itrust Markets and web experiences with its family of wholly
+          owned subsidiaries which includes Itrust investment, Itrust Securities, and
+          Itrust Crypto.<br>
+          All investments involve risk and loss of capital.<br>
+          Securities trading is offered to self-directed customers by Itrust
+          Investment. Itrust Investment is a member of the Financial Industry
+            Regulatory Authority (FINRA).</p>
         <nav class="nav social text-md-end">
           <!-- <a href="#"><i class="uil uil-facebook-f"></i></a> -->
         </nav>

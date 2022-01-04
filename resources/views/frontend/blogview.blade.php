@@ -148,7 +148,7 @@
                   @foreach($other_blogs as $blog)
                   <div class="item">
                     <article>
-                      <figure class="overlay overlay1 hover-scale rounded mb-5"><a href="{{ route('frontend.blogview', $blog->id) }}"> <img
+                      <figure class="overlay overlay1 hover-scale rounded mb-5"><a href="{{ route('frontend.blogview', $blog->title) }}"> <img
                             src="{{ asset($blog->image) }}" alt="" /></a>
                         <figcaption>
                           <h5 class="from-top mb-0">Read More</h5>
@@ -159,7 +159,7 @@
                           <a href="#" class="hover" rel="category">{{ $blog->category }}</a>
                         </div>
                         <!-- /.post-category -->
-                        <h2 class="post-title h3 mt-1 mb-3"><a class="link-dark" href="{{ route('frontend.blogview', $blog->id) }}">{!! $blog->title !!}</a></h2>
+                        <h2 class="post-title h3 mt-1 mb-3"><a class="link-dark" href="{{ route('frontend.blogview', $blog->title) }}">{!! $blog->title !!}</a></h2>
                       </div>
                       <!-- /.post-header -->
                       <div class="post-footer">
@@ -225,7 +225,7 @@
 
                 <h3 class="mb-3">Would you like to share your thoughts?</h3>
                 <p class="mb-7">Your email address will not be published. Required fields are marked *</p>
-                <form method="POST" action="{{ route('frontend.blog.addcomment', $blog_post->id) }}" class="comment-form">
+                <form method="POST" action="{{ route('frontend.blog.addcomment', $blog_post->title) }}" class="comment-form">
                     @csrf @method('POST')
                   <div class="form-label-group mb-4">
                     <input type="text" required class="form-control" name="name" placeholder="Name*" id="c-name">

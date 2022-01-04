@@ -67,12 +67,12 @@
                       <div class="col-lg-8">
                           <div class="blog classic-view">
                               {{-- @foreach ($blogs as $blog) --}}
-                              @if($first_blog)
+                              @foreach($blogs as $blog)
                                   <article class="post">
                                       <div class="card">
                                           <figure class="card-img-top overlay overlay1 hover-scale">
-                                              <a href="{{  route('frontend.blogview', $first_blog->id) }}">
-                                                  <img src="{{ asset($first_blog->image) }}"  alt="" />
+                                              <a href="{{  route('frontend.blogview', $blog->title) }}">
+                                                  <img src="{{ asset($blog->image) }}"  alt="" />
                                               </a>
                                               <figcaption>
                                                   <h5 class="from-top mb-0">Read More</h5>
@@ -81,24 +81,24 @@
                                           <div class="card-body">
                                               <div class="post-header">
                                                   <div class="post-category text-line">
-                                                      <a href="#" class="hover" rel="category">{{ $first_blog->category }}</a>
+                                                      <a href="#" class="hover" rel="category">{{ $blog->category }}</a>
                                                   </div>
                                                   <!-- /.post-category -->
-                                                  <h2 class="post-title mt-1 mb-0"><a class="link-dark" href="{{  route('frontend.blogview', $first_blog->id) }}">{{ $first_blog->title }}</a></h2>
+                                                  <h2 class="post-title mt-1 mb-0"><a class="link-dark" href="{{  route('frontend.blogview', $blog->title) }}">{{ $blog->title }}</a></h2>
                                               </div>
                                               <!-- /.post-header -->
                                               <div class="post-content">
-                                                  <p>{!! substr($first_blog->body, 0, 200) !!}</p>
+                                                  <p>{!! substr($blog->body, 0, 200) !!}</p>
                                               </div>
                                               <!-- /.post-content -->
                                           </div>
                                           <!--/.card-body -->
                                           <div class="card-footer">
                                               <ul class="post-meta d-flex mb-0">
-                                                  <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($first_blog->created_at)->format('d M Y') }}</span></li>
+                                                  <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
                                                   <li class="post-author"><a href="#"><i class="uil uil-user"></i><span>By Admin</span></a></li>
-                                                  {{-- <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>3<span> Comments</span></a> --}}
-                                                  {{-- <li class="post-likes ms-auto"><a href="#"><i class="uil uil-heart-alt"></i>3</a></li> --}}
+                                                   <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}<span> Comments</span></a>
+                                                   <li class="post-likes ms-auto"><a href="#"><i class="uil uil-heart-alt"></i>0</a></li>
                                               </ul>
                                               <!-- /.post-meta -->
                                           </div>
@@ -106,53 +106,53 @@
                                       </div>
                                       <!-- /.card -->
                                   </article>
-                              @endif
+                              @endforeach
                               {{-- @endforeach --}}
                           </div>
                           <!-- /.blog -->
-                          <div class="blog grid grid-view">
-                              <div class="row isotope gx-md-8 gy-8 mb-8">
-                                  @foreach ($blogs as $blog)
-                                      <article class="item post col-md-6">
-                                          <div class="card">
-                                              <figure class="card-img-top overlay overlay1 hover-scale" style="width: 100%; height:75%;"><a href="{{ route('frontend.blogview', $blog->id) }}"> <img class="img" src="{{ asset($blog->image) }}"
-                                                                                                                                                                                                     alt="" /></a>
-                                                  <figcaption>
-                                                      <h5 class="from-top mb-0">Read More</h5>
-                                                  </figcaption>
-                                              </figure>
-                                              <div class="card-body">
-                                                  <div class="post-header">
-                                                      <div class="post-category text-line">
-                                                          <a href="#" class="hover" rel="category">{{ $blog->category }}</a>
-                                                      </div>
-                                                      <!-- /.post-category -->
-                                                      <h2 class="post-title h3 mt-1 mb-3"><a class="link-dark" href="{{  route('frontend.blogview', $blog->id) }}">{{ $blog->title }}</a></h2>
-                                                  </div>
-                                                  <!-- /.post-header -->
-                                                  <div class="post-content">
-                                                      <p>{!! substr($blog->body, 0, 100) !!}</p>
-                                                      <a href="{{ route('frontend.blogview', $blog->id) }}">Read More</a>
-                                                  </div>
-                                                  <!-- /.post-content -->
-                                              </div>
-                                              <!--/.card-body -->
-                                              <div class="card-footer">
-                                                  <ul class="post-meta d-flex mb-0">
-                                                      <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
-                                                      <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>4</a></li>
-                                                      <li class="post-likes ms-auto"><a href="#"><i class="uil uil-heart-alt"></i>5</a></li>
-                                                  </ul>
-                                                  <!-- /.post-meta -->
-                                              </div>
-                                              <!-- /.card-footer -->
-                                          </div>
-                                          <!-- /.card -->
-                                      </article>
-                                  @endforeach
-                              </div>
-                              <!-- /.row -->
-                          </div>
+{{--                          <div class="blog grid grid-view">--}}
+{{--                              <div class="row isotope gx-md-8 gy-8 mb-8">--}}
+{{--                                  @foreach ($blogs as $blog)--}}
+{{--                                      <article class="item post col-md-6">--}}
+{{--                                          <div class="card">--}}
+{{--                                              <figure class="card-img-top overlay overlay1 hover-scale" style="width: 100%; height:75%;"><a href="{{ route('frontend.blogview', $blog->title) }}"> <img class="img" src="{{ asset($blog->image) }}"--}}
+{{--                                                                                                                                                                                                     alt="" /></a>--}}
+{{--                                                  <figcaption>--}}
+{{--                                                      <h5 class="from-top mb-0">Read More</h5>--}}
+{{--                                                  </figcaption>--}}
+{{--                                              </figure>--}}
+{{--                                              <div class="card-body">--}}
+{{--                                                  <div class="post-header">--}}
+{{--                                                      <div class="post-category text-line">--}}
+{{--                                                          <a href="#" class="hover" rel="category">{{ $blog->category }}</a>--}}
+{{--                                                      </div>--}}
+{{--                                                      <!-- /.post-category -->--}}
+{{--                                                      <h2 class="post-title h3 mt-1 mb-3"><a class="link-dark" href="{{  route('frontend.blogview', $blog->title) }}">{{ $blog->title }}</a></h2>--}}
+{{--                                                  </div>--}}
+{{--                                                  <!-- /.post-header -->--}}
+{{--                                                  <div class="post-content">--}}
+{{--                                                      <p>{!! substr($blog->body, 0, 100) !!}</p>--}}
+{{--                                                      <a href="{{ route('frontend.blogview', $blog->title) }}">Read More</a>--}}
+{{--                                                  </div>--}}
+{{--                                                  <!-- /.post-content -->--}}
+{{--                                              </div>--}}
+{{--                                              <!--/.card-body -->--}}
+{{--                                              <div class="card-footer">--}}
+{{--                                                  <ul class="post-meta d-flex mb-0">--}}
+{{--                                                      <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>--}}
+{{--                                                      <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>4</a></li>--}}
+{{--                                                      <li class="post-likes ms-auto"><a href="#"><i class="uil uil-heart-alt"></i>5</a></li>--}}
+{{--                                                  </ul>--}}
+{{--                                                  <!-- /.post-meta -->--}}
+{{--                                              </div>--}}
+{{--                                              <!-- /.card-footer -->--}}
+{{--                                          </div>--}}
+{{--                                          <!-- /.card -->--}}
+{{--                                      </article>--}}
+{{--                                  @endforeach--}}
+{{--                              </div>--}}
+{{--                              <!-- /.row -->--}}
+{{--                          </div>--}}
 
                       {{ $blogs->links('vendor.pagination.custom') }}
                       <!-- /.blog -->
@@ -169,12 +169,12 @@
                                   @foreach($popular_blogs as $blog)
                                       <li>
                                           <figure class="rounded">
-                                              <a href="{{  route('frontend.blogview', $blog->id) }}">
+                                              <a href="{{  route('frontend.blogview', $blog->title) }}">
                                                   <img class="img" src="{{ asset($blog->image) }}" alt="" />
                                               </a>
                                           </figure>
                                           <div class="post-content">
-                                              <h6 class="mb-2"> <a class="link-dark" href="{{  route('frontend.blogview', $blog->id) }}">{{ $blog->title }}</a> </h6>
+                                              <h6 class="mb-2"> <a class="link-dark" href="{{  route('frontend.blogview', $blog->title) }}">{{ $blog->title }}</a> </h6>
                                               <ul class="post-meta">
                                                   <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
                                                   <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>3</a></li>

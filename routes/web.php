@@ -38,7 +38,7 @@ Route::get('/investor-relations', [FrontEndController::class, 'investor_relation
 Route::get('/our-commitments', [FrontEndController::class, 'commitments'])->name('frontend.commitments');
 Route::get('/about', [FrontEndController::class, 'about'])->name('frontend.about');
 Route::get('/blog', [FrontEndController::class, 'blog'])->name('frontend.blog');
-Route::get('/blog/{id}', [FrontEndController::class, 'blogview'])->name('frontend.blogview');
+Route::get('/blog/{title}', [FrontEndController::class, 'blogview'])->name('frontend.blogview');
 Route::post('/comment/add/{id}', [FrontEndController::class, 'addComment'])->name('frontend.blog.addcomment');
 Route::get('/privacy', [FrontEndController::class, 'privacy'])->name('frontend.privacy');
 Route::get('/terms-and-conditions', [FrontEndController::class, 'terms'])->name('frontend.terms');

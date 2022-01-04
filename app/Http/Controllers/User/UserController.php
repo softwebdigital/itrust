@@ -158,7 +158,7 @@ class UserController extends Controller
         $totalPayouts = $transaction->where('acct_type', 'offshore')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . (now()->format('d') + 1)])->get();
 
         $depositArr = $depositData = $payoutArr = $payoutData = $days = $full_days = [];
-        for ($i = 1; $i <= ((int) now()->format('d')); $i++) {
+        for ($i = 1; $i <= ((int) now()->format('t')); $i++) {
             $days[] = $i;// . now()->format('-M');
             $full_days[] = now()->format('Y-m-') . (strlen($i) < 2 ? '0'.$i : $i);
         }
@@ -168,17 +168,17 @@ class UserController extends Controller
             ->where('status', 'approved')
             ->where('acct_type', 'basic_ira')
             ->where('type', 'deposit')
-            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
             ->sum('actual_amount');
         $with = $user->transactions()
             ->where('status', 'approved')
             ->where('acct_type', 'basic_ira')
             ->where('type', 'payout')
-            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
             ->sum('actual_amount');
         $roi = $user->investments()
             ->where('acct_type', 'basic_ira')
-            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
             ->sum('ROI');
         $oldTotal = ($dep - $with) + $roi;
 
@@ -219,17 +219,17 @@ class UserController extends Controller
             ->where('status', 'approved')
             ->where('acct_type', 'offshore')
             ->where('type', 'deposit')
-            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
             ->sum('actual_amount');
         $with = $user->transactions()
             ->where('status', 'approved')
             ->where('acct_type', 'offshore')
             ->where('type', 'payout')
-            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
             ->sum('actual_amount');
         $roi = $user->investments()
             ->where('acct_type', 'offshore')
-            ->where('created_at', '<=', now()->subDays(31)->format('Y-m-') .now()->subDays(31)->format('t'))
+            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
             ->sum('ROI');
         $oldTotal = ($dep - $with) + $roi;
 

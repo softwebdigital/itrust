@@ -90,6 +90,7 @@ tr:nth-child(even) {
                 <!-- end page title -->
                 <div class="card-body">
                     {{-- {{ dd($array) }} --}}
+{{--                    <div class="d-flex mb-5 justify-content-center"><img src="{{ $array['logo'] }}" class="mx-auto" alt="" height="65"></div>--}}
                     <h3>Latest Invoice for {{ $array['user'] }} </h3>
                     <table>
                         <tr>

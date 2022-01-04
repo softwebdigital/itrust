@@ -430,12 +430,14 @@
                                     <div class="row">
                                         <div class="col-5">
                                             <div class="card p-3 mx-auto" style="min-height: 100px;">
-                                                <img src="{{ $user->passport ? asset($user->passport) : '' }}" alt="" style="max-width: 200px" id="passport-preview">
+                                                <img src="" alt="" style="max-width: 200px" id="passport-preview">
+{{--                                                <img src="{{ $user->passport ? asset($user->passport) : '' }}" alt="" style="max-width: 200px" id="passport-preview">--}}
                                             </div>
                                         </div>
                                         <div class="col-7">
                                             <div class="form-group">
-                                                <input type="file" name="passport" id="passport-file" class="form-control" onchange="imagePreview(this, '#passport-preview', null, '{{ str_replace('\\', '/', asset($user->passport)) }}')">
+                                                <input type="file" name="passport" id="passport-file" class="form-control" onchange="imagePreview(this, '#passport-preview', null, null)">
+{{--                                                <input type="file" name="passport" id="passport-file" class="form-control" onchange="imagePreview(this, '#passport-preview', null, '{{ str_replace('\\', '/', asset($user->passport)) }}')">--}}
                                                 <div class="d-flex justify-content-end mt-3">
                                                     <button onclick="$('#passportVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
                                                             type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapsePassport" aria-expanded="false"

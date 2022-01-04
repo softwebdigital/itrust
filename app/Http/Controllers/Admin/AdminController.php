@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use function Symfony\Component\String\u;
 
 class AdminController extends Controller
 {
@@ -156,7 +157,7 @@ class AdminController extends Controller
         if ($validator->fails()) return back()->withErrors($validator)->withInput();
         $user_id = $request->input('user');
         $user = User::find($user_id);
-        $btc = round(json_decode(file_get_contents(public_path('data.json')))[0]->price, 2);
+        $btc = self::getBTC();
 
         if($type == 'payout'){
             $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
@@ -191,7 +192,6 @@ class AdminController extends Controller
 
     public function editTransaction(Request $request, $id, $type)
     {
-
         $this->validate($request, [
             'user' => 'required',
             'amount' => 'required',
@@ -202,7 +202,7 @@ class AdminController extends Controller
 
         $user_id = $request->input('user');
         $user = User::find($user_id);
-        $btc = round(json_decode(file_get_contents(public_path('data.json')))[0]->price, 2);
+        $btc = self::getBTC();
 
         if($type == 'payout'){
             $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
@@ -217,6 +217,7 @@ class AdminController extends Controller
             $amount = $request['amount'] / ($btc ?? 50000);
 
         $data = [
+            'user_id' => $user_id,
             'method' => $request['method'],
             'amount' => $amount,
             'actual_amount' => (float) $request['amount'],
@@ -230,7 +231,7 @@ class AdminController extends Controller
                  return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
 
 
-        $user->transactions()->where('id', $id)->update($data);
+        Transaction::find($id)->update($data);
         return back()->with('success', ucfirst($type) . ' Updated Successfully');
     }
 
@@ -321,5 +322,10 @@ class AdminController extends Controller
     public function imageUpload()
     {
         logger(\request()->all());
+    }
+
+    public static function getBTC()
+    {
+        return round(json_decode(file_get_contents(public_path('data.json')))[0]->price, 2) ?? 50000;
     }
 }

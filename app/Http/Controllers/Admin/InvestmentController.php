@@ -255,8 +255,7 @@ class InvestmentController extends Controller
             if ($type == 'closed') {
                 $data = [
                     'subject' => 'Investment Closed',
-                    'body' => 'Your '.$investment['type'].' investment of $'.number_format($investment['amount'], 2).
-                        ' with a total profit of $'.number_format($investment['ROI'] + 400.27, 2).' has been closed.',
+                    'body' => '<b>Profit made +$'.number_format($investment['ROI'], 2).' </b>',
                 ];
                 $user->notify(new WebNotification($data));
             }

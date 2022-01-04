@@ -6,8 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\HtmlString;
 
-class SendEmailHistoryOfAccount extends Notification
+class SendRequestWithdrawalNotificationToAdmin extends Notification
 {
     use Queueable;
 
@@ -37,17 +38,13 @@ class SendEmailHistoryOfAccount extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->subject('Account History')
-        ->greeting('Hello '.$this->data['user']['name'])
-        ->line('Please find the attached PDF to this email.')
-        ->attachData($this->data['pdf'], $this->data['user']['name'].'.pdf')
-        ->action('Download Statement', url($this->data['link']))
-        ->line('Thank you for choosing us!');
+            ->subject($this->data['subject'])
+            ->line(new HtmlString($this->data['body']));
     }
 
     /**

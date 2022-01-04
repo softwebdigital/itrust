@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\Investment;
 use App\Models\Settings;
 use App\Models\Transaction;
@@ -170,7 +171,8 @@ class TransactionController extends Controller
         $transactions = $user->transactions()->latest()->get();
         $array = [
             'inv' => $transactions,
-            'user' => $user->email
+            'user' => $user->email,
+            'logo' => asset('img/itrust-logo-large.png')
         ];
 
 
@@ -187,6 +189,7 @@ class TransactionController extends Controller
         $data = [
             'user' => $user,
             'link' => $public,
+            'pdf' => $pdf->output()
         ];
 
         // return $pdf->download('invoice.pdf');
@@ -213,9 +216,10 @@ class TransactionController extends Controller
             'user' => $user->email,
             'type' => $type,
             'withdrawable' => $withdrawable,
-            'data' => $data
+            'data' => $data,
+            'logo' => asset('img/itrust-logo-large.png')
         ];
-        // return view('user.invoice', compact('array'));
+//         return view('user.invoice', compact('array'));
 
 
         // // share data to view
@@ -231,6 +235,7 @@ class TransactionController extends Controller
         $data = [
             'user' => $user,
             'link' => $public,
+            'pdf' => $pdf->output()
         ];
 
         // return $pdf->download('invoice.pdf');
@@ -299,17 +304,18 @@ class TransactionController extends Controller
                 $mail['number'] = $setting['acct_no'];
                 $mail['type'] = 'bank';
 
+                $mailBody = '<p>A Bank deposit request of $'.number_format($request['amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
         } elseif ($request['method'] == 'bitcoin' && $request['btc_amount'] > 0) {
-            $amount = round((float) $request['btc_amount'] / 44000, 8);
+            $amount = round((float) $request['btc_amount'] / AdminController::getBTC(), 8);
             if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
                 // $mail['body'] = '<p>Your deposit of '.$amount.'BTC was successful. Your deposit would be confirmed in a couple of minutes. </p>';
-                $mail['body'] = 'You’ve requested a Bitcoin deposit of '.$amount.', kindly make a
-                payment of ($'.$amount.'/btc)) to '.$user->btc_wallet;
+                $mail['body'] = 'You’ve requested a Bitcoin deposit of '.$amount.', kindly make a payment of ($'.$amount.'/btc)) to '.$user->btc_wallet;
                 $mail['type'] = 'btc';
+                $mailBody = '<p>A Bitcoin deposit request of $'.number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
@@ -318,6 +324,14 @@ class TransactionController extends Controller
 
         // dd($mail);
         MailController::sendRequestDepositNotification($user, $mail);
+        $admin = new User;
+        $admin['email'] = env('TRANX_EMAIL');
+        $adminMail = [
+            'subject' => 'Deposit Request',
+            'body' => $mailBody,
+            'btc_wallet' => $request['btc_wallet']
+        ];
+        MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
         return redirect()->route('user.transactions')->with($msg);
     }
 
@@ -381,8 +395,8 @@ class TransactionController extends Controller
                 $msg = 'Withdrawal successful and is pending confirmation';
                 // $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
                 $body = '<p>Your Bank withdrawal request of $'.number_format($request['bank_amount'], 2).' has been received
-                and is in process
-                We will update the status of your transaction in less than 2/3 working days</p>';
+                and is in process. We will update the status of your transaction in less than 2/3 working days</p>';
+                $mailBody = '<p>A Bank withdrawal request of $'.number_format($request['bank_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
@@ -398,13 +412,13 @@ class TransactionController extends Controller
                 $withdrawable = $ira;
                 if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
             }
-            $amount = round((float) $request['w_amount'] / 44000, 8);
+            $amount = round((float) $request['w_amount'] / AdminController::getBTC(), 8);
             if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Withdrawal successful and is pending confirmation';
                 // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
                 $body = '<p>Your Bitcoin withdrawal request of $'.(float) $request['w_amount'].' has been received
-                and is in process
-                We will update the status of your transaction in  less than 24hrs</p>';
+                and is in process. We will update the status of your transaction in  less than 24hrs</p>';
+                $mailBody = '<p>A Bitcoin withdrawal request of $'.(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
@@ -417,8 +431,17 @@ class TransactionController extends Controller
             'body' => $body,
             'btc_wallet' => $request['btc_wallet']
         ];
+
+        $adminMail = [
+            'subject' => 'Withdrawal Request',
+            'body' => $mailBody,
+            'btc_wallet' => $request['btc_wallet']
+        ];
         // dd($user, $mail);
         MailController::sendRequestWithdrawalNotification($user, $mail);
+        $admin = new User;
+        $admin['email'] = env('TRANX_EMAIL');
+        MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
         return redirect()->route('user.transactions')->with($msg);
     }
 
