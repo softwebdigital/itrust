@@ -71,7 +71,7 @@
                                   <article class="post">
                                       <div class="card">
                                           <figure class="card-img-top overlay overlay1 hover-scale">
-                                              <a href="{{  route('frontend.blogview', $blog->title) }}">
+                                              <a href="{{  route('frontend.blogview', $blog->slug) }}">
                                                   <img src="{{ asset($blog->image) }}"  alt="" />
                                               </a>
                                               <figcaption>
@@ -84,7 +84,7 @@
                                                       <a href="#" class="hover" rel="category">{{ $blog->category }}</a>
                                                   </div>
                                                   <!-- /.post-category -->
-                                                  <h2 class="post-title mt-1 mb-0"><a class="link-dark" href="{{  route('frontend.blogview', $blog->title) }}">{{ $blog->title }}</a></h2>
+                                                  <h2 class="post-title mt-1 mb-0"><a class="link-dark" href="{{  route('frontend.blogview', $blog->slug) }}">{{ $blog->title }}</a></h2>
                                               </div>
                                               <!-- /.post-header -->
                                               <div class="post-content">
@@ -169,12 +169,12 @@
                                   @foreach($popular_blogs as $blog)
                                       <li>
                                           <figure class="rounded">
-                                              <a href="{{  route('frontend.blogview', $blog->title) }}">
+                                              <a href="{{  route('frontend.blogview', $blog->slug) }}">
                                                   <img class="img" src="{{ asset($blog->image) }}" alt="" />
                                               </a>
                                           </figure>
                                           <div class="post-content">
-                                              <h6 class="mb-2"> <a class="link-dark" href="{{  route('frontend.blogview', $blog->title) }}">{{ $blog->title }}</a> </h6>
+                                              <h6 class="mb-2"> <a class="link-dark" href="{{  route('frontend.blogview', $blog->slug) }}">{{ $blog->title }}</a> </h6>
                                               <ul class="post-meta">
                                                   <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
                                                   <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}</a></li>

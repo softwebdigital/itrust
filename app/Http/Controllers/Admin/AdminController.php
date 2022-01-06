@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\Settings;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\WebNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -105,6 +106,20 @@ class AdminController extends Controller
     public function deleteUser(User $user)
     {
         if ($user->delete()) return back()->with('success', 'User deleted successfully');
+        return back()->with('error', 'An error occurred, try again.');
+    }
+
+    public function approveID(User $user, $action): RedirectResponse
+    {
+        if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
+        $data = [
+            'subject' => 'Document '.$action,
+            'body' => 'Your means of identification has been <b>'.$action.'</b>.'
+        ];
+        if ($user->update(['id_approved' => $action == 'approved' ? '1' : '2', 'id_date_approved' => now()])) {
+            $user->notify(new WebNotification($data));
+            return back()->with('success', 'User document ' . $action . ' successfully');
+        }
         return back()->with('error', 'An error occurred, try again.');
     }
 

@@ -117,6 +117,7 @@ class UserController extends Controller
         $news = News::query()->orderByDesc('date_range')->get();
         $offshoreData = [];
         $iraData = [];
+        $slot = request('slot') == '30' ? 30 : 7;
 
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
         $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
@@ -125,7 +126,7 @@ class UserController extends Controller
         $open_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
         // $closed_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
         $withdrawable = ($deposits - $payouts - $open_inv) + $closed_roi;
-        $categories = $data = $days = [];
+        $data = [];
         $assets = DB::table('investments')
             ->where('user_id', '=', $user->id)
             ->where('status', '=', 'open')
@@ -133,7 +134,6 @@ class UserController extends Controller
             ->groupBy('type')
             ->get();
         $cash = $withdrawable;
-        $transaction = Transaction::query();
         $investment = Investment::query();
         $total_assets_amount = $investment->where(['user_id' => Auth::id(), 'status' => 'open'])->sum('amount');
         $total_assets_roi = $investment->where(['user_id' => Auth::id(), 'status' => 'open'])->sum('ROI');
@@ -144,119 +144,92 @@ class UserController extends Controller
         $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_roi = $user->ira_roi()->sum('ROI');
-        $ira_amount = $user->ira_roi()->sum('amount');
-        $offshore_amount = $user->offshore_roi()->sum('amount');
         $offshore_roi = $user->offshore_roi()->sum('ROI');
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
-        // dd($ira, $offshore);
-        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+        $days = [];
+        for ($i = 1; $i <= $slot; $i++)
+            $days[] = $i == $slot ? now()->format('d') : now()->subDays($slot - $i)->format('d');// . now()->format('-M');
 
-        $deposits = $transaction->where('acct_type', 'basic_ira')->where('status', '!=', 'declined')->sum('actual_amount');
-        $totalDeposits = $transaction->where('acct_type', 'basic_ira')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . (now()->format('d') + 1)])->get();
-        $payouts = $transaction->where('acct_type', 'offshore')->where('status', '!=', 'declined')->sum('actual_amount');
-        $totalPayouts = $transaction->where('acct_type', 'offshore')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . (now()->format('d') + 1)])->get();
+        foreach ($days as $day) {
+            $slot--;
+            if ($slot > 0) $day = now()->subDays($slot)->addDay()->format('Y-m-d');
+            else $day = now()->addDay()->format('Y-m-d');
 
-        $depositArr = $depositData = $payoutArr = $payoutData = $days = $full_days = [];
-        for ($i = 1; $i <= ((int) now()->format('t')); $i++) {
-            $days[] = $i;// . now()->format('-M');
-            $full_days[] = now()->format('Y-m-') . (strlen($i) < 2 ? '0'.$i : $i);
-        }
-        $user_id = $user->id;
-
-        $dep = $user->transactions()
-            ->where('status', 'approved')
-            ->where('acct_type', 'basic_ira')
-            ->where('type', 'deposit')
-            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
-            ->sum('actual_amount');
-        $with = $user->transactions()
-            ->where('status', 'approved')
-            ->where('acct_type', 'basic_ira')
-            ->where('type', 'payout')
-            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
-            ->sum('actual_amount');
-        $roi = $user->investments()
-            ->where('acct_type', 'basic_ira')
-            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
-            ->sum('ROI');
-        $oldTotal = ($dep - $with) + $roi;
-
-        foreach ($full_days as $key => $full_day) {
             $dep = $user->transactions()
                 ->where('status', 'approved')
                 ->where('acct_type', 'basic_ira')
                 ->where('type', 'deposit')
-                ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
+                ->where('created_at', $day)
+                ->sum('actual_amount');
+            $oldDep = $user->transactions()
+                ->where('status', 'approved')
+                ->where('acct_type', 'basic_ira')
+                ->where('type', 'deposit')
+                ->where('created_at', '<=', $day)
                 ->sum('actual_amount');
             $with = $user->transactions()
                 ->where('status', 'approved')
                 ->where('acct_type', 'basic_ira')
                 ->where('type', 'payout')
-                ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
+                ->where('created_at', $day)
+                ->sum('actual_amount');
+            $oldWith = $user->transactions()
+                ->where('status', 'approved')
+                ->where('acct_type', 'basic_ira')
+                ->where('type', 'payout')
+                ->where('created_at', '<=', $day)
                 ->sum('actual_amount');
             $roi = $user->investments()
                 ->where('acct_type', 'basic_ira')
-                ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
+                ->where('created_at', $day)
+                ->sum('ROI');
+            $oldRoi = $user->investments()
+                ->where('acct_type', 'basic_ira')
+                ->where('created_at', '<=', $day)
                 ->sum('ROI');
             $total = ($dep - $with) + $roi;
-            $depositArr[$key] = round($total + $oldTotal, 2);
-        }
+            $oldTotal = ($oldDep - $oldWith) + $oldRoi;
+            $iraData[] = round($total + $oldTotal, 2);
 
-        $amount = self::formatAmount($deposits);
-        $depositAmount = $amount[0];
-        $depositUnit = $amount[1];
-        foreach ($depositArr as $category) $iraData[] = $category;
-
-        $investments = 0;
-        $amount = self::formatAmount($investments);
-        $investedAmount = $amount[0];
-        $investedUnit = $amount[1];
-
-
-
-        $dep = $user->transactions()
-            ->where('status', 'approved')
-            ->where('acct_type', 'offshore')
-            ->where('type', 'deposit')
-            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
-            ->sum('actual_amount');
-        $with = $user->transactions()
-            ->where('status', 'approved')
-            ->where('acct_type', 'offshore')
-            ->where('type', 'payout')
-            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
-            ->sum('actual_amount');
-        $roi = $user->investments()
-            ->where('acct_type', 'offshore')
-            ->where('created_at', '<=', now()->subMonth()->format('Y-m-') .now()->subMonth()->format('t'))
-            ->sum('ROI');
-        $oldTotal = ($dep - $with) + $roi;
-
-        foreach ($full_days as $key => $full_day) {
-            $offshore_dep = $user->transactions()
+            $dep = $user->transactions()
                 ->where('status', 'approved')
                 ->where('acct_type', 'offshore')
                 ->where('type', 'deposit')
-                ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
+                ->where('created_at', $day)
                 ->sum('actual_amount');
-            $offshore_with = $user->transactions()
+            $oldDep = $user->transactions()
+                ->where('status', 'approved')
+                ->where('acct_type', 'offshore')
+                ->where('type', 'deposit')
+                ->where('created_at', '<=', $day)
+                ->sum('actual_amount');
+            $with = $user->transactions()
                 ->where('status', 'approved')
                 ->where('acct_type', 'offshore')
                 ->where('type', 'payout')
-                ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
+                ->where('created_at', $day)
+                ->sum('actual_amount');
+            $oldWith = $user->transactions()
+                ->where('status', 'approved')
+                ->where('acct_type', 'offshore')
+                ->where('type', 'payout')
+                ->where('created_at', '<=', $day)
                 ->sum('actual_amount');
             $roi = $user->investments()
                 ->where('acct_type', 'offshore')
-                ->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . ($key + 2)])
+                ->where('created_at', $day)
                 ->sum('ROI');
-            $total = ($offshore_dep - $offshore_with) + $roi;
-            $payoutArr[$key] = round($total + $oldTotal, 2, );
+            $oldRoi = $user->investments()
+                ->where('acct_type', 'offshore')
+                ->where('created_at', '<=', $day)
+                ->sum('ROI');
+            $total = ($dep - $with) + $roi;
+            $oldTotal = ($oldDep - $oldWith) + $oldRoi;
+
+            $offshoreData[] = round($total + $oldTotal, 2);
         }
-        foreach ($payoutArr as $arr) $offshoreData[] = $arr;
-        $amount = self::formatAmount($payouts);
-        $payoutAmount = $amount[0];
-        $payoutUnit = $amount[1];
+
         return view('user.portfolio', compact('news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
     }
 
@@ -296,9 +269,15 @@ class UserController extends Controller
             return response()->json(['msg' => 'Invalid file option, refresh the page and try again'], 400);
         if ($file = $request->file('file')) {
             $loc = $file->move('files/' . $request['type'], time() . mt_rand(100, 999) . '.' . $file->getClientOriginalExtension());
-            if ($request['type'] == 'passport') $user['passport'] = $loc;
+            if ($request['type'] == 'passport') {
+                $user['passport'] = $loc;
+                $user['id_approved'] = '0';
+            }
             if ($request['type'] == 'drivers_license') $user['drivers_license'] = $loc;
-            if ($request['type'] == 'state_id') $user['state_id'] = $loc;
+            if ($request['type'] == 'state_id') {
+                $user['state_id'] = $loc;
+                $user['state_id_approved'] = '0';
+            }
         }
         if ($user->update())
             return response()->json(['msg' => 'Document uploaded successfully', 'data' => 'Uploaded']);
@@ -344,6 +323,7 @@ class UserController extends Controller
         $notifications = $user->notifications;
         if ($notifications->count() < 1) return back();
         $type = 'all';
+        $notifications->markAsRead();
         return view('user.notifications', compact('notifications', 'type'));
     }
 

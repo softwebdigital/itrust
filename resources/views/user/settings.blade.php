@@ -27,7 +27,7 @@
                 <a class="nav-link mb-2 active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Investment Profile</a>
                 <a class="nav-link mb-2" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Investing</a>
                 <a class="nav-link mb-2" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Security and Privacy</a>
-                <a class="nav-link mb-2" id="v-pills-documents-tab" data-bs-toggle="pill" href="#v-pills-documents" role="tab" aria-controls="v-pills-documents" aria-selected="false">Documents</a>
+                <a class="nav-link mb-2" id="v-pills-documents-tab" data-bs-toggle="pill" href="#v-pills-documents" role="tab" aria-controls="v-pills-documents" aria-selected="false">Identity Documents</a>
             </div>
         </div><!-- end col -->
         <div class="col-md-9 col-sm-8">
@@ -421,7 +421,7 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingPassport">
                                 <button onclick="$('#passportVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#flush-collapsePassport" aria-expanded="false" aria-controls="flush-collapsePassport">
+                                        data-bs-target="#flush-collapsePassport" aria-expanded="false" aria-controls="flush-collapsePassport" id="id-btn">
                                         ID/ Driver's License / Passport <span id="passportVal" style="position: absolute; right: 15px">{{ $user->passport ? 'Uploaded' : '---' }}</span>
                                 </button>
                             </h2>
@@ -483,7 +483,7 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingStateID">
                                 <button onclick="$('#stateIDVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#flush-collapseStateID" aria-expanded="false" aria-controls="flush-collapseStateID">
+                                        data-bs-target="#flush-collapseStateID" aria-expanded="false" aria-controls="flush-collapseStateID" id="state-btn">
                                         Proof Of Address <span id="stateIDVal" style="position: absolute; right: 15px">{{ $user->state_id ? 'Uploaded' : '---' }}</span>
                                 </button>
                             </h2>
@@ -492,12 +492,14 @@
                                     <div class="row">
                                         <div class="col-5">
                                             <div class="card p-3 mx-auto" style="min-height: 100px;">
-                                                <img src="{{ $user->state_id ? asset($user->state_id) : '' }}" alt="" style="max-width: 200px" id="state_id-preview">
+{{--                                                <img src="{{ $user->state_id ? asset($user->state_id) : '' }}" alt="" style="max-width: 200px" id="state_id-preview">--}}
+                                                <img src="" alt="" style="max-width: 200px" id="state_id-preview">
                                             </div>
                                         </div>
                                         <div class="col-7">
                                             <div class="form-group">
-                                                <input type="file" name="state_id" id="state_id-file" class="form-control" onchange="imagePreview(this, '#state_id-preview', null, '{{ str_replace('\\', '/', asset($user->state_id)) }}')">
+                                                <input type="file" name="state_id" id="state_id-file" class="form-control" onchange="imagePreview(this, '#state_id-preview', null, null)">
+{{--                                                <input type="file" name="state_id" id="state_id-file" class="form-control" onchange="imagePreview(this, '#state_id-preview', null, '{{ str_replace('\\', '/', asset($user->state_id)) }}')">--}}
                                                 <div class="d-flex justify-content-end mt-3">
                                                     <button onclick="$('#stateIDVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
                                                             type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseStateID" aria-expanded="false"

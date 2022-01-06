@@ -367,6 +367,12 @@
 
                 <div class="col-md-12">
                     <div class="card card-h-100">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-end">
+                                <a href="{{ route('user.portfolio') }}" class="btn btn-small btn-outline-primary mx-1 {{request('slot') != '30' ? 'active' : ''}}">7d</a>
+                                <a href="{{ route('user.portfolio') }}?slot=30" class="btn btn-small btn-outline-primary mx-1 {{request('slot') == '30' ? 'active' : ''}}">30d</a>
+                            </div>
+                        </div>
                         <!-- card body -->
                         <div class="card-body">
                             <div class="row align-items-center">

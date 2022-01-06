@@ -62,9 +62,9 @@ class FrontEndController extends Controller
         return view('frontend.blog', compact('blogs', 'blogCategories', 'first_blog', 'popular_blogs'));
     }
 
-    public function blogview(Request $request, $title)
+    public function blogview(Request $request, Blog $blog)
     {
-        $blog_post = Blog::where('title', $title)->first();
+        $blog_post = $blog;
         $total_comments = $blog_post->comments()->count();
         $comments = $blog_post->comments()->paginate(5);
         if ($request->ajax()){
@@ -77,7 +77,7 @@ class FrontEndController extends Controller
     }
 
 
-    public function addComment(Request $request, $title)
+    public function addComment(Request $request, Blog $blog)
     {
         // dd($request->all(), $blog_id);
         $validator = Validator::make($request->all(), [
@@ -88,16 +88,15 @@ class FrontEndController extends Controller
         // dd($validator->errors());
         if ($validator->fails()) return back()->withInput()->withErrors($validator);
 
-        $blog = Blog::where('title', $title)->first();
         $comment = new Comment();
-        $comment->name = $request->input('name');
-        $comment->email = $request->input('email');
-        $comment->comment = $request->input('comment');
-        $comment->post_id = $blog->id;
+        $comment['name'] = $request->input('name');
+        $comment['email'] = $request->input('email');
+        $comment['comment'] = $request->input('comment');
+        $comment['post_id'] = $blog['id'];
 
         if ($comment->save()){
             // Session::flash('success', 'Comment Successfully Added);
-            return redirect()->route('frontend.blogview', $blog->title)->with('success', 'Comment Successfully Added');}
+            return redirect()->route('frontend.blogview', $blog['slug'])->with('success', 'Comment Successfully Added');}
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }
 

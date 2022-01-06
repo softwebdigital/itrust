@@ -63,10 +63,26 @@
                         </div>
                     </div>
                 @else
-                    @if ($user->status != 'approved')
-                        <div class="card border border-success">
+                    @if ($user->id_approved == 0)
+                        <div class="card border border-warning">
                             <div class="card-body">
-                                <h6>Documents Uploaded</h6>
+                                <h6>Document uploaded and pending approval</h6>
+                            </div>
+                        </div>
+                    @elseif ($user->id_approved == 1)
+                        @if($user->id_date_approved && \Carbon\Carbon::make($user->id_date_approved)->addDay()->gt(now()))
+                            <div class="card border border-success">
+                                <div class="card-body">
+                                    <h6>Document Approved</h6>
+                                </div>
+                            </div>
+                        @endif
+                    @elseif($user->id_approved == 2)
+                        <div class="card border border-danger">
+                            <div class="card-body">
+                                <h6>Document Declined</h6>
+                                <a href="javascript:void(0)" data-bs-toggle="modal"
+                                   data-bs-target=".bs-example-modal-center">Re-Upload Document</a>
                             </div>
                         </div>
                     @endif
@@ -464,7 +480,7 @@
        function updateModalTitle(id) {
            const value = $('input[type="radio"][name="formRadios"]:checked').val()
            // console.log(value);
-           if (value == 'Passport') {
+           if (value === 'Passport') {
                $(id).html("Upload a photo of your ID/ Driver's License / Passport")
            } else {
                $(id).html("Upload a photo of your Proof of Address")

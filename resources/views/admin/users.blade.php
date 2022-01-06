@@ -54,16 +54,16 @@
                             <a class="dropdown-item" href="{{ route('admin.users.show', $user->id) }}">View User</a>
 
                             @if($user->btc_wallet != null)
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
                             @else
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Add Wallet</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Add Wallet</a>
                             @endif
                             @if($user->isWaitingApproval())
-                            @if($user->btc_wallet != '')
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
-                            @else
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approvewithWallet-{{ $user->id }}">Approve User</a>
-                            @endif
+                                @if($user->btc_wallet != '')
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
+                                @else
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approvewithWallet-{{ $user->id }}">Approve User</a>
+                                @endif
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-decline-{{ $user->id }}">Decline User</a>
                             @endif
                             @if($user->isDeclined())

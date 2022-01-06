@@ -38,8 +38,8 @@ Route::get('/investor-relations', [FrontEndController::class, 'investor_relation
 Route::get('/our-commitments', [FrontEndController::class, 'commitments'])->name('frontend.commitments');
 Route::get('/about', [FrontEndController::class, 'about'])->name('frontend.about');
 Route::get('/blog', [FrontEndController::class, 'blog'])->name('frontend.blog');
-Route::get('/blog/{title}', [FrontEndController::class, 'blogview'])->name('frontend.blogview');
-Route::post('/comment/add/{id}', [FrontEndController::class, 'addComment'])->name('frontend.blog.addcomment');
+Route::get('/blog/{blog:slug}', [FrontEndController::class, 'blogview'])->name('frontend.blogview');
+Route::post('/comment/add/{blog:slug}', [FrontEndController::class, 'addComment'])->name('frontend.blog.addcomment');
 Route::get('/privacy', [FrontEndController::class, 'privacy'])->name('frontend.privacy');
 Route::get('/terms-and-conditions', [FrontEndController::class, 'terms'])->name('frontend.terms');
 Route::get('/faq', [FrontEndController::class, 'faq'])->name('frontend.faq');
@@ -49,7 +49,7 @@ Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('front
 
 Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('image.upload');
 
-Route::get('/cap', UserController::marketCap())->name('cap');
+Route::get('/cap', [UserController::class, 'marketCap'])->name('cap');
 
 Auth::routes(['verify' => true]);
 Route::get('/email/change', [VerificationController::class, 'changeEmail']);
@@ -124,6 +124,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::post('/users/invest/new', [InvestmentController::class, 'newInvestUser'])->name('admin.users.newInvest');
     Route::post('/users/update/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/users/delete/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::post('/users/{user}/documents/{action}', [AdminController::class, 'approveID'])->name('admin.users.documents.action');
 
     Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');
     Route::put('/deposits/{transaction}/{action}', [TransactionController::class, 'depositAction'])->name('admin.deposits.action');

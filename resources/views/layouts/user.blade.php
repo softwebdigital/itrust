@@ -203,7 +203,7 @@
                             @if($user->notifications()->count() > 2)
                                 <div class="p-2 border-top d-grid">
                                     <a class="btn btn-sm btn-link font-size-14 text-center" href="{{ route('user.notifications') }}">
-                                        <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span>
+                                        <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View All</span>
                                     </a>
                                 </div>
                             @endif
@@ -698,6 +698,11 @@
         navigator.vendor,
         window.opera
     ];
+
+    $(document).ready(() => {
+        $('#id-btn').click();
+        $('#state-btn').click();
+    })
 
     function matchItem(string, data) {
         let i, j = 0, html = '', regex, regexv, match, matches, version;

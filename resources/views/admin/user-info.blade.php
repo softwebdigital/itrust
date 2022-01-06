@@ -77,6 +77,23 @@
                 <div class="text-center user-info">
                     @if($user->passport != null)
                         <img src="{{ asset($user->passport) }}" width="200" height="" alt="avatar">
+                        <div class="my-2 text-center">
+                            @if($user->id_approved == '0')
+                                <p><b>status: </b> <span class="badge bg-warning">pending</span></p>
+                            @elseif($user->id_approved == '1')
+                                <p><b>status: </b> <span class="badge bg-success">approved</span></p>
+                            @elseif($user->id_approved == '2')
+                                <p><b>status: </b> <span class="badge bg-danger">declined</span></p>
+                            @endif
+                        </div>
+                        <div class="d-flex mt-2 justify-content-center">
+                            <form action="{{ route('admin.users.documents.action', [$user->id, 'approved']) }}" method="post">@csrf
+                                <button type="submit" class="btn btn-success mx-2">Approve</button>
+                            </form>
+                            <form action="{{ route('admin.users.documents.action', [$user->id, 'declined']) }}" method="post">@csrf
+                                <button type="submit" class="btn btn-danger mx-2">Decline</button>
+                            </form>
+                        </div>
                     @else
                         <p>Not Provided Yet</p>
                     @endif
