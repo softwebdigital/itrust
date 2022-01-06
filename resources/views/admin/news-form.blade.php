@@ -81,6 +81,13 @@
             'remove':  'Remove'
         }
     });
-    new FroalaEditor('textarea#froala-editor')
+    new FroalaEditor('textarea#froala-editor', {
+        // Set the image upload URL.
+        imageUploadURL: '/api/image/upload2',
+        // imageUploadURL: 'image_upload.php',
+        imageUploadParams: {
+            id: 'my_editor'
+        }
+    })
 </script>
 @endsection

@@ -334,9 +334,20 @@ class AdminController extends Controller
         return [$price, $unit];
     }
 
-    public function imageUpload()
+    public function imageUpload(): JsonResponse
     {
-        logger(\request()->all());
+        $file = request()->file('file');
+        $name = time().'_'.$file->getClientOriginalName();
+        $loc = $file->move('uploads/blog', $name);
+        return response()->json(['link' => asset($loc)]);
+    }
+
+    public function imageUpload2(): JsonResponse
+    {
+        $file = request()->file('file');
+        $name = time().'_'.$file->getClientOriginalName();
+        $loc = $file->move('uploads/news', $name);
+        return response()->json(['link' => asset($loc)]);
     }
 
     public static function getBTC()
