@@ -66,7 +66,7 @@
             <div class="text-danger" role="alert" id="category-err"></div>
         </div>
         <div class="form-group mb-3">
-            <label for="ckeditor-classic" class="form-label">Body <strong class="text-danger">*</strong></label>
+            <label for="summernote" class="form-label">Body <strong class="text-danger">*</strong></label>
             <textarea name="body" cols="30" rows="10" id="summernote" class="form-control form-control-lg @error('body') is-invalid @enderror">{!! old('body') ?? ($edit ? $blog['body'] : '') !!}</textarea>
             @error('body') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
             <div class="text-danger" role="alert" id="body-err"></div>
@@ -78,7 +78,7 @@
             <div class="text-danger" role="alert" id="image-err"></div>
         </div>
         <div class="d-flex justify-content-center mb-3">
-            <button type="submit" class="btn btn-primary">{{ $edit ? 'Update' : 'Create' }}</button>
+            <button type="button" class="btn btn-primary" onclick="uploadBlog()">{{ $edit ? 'Update' : 'Create' }}</button>
         </div>
     </form>
 </div>
@@ -121,7 +121,7 @@
         const bodyError = $('#body-err')
         const bodyVal = body.val()
         const image = $('input.dropify')[0].files
-        const imageError = $('#image-err')
+        // const imageError = $('#image-err')
 
         if (titleVal === '')
             appendError(title, titleError)
