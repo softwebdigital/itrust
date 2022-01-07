@@ -78,7 +78,7 @@
             <div class="text-danger" role="alert" id="image-err"></div>
         </div>
         <div class="d-flex justify-content-center mb-3">
-            <button type="button" class="btn btn-primary" onclick="uploadBlog()">{{ $edit ? 'Update' : 'Create' }}</button>
+            <button type="submit" class="btn btn-primary">{{ $edit ? 'Update' : 'Create' }}</button>
         </div>
     </form>
 </div>
