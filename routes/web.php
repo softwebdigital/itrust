@@ -63,8 +63,6 @@ Route::get('/admin/password/email', [AdminForgotPasswordController::class, 'show
 Route::post('/admin/password/email', [AdminForgotPasswordController::class, 'sendResetLinkEmail'])->name('admin.password.email');
 Route::get('/admin/password/reset/{token}', [AdminResetPasswordController::class, 'showResetForm'])->name('admin.password.update');
 Route::post('/admin/password/reset', [AdminResetPasswordController::class, 'reset'])->name('admin.password.update');
-Route::post('/blogs/store', [BlogController::class, 'store'])->name('admin.blog.store');
-Route::post('/blogs/{blog}/update', [BlogController::class, 'update'])->name('admin.blog.update');
 
 
 Route::get('/lock', [UserController::class, 'lock'])->name('user.lock');
@@ -147,8 +145,8 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/blogs', [BlogController::class, 'index'])->name('admin.blog');
     Route::get('/blogs/add', [BlogController::class, 'create'])->name('admin.blog.create');
     Route::get('/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('admin.blog.edit');
-//    Route::post('/blogs/store', [BlogController::class, 'store'])->name('admin.blog.store');
-//    Route::post('/blogs/{blog}/update', [BlogController::class, 'update'])->name('admin.blog.update');
+    Route::post('/blogs/store', [BlogController::class, 'store'])->name('admin.blog.store');
+    Route::post('/blogs/{blog}/update', [BlogController::class, 'update'])->name('admin.blog.update');
     Route::delete('/blogs/{blog}/destroy', [BlogController::class, 'destroy'])->name('admin.blog.destroy');
 
     Route::get('/blogcategory', [BlogCategoryController::class, 'index'])->name('admin.blogCategory');

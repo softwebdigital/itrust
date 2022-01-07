@@ -16,8 +16,8 @@
 
 @section('content')
 <div class="mx-auto col-md-10">
-    <form class="form" method="post" enctype="multipart/form-data" action="#">
-{{--    <form class="form" method="post" enctype="multipart/form-data" action="{{ $edit ? route('admin.blog.update', $blog->id) : route('admin.blog.store') }}">--}}
+{{--    <form class="form" method="post" enctype="multipart/form-data" action="#">--}}
+    <form class="form" method="post" enctype="multipart/form-data" action="{{ $edit ? route('admin.blog.update', $blog->id) : route('admin.blog.store') }}">
         @csrf
         <div class="form-group mb-3">
             <label for="title" class="form-label">Title <strong class="text-danger">*</strong></label>
@@ -79,7 +79,7 @@
             <div class="text-danger" role="alert" id="image-err"></div>
         </div>
         <div class="d-flex justify-content-center mb-3">
-            <button type="button" class="btn btn-primary" onclick="uploadBlog()">{{ $edit ? 'Update' : 'Create' }}</button>
+            <button type="submit" class="btn btn-primary">{{ $edit ? 'Update' : 'Create' }}</button>
         </div>
     </form>
 </div>
