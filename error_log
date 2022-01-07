@@ -1,0 +1,15 @@
+[06-Jan-2022 16:57:17 UTC] PHP Deprecated:  Return type of Symfony\Component\Console\Helper\HelperSet::getIterator() should either be compatible with IteratorAggregate::getIterator(): Traversable, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in phar:///opt/cpanel/composer/bin/composer/vendor/symfony/console/Helper/HelperSet.php on line 112
+[06-Jan-2022 16:58:42 UTC] PHP Deprecated:  Return type of Symfony\Component\Console\Helper\HelperSet::getIterator() should either be compatible with IteratorAggregate::getIterator(): Traversable, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in phar:///opt/cpanel/composer/bin/composer/vendor/symfony/console/Helper/HelperSet.php on line 112
+[06-Jan-2022 17:14:51 UTC] PHP Deprecated:  Return type of Symfony\Component\Console\Helper\HelperSet::getIterator() should either be compatible with IteratorAggregate::getIterator(): Traversable, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in phar:///opt/cpanel/composer/bin/composer/vendor/symfony/console/Helper/HelperSet.php on line 112
+[06-Jan-2022 17:23:23 UTC] PHP Parse error:  syntax error, unexpected '|', expecting variable (T_VARIABLE) in /home/itrubzcw/itrust/vendor/psr/log/src/LoggerInterface.php on line 30
+[06-Jan-2022 17:23:23 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[06-Jan-2022 17:23:23 UTC] PHP Parse error:  syntax error, unexpected '|', expecting variable (T_VARIABLE) in /home/itrubzcw/itrust/vendor/psr/log/src/LoggerInterface.php on line 30
+[06-Jan-2022 17:23:23 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[06-Jan-2022 17:23:54 UTC] PHP Parse error:  syntax error, unexpected '|', expecting variable (T_VARIABLE) in /home/itrubzcw/itrust/vendor/psr/log/src/LoggerInterface.php on line 30
+[06-Jan-2022 17:23:54 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[06-Jan-2022 17:23:54 UTC] PHP Parse error:  syntax error, unexpected '|', expecting variable (T_VARIABLE) in /home/itrubzcw/itrust/vendor/psr/log/src/LoggerInterface.php on line 30
+[06-Jan-2022 17:23:54 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[06-Jan-2022 17:25:40 UTC] PHP Parse error:  syntax error, unexpected '|', expecting variable (T_VARIABLE) in /home/itrubzcw/itrust/vendor/psr/log/src/LoggerInterface.php on line 30
+[06-Jan-2022 17:25:40 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[06-Jan-2022 17:25:40 UTC] PHP Parse error:  syntax error, unexpected '|', expecting variable (T_VARIABLE) in /home/itrubzcw/itrust/vendor/psr/log/src/LoggerInterface.php on line 30
+[06-Jan-2022 17:25:40 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
