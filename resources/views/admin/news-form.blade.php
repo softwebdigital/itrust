@@ -66,14 +66,7 @@
 @endsection
 
 @section('script')
-<script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.js" integrity="sha512-hJsxoiLoVRkwHNvA5alz/GVA+eWtVxdQ48iy4sFRQLpDrBPn6BFZeUcW4R4kU+Rj2ljM9wHwekwVtsb0RY/46Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 <script>
-    // CKEDITOR.replace( 'editor' )
-</script>
-<script>
-
     $('.dropify').dropify({
         messages: {
             'default': '<p style="font-size: 18px">Drag and drop a file here or click</p>',
@@ -82,13 +75,5 @@
         }
     });
     $('#summernote').summernote();
-    // new FroalaEditor('textarea#froala-editor', {
-    //     // Set the image upload URL.
-    //     imageUploadURL: '/api/image/upload2',
-    //     // imageUploadURL: 'image_upload.php',
-    //     imageUploadParams: {
-    //         id: 'my_editor'
-    //     }
-    // })
 </script>
 @endsection
