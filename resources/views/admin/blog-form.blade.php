@@ -18,7 +18,6 @@
 <div class="mx-auto col-md-10">
     <form class="form" method="post" enctype="multipart/form-data" action="{{ $edit ? route('admin.blog.update', $blog->id) : route('admin.blog.store') }}">
         @csrf
-        @if($edit) @method('PUT') @endif
         <div class="form-group mb-3">
             <label for="title" class="form-label">Title <strong class="text-danger">*</strong></label>
             <input type="text" name="title" id="title" class="form-control form-control-lg @error('title') is-invalid @enderror" value="{{ old('title') ?? ($edit ? $blog['title'] : '') }}">
