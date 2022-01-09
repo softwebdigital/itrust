@@ -38,7 +38,7 @@
     <link href='https://cdn.jsdelivr.net/npm/froala-editor@4.0.8/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
     <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@4.0.8/js/froala_editor.pkgd.min.js'></script>
 
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+{{--    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">--}}
     @yield('style')
     <style>
         .dropdown-menu { min-width: 0 !important; }
@@ -57,35 +57,27 @@
                 <!-- LOGO -->
                 <div class="navbar-brand-box">
                     <a href="{{ '/admin' }}" class="logo logo-dark">
-                                <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24">
-                                </span>
+                        <span class="logo-sm">
+                            <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24">
+                        </span>
                         <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">{{ env('APP_NAME') }}</span>
-                                </span>
+                            <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">{{ env('APP_NAME') }}</span>
+                        </span>
                     </a>
 
                     <a href="{{ '/admin' }}" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24">
-                                </span>
+                        <span class="logo-sm">
+                            <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24">
+                        </span>
                         <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">{{ env('APP_NAME') }}</span>
-                                </span>
+                            <img src="{{ asset('assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">{{ env('APP_NAME') }}</span>
+                        </span>
                     </a>
                 </div>
 
                 <button type="button" class="btn btn-sm px-3 font-size-16 header-item" id="vertical-menu-btn">
                     <i class="fa fa-fw fa-bars"></i>
                 </button>
-
-                <!-- App Search-->
-{{--                <form class="app-search d-none d-lg-block">--}}
-{{--                    <div class="position-relative">--}}
-{{--                        <input type="text" class="form-control" placeholder="Search...">--}}
-{{--                        <button class="btn btn-primary" type="button"><i class="bx bx-search-alt align-middle"></i></button>--}}
-{{--                    </div>--}}
-{{--                </form>--}}
             </div>
 
             <div class="d-flex">
@@ -110,65 +102,6 @@
                     </div>
                 </div>
 
-                {{-- <div class="dropdown d-none d-sm-inline-block">
-                    <button type="button" class="btn header-item" id="mode-setting-btn" onclick="setTheme('dark' === document.getElementsByTagName('body')[0].getAttribute('data-layout-mode') ? 'light' : 'dark')">
-                        <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
-                        <i data-feather="sun" class="icon-lg layout-mode-light"></i>
-                    </button>
-                </div>
-
-                <div class="dropdown d-none d-lg-inline-block ms-1">
-                    <button type="button" class="btn header-item"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i data-feather="grid" class="icon-lg"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                        <div class="p-2">
-                            <div class="row g-0">
-                                <div class="col">
-                                    <a class="dropdown-icon-item" href="#">
-                                        <img src="{{ asset('assets/images/brands/github.png') }}" alt="Github">
-                                        <span>GitHub</span>
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    <a class="dropdown-icon-item" href="#">
-                                        <img src="{{ asset('assets/images/brands/bitbucket.png') }}" alt="bitbucket">
-                                        <span>Bitbucket</span>
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    <a class="dropdown-icon-item" href="#">
-                                        <img src="{{ asset('assets/images/brands/dribbble.png') }}" alt="dribbble">
-                                        <span>Dribbble</span>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="row g-0">
-                                <div class="col">
-                                    <a class="dropdown-icon-item" href="#">
-                                        <img src="{{ asset('assets/images/brands/dropbox.png') }}" alt="dropbox">
-                                        <span>Dropbox</span>
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    <a class="dropdown-icon-item" href="#">
-                                        <img src="{{ asset('assets/images/brands/mail_chimp.png') }}" alt="mail_chimp">
-                                        <span>Mail Chimp</span>
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    <a class="dropdown-icon-item" href="#">
-                                        <img src="{{ asset('assets/images/brands/slack.png') }}" alt="slack">
-                                        <span>Slack</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
-
                 <div class="dropdown d-inline-block">
                     <button type="button" class="btn header-item right-bar-toggle me-2">
                         <i data-feather="settings" class="icon-lg"></i>
@@ -186,7 +119,6 @@
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
                         <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
-{{--                        <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>--}}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#" onclick="event.preventDefault(); $('#logout-form').submit()"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
                         <form action="{{ route('admin.logout') }}" method="post" id="logout-form" class="d-none">@csrf</form>
@@ -196,7 +128,6 @@
             </div>
         </div>
     </header>
-
     <!-- ========== Left Sidebar Start ========== -->
     <div class="vertical-menu">
 
@@ -263,7 +194,7 @@
                         </a>
                     </li>
 
-                    <li class="{{ Route::currentRouteNamed(['admin.blog']) ? 'mm-active' : '' }}">
+                    <li class="{{ Route::currentRouteNamed(['admin.blog', 'admin.blog.create', 'admin.blog.edit']) ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.blog') }}">
                             <i data-feather="book-open"></i>
                             <span data-key="t-news">Blog</span>
