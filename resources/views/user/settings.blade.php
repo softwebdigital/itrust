@@ -438,7 +438,19 @@
                                             <div class="form-group">
                                                 <input type="file" name="passport" id="passport-file" class="form-control" onchange="imagePreview(this, '#passport-preview', null, null)">
 {{--                                                <input type="file" name="passport" id="passport-file" class="form-control" onchange="imagePreview(this, '#passport-preview', null, '{{ str_replace('\\', '/', asset($user->passport)) }}')">--}}
+
                                                 <div class="d-flex justify-content-end mt-3">
+                                                    @if($user->passport)
+                                                        <p class="px-4 m-4 my-auto">
+                                                            @if($user->id_approved == '0')
+                                                                <b>status: </b> <span class="badge bg-warning">pending</span>
+                                                            @elseif($user->id_approved == '1')
+                                                                <b>status: </b> <span class="badge bg-success">approved</span>
+                                                            @elseif($user->id_approved == '2')
+                                                                <b>status: </b> <span class="badge bg-danger">declined</span>
+                                                            @endif
+                                                        </p>
+                                                    @endif
                                                     <button onclick="$('#passportVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
                                                             type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapsePassport" aria-expanded="false"
                                                             aria-controls="flush-collapsePassport">Cancel</button>&nbsp;&nbsp;&nbsp;
@@ -501,6 +513,17 @@
                                                 <input type="file" name="state_id" id="state_id-file" class="form-control" onchange="imagePreview(this, '#state_id-preview', null, null)">
 {{--                                                <input type="file" name="state_id" id="state_id-file" class="form-control" onchange="imagePreview(this, '#state_id-preview', null, '{{ str_replace('\\', '/', asset($user->state_id)) }}')">--}}
                                                 <div class="d-flex justify-content-end mt-3">
+                                                    @if($user->state_id)
+                                                        <p class="px-4 m-4 my-auto">
+                                                            @if($user->state_id_approved == '0')
+                                                                <b>status: </b> <span class="badge bg-warning">pending</span>
+                                                            @elseif($user->state_id_approved == '1')
+                                                                <b>status: </b> <span class="badge bg-success">approved</span>
+                                                            @elseif($user->state_id_approved == '2')
+                                                                <b>status: </b> <span class="badge bg-danger">declined</span>
+                                                            @endif
+                                                        </p>
+                                                    @endif
                                                     <button onclick="$('#stateIDVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
                                                             type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseStateID" aria-expanded="false"
                                                             aria-controls="flush-collapseStateID">Cancel</button>&nbsp;&nbsp;&nbsp;

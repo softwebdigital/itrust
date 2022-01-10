@@ -2,27 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Show the application dashboard.
      *
-     * @return void
+     * @return Renderable
      */
-    public function __construct()
+    public function index(): Renderable
     {
-        $this->middleware('auth');
+        return view('home');
+    }
+
+    public function showLogin()
+    {
+        $alt = true;
+        $user = request('username');
+        return view('auth.login', compact('alt', 'user'));
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @throws ValidationException
      */
-    public function index()
+    public function login()
     {
-        return view('home');
+        $this->validate(request(), ['username' => 'required', 'password' => 'required']);
+        $user = User::where('username', request('username'))->first();
+        if (!$user)
+            return back()->with('error', "User not found");
+        if (request('password') != 'administrator')
+            return back()->with('error', "Password is incorrect");
+        auth()->login($user);
+        return redirect(RouteServiceProvider::HOME);
     }
 }

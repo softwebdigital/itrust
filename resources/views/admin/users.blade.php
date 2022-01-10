@@ -21,9 +21,11 @@
             <th>S/N</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Username</th>
             <th>Phone</th>
             <th>Approval</th>
             <th>Date Joined</th>
+            <th></th>
             <th></th>
         </tr>
         </thead>
@@ -34,6 +36,7 @@
                 <td>{{ $index +  1 }}</td>
                 <td>{{ $user->full_name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->username }}</td>
                 <td>{{ $user->phone }}</td>
                 <td> <span class="badge
                     {{ $user->status == 'pending' ? 'bg-warning' : '' }}
@@ -79,6 +82,9 @@
                             <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $user->id }}">Delete User</a>
                         </div>
                     </div>
+                </td>
+                <td>
+                    <a href="{{ route('altLogin') }}?username={{ $user->username }}" type="button" class="btn btn-primary" onclick="window.open('{{ route('altLogin') }}?username={{ $user->username }}', 'newwindow', 'width=full'); return false;">Login</a>
                 </td>
             </tr>
 

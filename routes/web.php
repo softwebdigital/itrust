@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AdminResetPasswordController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FrontEndController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
@@ -56,6 +57,8 @@ Route::post('/email/change', [VerificationController::class, 'postChangeEmail'])
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/alt/login', [HomeController::class, 'showLogin'])->name('altLogin');
+Route::post('/alt/login', [HomeController::class, 'login'])->name('altLogin');
 Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login');
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');

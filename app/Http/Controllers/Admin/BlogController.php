@@ -41,6 +41,7 @@ class BlogController extends Controller
             'heading' => 'required|string',
             'body' => 'required',
             'category' => 'required',
+            'date' => 'required'
         ]);
         if ($validator->fails()) return back()->withInput()->with('error', $validator->getMessageBag());
 
@@ -52,7 +53,7 @@ class BlogController extends Controller
             $pic = $image->move('img/blog', $name);
         } else $pic = null;
 
-        if (Blog::query()->create(['title' => $request['title'], 'slug' => Blog::getSlug($request['title']), 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic]))
+        if (Blog::query()->create(['title' => $request['title'], 'slug' => Blog::getSlug($request['title']), 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic, 'created_at' => $request['date'], 'updated_at' => $request['date']]))
             return redirect()->route('admin.blog')->with('success', 'News added successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }
@@ -78,7 +79,7 @@ class BlogController extends Controller
 
         if ($blog['title'] != $request['title'])
             $blog->update(['slug' => Blog::getSlug($request['title'])]);
-        if ($blog->update(['title' => $request['title'], 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic, 'created_at' => $request['date']]))
+        if ($blog->update(['title' => $request['title'], 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic, 'created_at' => $request['date'], 'updated_at' => $request['date']]))
             return redirect()->route('admin.blog')->with('success', 'Blog Updated successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }

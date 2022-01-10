@@ -69,14 +69,14 @@
                                 <h6>Document uploaded and pending approval</h6>
                             </div>
                         </div>
-                    @elseif ($user->id_approved == 1)
-                        @if($user->id_date_approved && \Carbon\Carbon::make($user->id_date_approved)->addDay()->gt(now()))
-                            <div class="card border border-success">
-                                <div class="card-body">
-                                    <h6>Document Approved</h6>
-                                </div>
-                            </div>
-                        @endif
+{{--                    @elseif ($user->id_approved == 1)--}}
+{{--                        @if($user->id_date_approved && \Carbon\Carbon::make($user->id_date_approved)->addDay()->gt(now()))--}}
+{{--                            <div class="card border border-success">--}}
+{{--                                <div class="card-body">--}}
+{{--                                    <h6>Document Approved</h6>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
                     @elseif($user->id_approved == 2)
                         <div class="card border border-danger">
                             <div class="card-body">
