@@ -699,11 +699,6 @@
         window.opera
     ];
 
-    $(document).ready(() => {
-        $('#id-btn').click();
-        $('#state-btn').click();
-    })
-
     function matchItem(string, data) {
         let i, j = 0, html = '', regex, regexv, match, matches, version;
 
@@ -888,6 +883,16 @@
             .attr('src', defaultImg)
             .width(width)
     }
+
+
+    $(document).ready(() => {
+        @if(auth()->user()['id_approved'] != 1)
+            $('#id-btn').click();
+        @endif
+        @if(auth()->user()['state_id_approved'] != 1)
+            $('#state-btn').click();
+        @endif
+    })
 </script>
 
 @yield('script')
