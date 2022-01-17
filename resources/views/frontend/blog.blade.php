@@ -97,8 +97,8 @@
                                               <ul class="post-meta d-flex mb-0">
                                                   <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
                                                   <li class="post-author"><a href="#"><i class="uil uil-user"></i><span>By Admin</span></a></li>
-                                                   <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}<span> Comments</span></a>
-                                                   <li class="post-likes ms-auto"><a href="#"><i class="uil uil-heart-alt"></i>0</a></li>
+{{--                                                   <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}<span> Comments</span></a>--}}
+{{--                                                   <li class="post-likes ms-auto"><a href="#"><i class="uil uil-heart-alt"></i>0</a></li>--}}
                                               </ul>
                                               <!-- /.post-meta -->
                                           </div>
@@ -177,7 +177,7 @@
                                               <h6 class="mb-2"> <a class="link-dark" href="{{  route('frontend.blogview', $blog->slug) }}">{{ $blog->title }}</a> </h6>
                                               <ul class="post-meta">
                                                   <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog->created_at)->format('d M Y') }}</span></li>
-                                                  <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}</a></li>
+{{--                                                  <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $blog->comments()->count() }}</a></li>--}}
                                               </ul>
                                               <!-- /.post-meta -->
                                           </div>
