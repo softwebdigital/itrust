@@ -102,7 +102,15 @@
         }
     });
 
-    $('#summernote').summernote();
+    // $('#summernote').summernote();
+    new FroalaEditor('textarea#summernote', {
+        // Set the image upload URL.
+        imageUploadURL: '/api/image/upload',
+        // imageUploadURL: 'image_upload.php',
+        imageUploadParams: {
+            id: 'my_editor'
+        }
+    })
 
 
     function uploadBlog() {

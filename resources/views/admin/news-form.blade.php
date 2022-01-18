@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="form-group mb-3">
-            <label for="ckeditor-classic" class="form-label">Body <strong class="text-danger">*</strong></label>
+            <label for="summernote" class="form-label">Body <strong class="text-danger">*</strong></label>
             <textarea name="body" cols="30" rows="10" id="summernote" class="form-control form-control-lg @error('body') is-invalid @enderror">{!! old('body') ?? ($edit ? $news['body'] : '') !!}</textarea>
             @error('body') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
         </div>
@@ -80,14 +80,14 @@
             'remove':  'Remove'
         }
     });
-    $('#summernote').summernote();
-    // new FroalaEditor('textarea#froala-editor', {
-    //     // Set the image upload URL.
-    //     imageUploadURL: '/api/image/upload2',
-    //     // imageUploadURL: 'image_upload.php',
-    //     imageUploadParams: {
-    //         id: 'my_editor'
-    //     }
-    // })
+    // $('#summernote').summernote();
+    new FroalaEditor('textarea#summernote', {
+        // Set the image upload URL.
+        imageUploadURL: '/api/image/upload2',
+        // imageUploadURL: 'image_upload.php',
+        imageUploadParams: {
+            id: 'my_editor'
+        }
+    })
 </script>
 @endsection
