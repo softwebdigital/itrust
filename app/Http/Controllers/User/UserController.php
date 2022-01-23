@@ -51,16 +51,25 @@ class UserController extends Controller
 
 
 
-        $ira_deposit = $user->ira_deposit()->where('status', 'approved')->sum('actual_amount');
-        $ira_payout = $user->ira_payout()->where('status', 'approved')->sum('actual_amount');
-        $offshore_deposit = $user->offshore_deposit()->where('status', 'approved')->sum('actual_amount');
-        $offshore_payout = $user->offshore_payout()->where('status', 'approved')->sum('actual_amount');
-        $ira_roi = $user->ira_roi()->where('status', 'open')->sum('ROI');
-        $ira_amount = $user->ira_roi()->where('status', 'open')->sum('amount');
-        $offshore_amount = $user->offshore_roi()->where('status', 'open')->sum('amount');
-        $offshore_roi = $user->offshore_roi()->where('status', 'open')->sum('ROI');
-        $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi;
-        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
+//        $ira_deposit = $user->ira_deposit()->where('status', 'approved')->sum('actual_amount');
+//        $ira_payout = $user->ira_payout()->where('status', 'approved')->sum('actual_amount');
+//        $offshore_deposit = $user->offshore_deposit()->where('status', 'approved')->sum('actual_amount');
+//        $offshore_payout = $user->offshore_payout()->where('status', 'approved')->sum('actual_amount');
+//        $ira_roi = $user->ira_roi()->where('status', 'open')->sum('ROI');
+//        $ira_amount = $user->ira_roi()->where('status', 'open')->sum('amount');
+//        $offshore_amount = $user->offshore_roi()->where('status', 'open')->sum('amount');
+//        $offshore_roi = $user->offshore_roi()->where('status', 'open')->sum('ROI');
+//        $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi;
+//        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
+
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
         $portfolioValue = ($ira + $offshore);
         // dd($portfolioValue, $withdrawable);
