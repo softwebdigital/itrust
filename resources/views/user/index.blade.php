@@ -606,7 +606,8 @@
         function appendHTML(data) {
             let market = '';
             data.forEach((cur, i) => {
-                market += appendRow(cur, i+1)
+                if (cur['market_cap'])
+                    market += appendRow(cur, i+1)
             })
             return market;
         }
