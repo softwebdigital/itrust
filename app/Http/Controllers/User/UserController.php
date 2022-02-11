@@ -522,7 +522,7 @@ class UserController extends Controller
     {
         $data = json_decode(file_get_contents(public_path('data.json')), true);
         foreach ($data as $key => $datum)
-            if ($datum['market_cap'])
+            if (isset($datum['market_cap']))
                 $data[$key]['market_cap'] = self::cap($datum['market_cap']);
 
         // $total=count($data);
