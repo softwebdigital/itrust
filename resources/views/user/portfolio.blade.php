@@ -333,7 +333,6 @@
                 </div><!-- end col -->
                 <div class="col-xl-6 col-md-6">
 
-
                     <div class="card card-h-100">
                         <!-- card body -->
                         <div class="card-body">
@@ -369,8 +368,9 @@
                     <div class="card card-h-100">
                         <div class="card-header">
                             <div class="d-flex justify-content-end">
-                                <a href="{{ route('user.portfolio') }}" class="btn btn-small btn-outline-primary mx-1 {{request('slot') != '30' ? 'active' : ''}}">7d</a>
-                                <a href="{{ route('user.portfolio') }}?slot=30" class="btn btn-small btn-outline-primary mx-1 {{request('slot') == '30' ? 'active' : ''}}">30d</a>
+                                <a href="{{ route('user.portfolio') }}?slot=7" class="btn btn-small btn-outline-primary mx-1 {{request('slot') == 7 ? 'active' : ''}}">7d</a>
+                                <a href="{{ route('user.portfolio') }}" class="btn btn-small btn-outline-primary mx-1 {{request('slot') != 7 && !request('all') ? 'active' : ''}}">30d</a>
+                                <a href="{{ route('user.portfolio') }}?all=1" class="btn btn-small btn-outline-primary mx-1 {{request('all') != null ? 'active' : ''}}">All</a>
                             </div>
                         </div>
                         <!-- card body -->

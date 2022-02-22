@@ -54,7 +54,7 @@ class TransactionController extends Controller
                 $mail = [
                     'subject' => 'Deposit ' . ucfirst($action),
                     'name' => $transaction->user()->first()->name,
-                    'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' deposit of ' . $amount . ' has received
+                    'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' deposit of ' . $amount . ' has been received
                     and processed.',
                 ];
                 if ($action == 'declined') {
@@ -91,7 +91,7 @@ class TransactionController extends Controller
                 $mail = [
                     'subject' => 'Withdrawal ' . ucfirst($action),
                     'name' => $transaction->user()->first()->name,
-                    'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' withdrawal of ' . $amount . ' has received
+                    'body' => ($transaction['method'] == 'bank' ? 'Your Bank' : 'Your Bitcoin') . ' withdrawal of ' . $amount . ' has been received
                 and processed. ' . $amount . ' has been sent to your' . ($transaction['method'] == 'bank' ? ' Bank details below:' : ' Bitcoin below:'),
                 ];
                 if ($transaction['method'] == 'bitcoin') {
@@ -296,7 +296,6 @@ class TransactionController extends Controller
         if ($request['method'] == 'bank' && (float) $request['amount'] > 0) {
             if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['amount'], 'type' => 'deposit', 'actual_amount' => (float) $request['amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
-                // $mail['body'] = '<p>Your deposit of $'.number_format($request['amount'], 2).' was successful. Your deposit would be confirmed in a couple of minutes. </p>';
                 $mail['body'] = 'You’ve requested a Bank deposit of '.number_format($request['amount'], 2).', kindly make a
                 payment of $'.number_format($request['amount'], 2).' to:';
                 $mail['bank'] = $setting['bank_name'];
@@ -312,8 +311,7 @@ class TransactionController extends Controller
             $amount = round((float) $request['btc_amount'] / AdminController::getBTC(), 8);
             if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
-                // $mail['body'] = '<p>Your deposit of '.$amount.'BTC was successful. Your deposit would be confirmed in a couple of minutes. </p>';
-                $mail['body'] = 'You’ve requested a Bitcoin deposit of '.$amount.', kindly make a payment of ($'.$amount.'/btc)) to '.$user->btc_wallet;
+                $mail['body'] = 'You’ve requested a Bitcoin deposit of $'.number_format($request['btc_amount'], 2).', kindly make a payment of $'.number_format($request['btc_amount'], 2).' ('.$amount.'btc) to '.$user->btc_wallet;
                 $mail['type'] = 'btc';
                 $mailBody = '<p>A Bitcoin deposit request of $'.number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
@@ -348,7 +346,6 @@ class TransactionController extends Controller
             'bank_name' => 'required_if:w_method,bank',
             'acct_name' => 'required_if:w_method,bank',
             'acct_no' => 'required_if:w_method,bank',
-            'info' => 'required_if:w_method,bank',
             'w_amount' => 'required_if:w_method,bitcoin',
             'btc_wallet' => 'required_if:w_method,bitcoin',
             'acct_type' => 'required'
@@ -356,27 +353,18 @@ class TransactionController extends Controller
         // dd($validator);
         if ($validator->fails()) return back()->with(['validation' => true, 'w_method' => $request['w_method']])->withErrors($validator)->withInput();
 
-        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
-        $inv = $user->roi()->sum('amount');
-        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
-
-        $withdrawable = ($deposits - $payouts) - $inv;
-
-
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
         $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
-        $ira_roi = $user->ira_roi()->where('status', '=', 'open')->sum('ROI');
+        $ira_roi = $user->ira_roi()->where('status', '=', 'closed')->sum('ROI');
         $ira_amount = $user->ira_roi()->where('status', '=', 'open')->sum('amount');
         $offshore_amount = $user->offshore_roi()->where('status', '=', 'open')->sum('amount');
-        $offshore_roi = $user->offshore_roi()->where('status', '=', 'open')->sum('ROI');
-        $offshore = ($offshore_deposit - $offshore_payout) - ($offshore_roi + $offshore_amount);
-        $ira = ($ira_deposit - $ira_payout) - ($ira_roi + $ira_amount);
+        $offshore_roi = $user->offshore_roi()->where('status', '=', 'closed')->sum('ROI');
+        $offshore = $offshore_deposit - $offshore_payout - $offshore_amount + $offshore_roi;
+        $ira = $ira_deposit - $ira_payout - $ira_amount + $ira_roi;
         // dd($portfolioValue, $request['investment']);
         // dd($ira, $offshore);
-
-
 
 
         if ($request['w_method'] == 'bank' && (float) $request['bank_amount'] > 0) {
