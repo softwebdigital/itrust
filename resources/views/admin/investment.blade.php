@@ -19,140 +19,142 @@
         {{-- <a href="{{ route('admin.inv.create') }}" type="button" c>Add Investment</a> --}}
         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add" class="btn btn-primary">Add Investment</a>
     </div>
-    <table id="datatable" class="table table-borderless table-striped table-responsive nowrap">
-        <thead>
-            <tr>
-                <th>Investment Date</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Amount</th>
-            <th>ROI</th>
-            <th>Asset</th>
-            <th>Account</th>
-            <th>Status</th>
+    <div class="table table-responsive">
+        <table id="datatable" class="table table-borderless table-striped nowrap">
+            <thead>
+                <tr>
+                    <th>Investment Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Amount</th>
+                <th>ROI</th>
+                <th>Asset</th>
+                <th>Account</th>
+                <th>Status</th>
 
-            <th></th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach($investments as $investment)
-            <tr>
-                <td>{{ date('d/M/Y', strtotime($investment->created_at)) }}</td>
-                <td>{{ $investment->user->full_name }}</td>
-                <td>{{ $investment->user->email }}</td>
-                <td>{{ number_format($investment->amount, 2) }}</td>
-                <td>{{ number_format($investment->ROI, 2) }}</td>
-                <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
-                <td>
-                    @if($investment->acct_type == 'offshore')
-                    Offshore
-                    @elseif($investment->acct_type == 'basic_ira')
-                    Basic IRA
-                    @endif
-                </td>
-                <td> <span class="badge
-                    {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
-                    {{ $investment->status == 'open' ? 'bg-success' : '' }}
-                        ">{{ ucwords($investment->status) }}</td>
-
-                <td>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-dark btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
-                            <span>Open </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
-                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-roi-{{ $investment->id }}">Edit</a>
-                                <a class="dropdown-item" href="{{ route('admin.investments.updatestatus', [$investment->id, 'closed']) }}">Make Closed</a>
-                                <a class="dropdown-item" href="{{ route('admin.investments.updatestatus', [$investment->id, 'open']) }}">Make Open</a>
-                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $investment->id }}">Delete</a>
-                        </div>
-                    </div>
-                </td>
+                <th></th>
             </tr>
+            </thead>
 
-            <div class="modal fade" id="staticBackdrop-roi-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Invest for investments</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <tbody>
+            @foreach($investments as $investment)
+                <tr>
+                    <td>{{ date('d/M/Y', strtotime($investment->created_at)) }}</td>
+                    <td>{{ $investment->user->full_name }}</td>
+                    <td>{{ $investment->user->email }}</td>
+                    <td>{{ number_format($investment->amount, 2) }}</td>
+                    <td>{{ number_format($investment->ROI, 2) }}</td>
+                    <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
+                    <td>
+                        @if($investment->acct_type == 'offshore')
+                        Offshore
+                        @elseif($investment->acct_type == 'basic_ira')
+                        Basic IRA
+                        @endif
+                    </td>
+                    <td> <span class="badge
+                        {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
+                        {{ $investment->status == 'open' ? 'bg-success' : '' }}
+                            ">{{ ucwords($investment->status) }}</td>
+
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-dark btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
+                                <span>Open </span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-roi-{{ $investment->id }}">Edit</a>
+                                    <a class="dropdown-item" href="{{ route('admin.investments.updatestatus', [$investment->id, 'closed']) }}">Make Closed</a>
+                                    <a class="dropdown-item" href="{{ route('admin.investments.updatestatus', [$investment->id, 'open']) }}">Make Open</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $investment->id }}">Delete</a>
+                            </div>
                         </div>
-                        <form action="{{ route('admin.investments.addroi', $investment->id) }}" method="post">
-                            @csrf
-                            @method('POST')
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="investment">$</label>
-                                        <input type="number" step="any" class="form-control @error('investment') is-invalid @enderror"
-                                            name="investment" value="{{ $investment->amount }}" id="investment" placeholder="ROI">
-                                    </div>
-                                    @error('investment') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="amount">ROI</label>
-                                        <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
-                                            name="amount" value="{{ $investment->ROI }}" id="amount" placeholder="ROI">
-                                    </div>
-                                    @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                    @enderror
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="date">Date <span class="text-danger">*</span></label>
-                                    <input type="date" step="any" class="form-control required @error('date') is-invalid @enderror"
-                                           name="date" value="{{ old('date') ?? \Carbon\Carbon::make($investment['created_at'])->format('Y-m-d') }}" id="date" placeholder="Date">
-                                    @error('date') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                    @enderror
-                                </div>
+                    </td>
+                </tr>
 
-                                {{-- <div class="form-group">
-                                    <div class="input-group mb-3">
-                                        <select class="form-select @error('status') is-invalid @enderror" name="status" style="display:block !important;">
-                                            <option value="">Select Status</option>
-                                            <option value="open" {{ $investment->status == 'open' ? 'selected' : '' }}>Open</option>
-                                            <option value="closed" {{ $investment->status == 'closed' ? 'selected' : '' }}>Closed</option>
-                                        </select>
+                <div class="modal fade" id="staticBackdrop-roi-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Invest for investments</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('admin.investments.addroi', $investment->id) }}" method="post">
+                                @csrf
+                                @method('POST')
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <label class="input-group-text" for="investment">$</label>
+                                            <input type="number" step="any" class="form-control @error('investment') is-invalid @enderror"
+                                                name="investment" value="{{ $investment->amount }}" id="investment" placeholder="ROI">
+                                        </div>
+                                        @error('investment') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                        @enderror
                                     </div>
-                                    @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                                </div> --}}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger">Add</button>
-                            </div>
-                        </form>
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <label class="input-group-text" for="amount">ROI</label>
+                                            <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
+                                                name="amount" value="{{ $investment->ROI }}" id="amount" placeholder="ROI">
+                                        </div>
+                                        @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="date">Date <span class="text-danger">*</span></label>
+                                        <input type="date" step="any" class="form-control required @error('date') is-invalid @enderror"
+                                               name="date" value="{{ old('date') ?? \Carbon\Carbon::make($investment['created_at'])->format('Y-m-d') }}" id="date" placeholder="Date">
+                                        @error('date') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                        @enderror
+                                    </div>
+
+                                    {{-- <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <select class="form-select @error('status') is-invalid @enderror" name="status" style="display:block !important;">
+                                                <option value="">Select Status</option>
+                                                <option value="open" {{ $investment->status == 'open' ? 'selected' : '' }}>Open</option>
+                                                <option value="closed" {{ $investment->status == 'closed' ? 'selected' : '' }}>Closed</option>
+                                            </select>
+                                        </div>
+                                        @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                                    </div> --}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Add</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="modal fade" id="staticBackdrop-delete-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal fade" id="staticBackdrop-delete-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('admin.investments.delete', $investment->id) }}" method="post">@csrf @method('POST')
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this investment?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
                         </div>
-                        <form action="{{ route('admin.investments.delete', $investment->id) }}" method="post">@csrf @method('POST')
-                            <div class="modal-body">
-                                <p>Are you sure you want to delete this investment?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
-            </div>
-        @endforeach
-        </tbody>
-    </table>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
 </div>
 <div class="modal fade" id="staticBackdrop-add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -245,7 +247,7 @@
 @section('script')
     <script>
         $('#datatable').DataTable({
-            "order": [[ 0, "desc" ]]
+            "ordering": false
         })
     </script>
 @endsection
