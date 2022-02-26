@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="{{ asset('card.jpeg') }}">
+    <meta property="og:image" content="{{ asset('card.png') }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
     <title>Itrust Investments</title>
     <link rel="stylesheet" href="css/plugins.css">
