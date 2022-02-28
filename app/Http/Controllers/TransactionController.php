@@ -333,8 +333,6 @@ class TransactionController extends Controller
         return redirect()->route('user.transactions')->with($msg);
     }
 
-
-
     public function userWithdrawStore(Request $request): RedirectResponse
     {
 
@@ -352,6 +350,11 @@ class TransactionController extends Controller
         ], [], $this->attributes());
         // dd($validator);
         if ($validator->fails()) return back()->with(['validation' => true, 'w_method' => $request['w_method']])->withErrors($validator)->withInput();
+
+        if ($user->offshore_payout()->where('status', '=', 'pending')->first() ||
+            $user->ira_payout()->where('status', '=', 'pending')->first()
+        )
+            return back()->with('error', 'You have a pending withdrawal request.');
 
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
