@@ -320,11 +320,11 @@
     }
 
     function calcEquiv(id) {
-        if ($(id).val().length > 0) $('#crypto-amount').html((parseFloat($(id).val()) / 44000).toFixed(8) + ' BTC');
+        if ($(id).val().length > 0) $('#crypto-amount').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) + ' BTC');
     }
 
     function calcEquivWithdraw(id) {
-        if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) / 44000).toFixed(8) + ' BTC');
+        if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) + ' BTC');
     }
     function submitForm(){
 

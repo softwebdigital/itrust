@@ -14,16 +14,18 @@
 @endsection
 
 @section('content')
-<div>
+<div style="min-height: 500px">
     <table id="datatable" class="table table-borderless table-striped table-responsive nowrap w-100">
         <thead>
         <tr>
             <th>S/N</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Username</th>
             <th>Phone</th>
             <th>Approval</th>
             <th>Date Joined</th>
+            <th></th>
             <th></th>
         </tr>
         </thead>
@@ -34,6 +36,7 @@
                 <td>{{ $index +  1 }}</td>
                 <td>{{ $user->full_name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->username }}</td>
                 <td>{{ $user->phone }}</td>
                 <td> <span class="badge
                     {{ $user->status == 'pending' ? 'bg-warning' : '' }}
@@ -54,16 +57,16 @@
                             <a class="dropdown-item" href="{{ route('admin.users.show', $user->id) }}">View User</a>
 
                             @if($user->btc_wallet != null)
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
                             @else
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Add Wallet</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Add Wallet</a>
                             @endif
                             @if($user->isWaitingApproval())
-                            @if($user->btc_wallet != '')
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
-                            @else
-                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approvewithWallet-{{ $user->id }}">Approve User</a>
-                            @endif
+                                @if($user->btc_wallet != '')
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $user->id }}">Approve User</a>
+                                @else
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approvewithWallet-{{ $user->id }}">Approve User</a>
+                                @endif
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-decline-{{ $user->id }}">Decline User</a>
                             @endif
                             @if($user->isDeclined())
@@ -79,6 +82,9 @@
                             <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $user->id }}">Delete User</a>
                         </div>
                     </div>
+                </td>
+                <td>
+                    <a href="{{ route('altLogin') }}?username={{ $user->username }}" type="button" class="btn btn-primary" onclick="window.open('{{ route('altLogin') }}?username={{ $user->username }}', 'newwindow', 'width=full'); return false;">Login</a>
                 </td>
             </tr>
 

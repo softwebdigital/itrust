@@ -7,7 +7,9 @@ use App\Notifications\SendActionDepositNotification;
 use App\Notifications\SendActionWithdrawalNotification;
 use App\Notifications\SendRequestDepositNotification;
 use App\Notifications\SendRequestWithdrawalNotification;
+use App\Notifications\SendRequestWithdrawalNotificationToAdmin;
 use App\Notifications\TransactionNotification;
+use App\Notifications\WebNotification;
 use Illuminate\Support\Facades\Notification;
 
 class MailController extends Controller
@@ -19,7 +21,7 @@ class MailController extends Controller
 
     public static function sendInvestmentNotification($user, $data)
     {
-        Notification::send($user, new TransactionNotification($data));
+        Notification::send($user, new WebNotification($data));
     }
 
 
@@ -36,6 +38,11 @@ class MailController extends Controller
     public static function sendRequestWithdrawalNotification($user, $data)
     {
         Notification::send($user, new SendRequestWithdrawalNotification($data));
+    }
+
+    public static function sendTransactionNotificationToAdmin($email, $data)
+    {
+        Notification::send($email, new SendRequestWithdrawalNotificationToAdmin($data));
     }
 
     public static function sendActionDepositNotification($user, $data)

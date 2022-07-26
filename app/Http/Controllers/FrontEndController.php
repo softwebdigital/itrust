@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class FrontEndController extends Controller
 {
-
-
     public function home()
     {
         return view('frontend.index');
@@ -56,7 +54,7 @@ class FrontEndController extends Controller
     public function blog()
     {
         $blogCategories = BlogCategory::all();
-        $blogs = Blog::orderBy('id', 'desc')->paginate(10);
+        $blogs = Blog::orderBy('id', 'desc')->paginate(5);
         $popular_blogs = Blog::orderBy('id', 'desc')->take(5)->get();
 
         $first_blog = Blog::orderBy('id', 'desc')->first();
@@ -64,9 +62,9 @@ class FrontEndController extends Controller
         return view('frontend.blog', compact('blogs', 'blogCategories', 'first_blog', 'popular_blogs'));
     }
 
-    public function blogview(Request $request, $id)
+    public function blogview(Request $request, Blog $blog)
     {
-        $blog_post = Blog::findOrFail($id);
+        $blog_post = $blog;
         $total_comments = $blog_post->comments()->count();
         $comments = $blog_post->comments()->paginate(5);
         if ($request->ajax()){
@@ -79,7 +77,7 @@ class FrontEndController extends Controller
     }
 
 
-    public function addComment(Request $request, $blog_id)
+    public function addComment(Request $request, Blog $blog)
     {
         // dd($request->all(), $blog_id);
         $validator = Validator::make($request->all(), [
@@ -90,16 +88,15 @@ class FrontEndController extends Controller
         // dd($validator->errors());
         if ($validator->fails()) return back()->withInput()->withErrors($validator);
 
-
         $comment = new Comment();
-        $comment->name = $request->input('name');
-        $comment->email = $request->input('email');
-        $comment->comment = $request->input('comment');
-        $comment->post_id = $blog_id;
+        $comment['name'] = $request->input('name');
+        $comment['email'] = $request->input('email');
+        $comment['comment'] = $request->input('comment');
+        $comment['post_id'] = $blog['id'];
 
         if ($comment->save()){
             // Session::flash('success', 'Comment Successfully Added);
-            return redirect()->route('frontend.blogview', $blog_id)->with('success', 'Comment Successfully Added');}
+            return redirect()->route('frontend.blogview', $blog['slug'])->with('success', 'Comment Successfully Added');}
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }
 

@@ -77,6 +77,23 @@
                 <div class="text-center user-info">
                     @if($user->passport != null)
                         <img src="{{ asset($user->passport) }}" width="200" height="" alt="avatar">
+                        <div class="my-2 text-center">
+                            @if($user->id_approved == '0')
+                                <p><b>status: </b> <span class="badge bg-warning">pending</span></p>
+                            @elseif($user->id_approved == '1')
+                                <p><b>status: </b> <span class="badge bg-success">approved</span></p>
+                            @elseif($user->id_approved == '2')
+                                <p><b>status: </b> <span class="badge bg-danger">declined</span></p>
+                            @endif
+                        </div>
+                        <div class="d-flex mt-2 justify-content-center">
+                            <form action="{{ route('admin.users.documents.action', [$user->id, 'approved']) }}" method="post">@csrf
+                                <button type="submit" class="btn btn-success mx-2">Approve</button>
+                            </form>
+                            <form action="{{ route('admin.users.documents.action', [$user->id, 'declined']) }}" method="post">@csrf
+                                <button type="submit" class="btn btn-danger mx-2">Decline</button>
+                            </form>
+                        </div>
                     @else
                         <p>Not Provided Yet</p>
                     @endif
@@ -111,18 +128,18 @@
                 <h4 class="text-center">User Funds</h4>
 
                 <div class="mt-4">
-                    {{--                @if(sizeof($investments) > 0)--}}
-                    @if(sizeof([]) > 0)
+                    @if(sizeof($user->investments) > 0)
+{{--                    @if(sizeof([]) > 0)--}}
                         <table>
-                            @foreach($investments as $investment)
+                            @foreach($user->investments as $investment)
                                 <tr>
-                                    <td><b>{{ $investment->plan.': ' }} </b></td>
+                                    <td><b>{{ $investment->type.': ' }} </b></td>
                                     <td>&nbsp;&nbsp;&nbsp; {{ '$'.number_format($investment->amount, 2) }}</td>
                                 </tr>
                             @endforeach
                         </table>
                         <br>
-                        <p><b>Total: </b> {{ '$'.number_format(20000, 2) }}</p>
+                        <p><b>Total: </b> {{ '$'.number_format($user->investments()->sum('amount'), 2) }}</p>
                     @else
                         <div class="text-center user-info">
                             <p>Account Not Funded Yet</p>
@@ -138,7 +155,7 @@
                 <div class="scrollspy-example" data-spy="scroll" data-target="#account-settings-scroll" data-offset="-100">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
-                            <form id="general-info" class="section general-info" action="javascript:void(0)" method="post">
+                            <form id="general-info" class="section general-info" action="{{ route('admin.users.update', $user->id) }}" method="post">
                                 @csrf
                                 <div class="info">
                                     <h5 class="">Personal Details</h5>
@@ -149,13 +166,13 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>First Name </label>
-                                                            <input type="text" class="form-control mb-4" name="firstname" value="{{ $user->first_name }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="first_name" value="{{ $user->first_name }}" >
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Last Name </label>
-                                                            <input type="text" class="form-control mb-4" name="lastname" value="{{ $user->last_name }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="last_name" value="{{ $user->last_name }}" >
                                                         </div>
                                                     </div>
                                                 </div>
@@ -163,13 +180,13 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Username </label>
-                                                            <input type="text" class="form-control mb-4" name="username" value="{{ $user->username }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="username" value="{{ $user->username }}" >
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Date of Birth </label>
-                                                            <input type="date" class="form-control mb-4" name="dob" value="{{ $user->dob }}" readonly="">
+                                                            <input type="date" class="form-control mb-4" name="dob" value="{{ $user->dob }}" >
                                                         </div>
                                                     </div>
                                                 </div>
@@ -177,25 +194,25 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Social Security Number </label>
-                                                            <input type="text" class="form-control mb-4" name="id_number" value="{{ $user->ssn }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="ssn" value="{{ $user->ssn }}" >
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Email </label>
-                                                            <input type="text" class="form-control mb-4" name="email" value="{{ $user->email }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" value="{{ $user->email }}" readonly="">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Mobile Number </label>
-                                                            <input type="text" class="form-control mb-4" name="phone" value="+1 {{$user->phone }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="phone" id="new-phone" value="{{ $user->phone }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Marital Status </label>
-                                                            <select class="form-control" name="marital_status" disabled="">
+                                                            <select class="form-control" name="marital_status">
                                                                 <option value="single" {{ ($user->marital_status == 'single')? 'selected': '' }}>Single</option>
                                                                 <option value="married" {{ ($user->marital_status == 'married')? 'selected': '' }}>Married</option>
                                                                 <option value="divorced" {{ ($user->marital_status == 'divorced')? 'selected': '' }}>Divorced</option>
@@ -208,16 +225,24 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Wallet Address </label>
-                                                            <input type="text" class="form-control mb-4" name="nationality" value="{{ $user->btc_wallet }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="btc_wallet" value="{{ $user->btc_wallet }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Nationality </label>
-                                                            <input type="text" class="form-control mb-4" name="nationality" value="{{ $user->nationality }}" readonly="">
+                                                            <select class="form-select @error('nationality') is-invalid @enderror" data-trigger name="nationality" id="nationality">
+                                                                <option value="">Select Nationality</option>
+                                                                @foreach(\App\Models\Nationality::query()->orderBy('name')->get() as $nationality)
+                                                                    <option value="{{ $nationality->name }}" @if(ucwords($user->nationality) == ucwords($nationality->name)) selected @endif>{{ ucwords($nationality->name) }}</option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="">
+                                                <button type="submit" class="btn btn-primary">Update</button>
                                             </div>
                                         </div>
                                     </div>
@@ -293,13 +318,13 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Employment </label>
-                                                            <input type="text" class="form-control mb-4" name="city" value="{{ ucwords($user->employment) }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="employment" value="{{ ucwords($user->employment) }}" readonly="">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Marital Status </label>
-                                                            <input type="text" class="form-control mb-4" name="city" value="{{ ucwords($user->marital_status) }}" readonly="">
+                                                            <input type="text" class="form-control mb-4" name="marital_status" value="{{ ucwords($user->marital_status) }}" readonly="">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">

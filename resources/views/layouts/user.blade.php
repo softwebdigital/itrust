@@ -187,7 +187,7 @@
                                     <a href="{{ route('user.notifications.show', $notis->id) }}#{{ $notis->id }}" class="text-reset notification-item">
                                         <div class="d-flex {{ $notis->read_at == null ? 'bg-light' : '' }}">
                                             <div class="flex-shrink-0 me-3">
-                                                <img src="{{ asset($notis->data['image'] ?? 'assets/images/logo-sm.svg') }}" class="rounded-circle avatar-sm" alt="user-pic">
+                                                <img src="{{ asset($notis->data['image'] ?? 'img/avatar.png') }}" class="rounded-circle avatar-sm" alt="user-pic">
                                             </div>
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1">{{ ucwords($notis->data['title']) }}</h6>
@@ -203,7 +203,7 @@
                             @if($user->notifications()->count() > 2)
                                 <div class="p-2 border-top d-grid">
                                     <a class="btn btn-sm btn-link font-size-14 text-center" href="{{ route('user.notifications') }}">
-                                        <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span>
+                                        <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View All</span>
                                     </a>
                                 </div>
                             @endif
@@ -346,6 +346,27 @@
                 @yield('content')
             </div>
             <!-- container-fluid -->
+
+            <button type="button" class="btn btn-primary waves-effect waves-light d-none" id="alert-btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Static backdrop modal
+            </button>
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Account not verified</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="msg"></p>
+                        </div>
+{{--                        <div class="modal-footer">--}}
+{{--                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>--}}
+{{--                            <button type="button" class="btn btn-primary">Understood</button>--}}
+{{--                        </div>--}}
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- End Page-content -->
 
@@ -862,9 +883,31 @@
             .attr('src', defaultImg)
             .width(width)
     }
+
+
+    $(document).ready(() => {
+        @if(auth()->user()['id_approved'] != 1)
+            $('#id-btn').click();
+        @endif
+        @if(auth()->user()['state_id_approved'] != 1)
+            $('#state-btn').click();
+        @endif
+    })
 </script>
 
 @yield('script')
+
+<script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/61d7335eb84f7301d329b6f4/1fooa1bol';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+    })();
+</script>
 </body>
 
 </html>

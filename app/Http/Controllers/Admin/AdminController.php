@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\Settings;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\WebNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use function Symfony\Component\String\u;
 
 class AdminController extends Controller
 {
@@ -85,9 +87,39 @@ class AdminController extends Controller
         return view('admin.user-info', compact('user'));
     }
 
+    public function updateUser(User $user)
+    {
+        $this->validate(request(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'username' => 'required',
+            'dob' => 'required|date',
+            'ssn' => 'required',
+            'phone' => 'required',
+            'marital_status' => 'required',
+            'nationality' => 'required',
+        ]);
+        $user->update(request()->except('token'));
+        return back()->with('success', 'User updated successfully');
+    }
+
     public function deleteUser(User $user)
     {
         if ($user->delete()) return back()->with('success', 'User deleted successfully');
+        return back()->with('error', 'An error occurred, try again.');
+    }
+
+    public function approveID(User $user, $action): RedirectResponse
+    {
+        if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
+        $data = [
+            'subject' => 'Document '.$action,
+            'body' => 'Your means of identification has been <b>'.$action.'</b>.'
+        ];
+        if ($user->update(['id_approved' => $action == 'approved' ? '1' : '2', 'id_date_approved' => now()])) {
+            $user->notify(new WebNotification($data));
+            return back()->with('success', 'User document ' . $action . ' successfully');
+        }
         return back()->with('error', 'An error occurred, try again.');
     }
 
@@ -140,18 +172,17 @@ class AdminController extends Controller
         if ($validator->fails()) return back()->withErrors($validator)->withInput();
         $user_id = $request->input('user');
         $user = User::find($user_id);
+        $btc = self::getBTC();
 
         if($type == 'payout'){
-        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
-        $inv = $user->roi()->sum('amount');
-        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
-        $withdrawable = ($deposits - $payouts) + $inv;
-    }
+            $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+            $inv = $user->roi()->sum('amount');
+            $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+            $withdrawable = ($deposits - $payouts) + $inv;
+        }
 
-        if ($request['method'] == 'bank') {
-            $amount = $request['amount'];
-        } else
-            $amount = $request['amount'] / 44000;
+        if ($request['method'] == 'bank') $amount = $request['amount'];
+        else $amount = $request['amount'] / ($btc ?? 50000);
 
         $data = [
             'method' => $request['method'],
@@ -163,15 +194,60 @@ class AdminController extends Controller
             'created_at' => $request['date']
         ];
 
-        // if($type == 'payout')
-        // if ((float) $request['amount'] > $withdrawable) {
-        //     return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
-        // }
+         if($type == 'payout')
+             if ((float) $request['amount'] > $withdrawable)
+                 return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
+
 
         if ($user->transactions()->create($data)) {
             return back()->with('success', ucfirst($type) . ' Created Successfully');
         } else
             return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
+    }
+
+    public function editTransaction(Request $request, $id, $type)
+    {
+        $this->validate($request, [
+            'user' => 'required',
+            'amount' => 'required',
+            'method' => 'required',
+            'account' => 'required',
+            'date' => 'required'
+        ]);
+
+        $user_id = $request->input('user');
+        $user = User::find($user_id);
+        $btc = self::getBTC();
+
+        if($type == 'payout'){
+            $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+            $inv = $user->roi()->sum('amount');
+            $payouts = $user->payouts()->where('status', '=', 'approved')->where('id', '!=', $id)->sum('actual_amount');
+            $withdrawable = ($deposits - $payouts) + $inv;
+        }
+
+        if ($request['method'] == 'bank') {
+            $amount = $request['amount'];
+        } else
+            $amount = $request['amount'] / ($btc ?? 50000);
+
+        $data = [
+            'user_id' => $user_id,
+            'method' => $request['method'],
+            'amount' => $amount,
+            'actual_amount' => (float) $request['amount'],
+            'type' => $type,
+            'acct_type' => $request['account'],
+            'created_at' => $request['date']
+        ];
+
+         if($type == 'payout')
+             if ((float) $request['amount'] > $withdrawable)
+                 return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
+
+
+        Transaction::find($id)->update($data);
+        return back()->with('success', ucfirst($type) . ' Updated Successfully');
     }
 
     public function profile()
@@ -256,5 +332,26 @@ class AdminController extends Controller
             $unit = 'T';
         }
         return [$price, $unit];
+    }
+
+    public function imageUpload(): JsonResponse
+    {
+        $file = request()->file('file');
+        $name = time().'_'.$file->getClientOriginalName();
+        $loc = $file->move('uploads/blog', $name);
+        return response()->json(['link' => asset($loc)]);
+    }
+
+    public function imageUpload2(): JsonResponse
+    {
+        $file = request()->file('file');
+        $name = time().'_'.$file->getClientOriginalName();
+        $loc = $file->move('uploads/news', $name);
+        return response()->json(['link' => asset($loc)]);
+    }
+
+    public static function getBTC()
+    {
+        return round(json_decode(file_get_contents(public_path('data.json')))[0]->price, 2) ?? 50000;
     }
 }

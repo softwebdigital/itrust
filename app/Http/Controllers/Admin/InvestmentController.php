@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MailController;
 use App\Models\Investment;
-use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\WebNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -94,6 +95,8 @@ class InvestmentController extends Controller
         $inv->status = $request['status'];
 
         $inv->acct_type = $request['acct_type'];
+
+        $inv->created_at = Carbon::make($request['date'])->format('Y-m-d');
 
         $inv->save();
 
@@ -229,7 +232,8 @@ class InvestmentController extends Controller
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
 
-        if ($investment->update(['ROI' => $request['amount'], 'amount' => $request['investment']])) return back()->with('success', 'Investment successfully updated');
+        if ($investment->update(['ROI' => $request['amount'], 'amount' => $request['investment'], 'created_at' => Carbon::make($request['date'])->format('Y-m-d')]))
+            return back()->with('success', 'Investment successfully updated');
 
         return back()->with('error', 'An error occurred, try again.');
     }
@@ -238,8 +242,6 @@ class InvestmentController extends Controller
 
     public function updateStatus($investment_id, $type)
     {
-
-        // dd($investment_id, $type);
         $investment = Investment::find($investment_id);
         // dd($investment);
 
@@ -247,7 +249,19 @@ class InvestmentController extends Controller
 
         if (!$investment) return back()->with('error', 'Investment not found');
 
-        if ($investment->update(['status' => $type])) return back()->with('success', 'Investment is ' . $type);
+        if ($investment->update(['status' => $type])) {
+            $user = User::find($investment->user_id);
+
+            if ($type == 'closed') {
+                $data = [
+                    'subject' => 'Investment Closed',
+                    'body' => '<b>Profit made +$'.number_format($investment['ROI'], 2).' </b>',
+                ];
+                $user->notify(new WebNotification($data));
+            }
+
+            return back()->with('success', 'Investment is ' . $type);
+        }
 
         return back()->with('error', 'An error occurred, try again.');
     }

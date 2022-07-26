@@ -26,7 +26,7 @@
             <ul class="post-meta mb-5">
               <li class="post-date"><i class="uil uil-calendar-alt"></i><span>{{ \Carbon\Carbon::make($blog_post->created_at)->format('d M Y') }}</span></li>
               <li class="post-author"><a href="#"><i class="uil uil-user"></i><span>By Admin</span></a></li>
-              <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $total_comments }}<span> Comments</span></a></li>
+{{--              <li class="post-comments"><a href="#"><i class="uil uil-comment"></i>{{ $total_comments }}<span> Comments</span></a></li>--}}
               {{-- <li class="post-likes"><a href="#"><i class="uil uil-heart-alt"></i>3<span> Likes</span></a></li> --}}
             </ul>
             <!-- /.post-meta -->
@@ -46,7 +46,7 @@
         <div class="col-lg-10 mx-auto">
           <div class="blog single mt-n17">
             <div class="card">
-              <figure class="card-img-top "><img class="img align-self-center justify-content-between" src="{{ env('APP_URL').'/'.$blog_post->image }}" alt="" /></figure>
+              <figure class="card-img-top "><img class="img align-self-center justify-content-between" src="{{ asset($blog_post->image) }}" alt="" /></figure>
               <div class="card-body">
                 <div class="classic-view">
                   <article class="post">
@@ -148,8 +148,8 @@
                   @foreach($other_blogs as $blog)
                   <div class="item">
                     <article>
-                      <figure class="overlay overlay1 hover-scale rounded mb-5"><a href="{{ route('frontend.blogview', $blog->id) }}"> <img
-                            src="{{ env('APP_URL').'/'.$blog->image }}" alt="" /></a>
+                      <figure class="overlay overlay1 hover-scale rounded mb-5"><a href="{{ route('frontend.blogview', $blog->slug) }}"> <img
+                            src="{{ asset($blog->image) }}" alt="" /></a>
                         <figcaption>
                           <h5 class="from-top mb-0">Read More</h5>
                         </figcaption>
@@ -159,7 +159,7 @@
                           <a href="#" class="hover" rel="category">{{ $blog->category }}</a>
                         </div>
                         <!-- /.post-category -->
-                        <h2 class="post-title h3 mt-1 mb-3"><a class="link-dark" href="{{ route('frontend.blogview', $blog->id) }}">{!! $blog->title !!}</a></h2>
+                        <h2 class="post-title h3 mt-1 mb-3"><a class="link-dark" href="{{ route('frontend.blogview', $blog->slug) }}">{!! $blog->title !!}</a></h2>
                       </div>
                       <!-- /.post-header -->
                       <div class="post-footer">
@@ -179,78 +179,78 @@
                   <!-- /.item -->
                 </div>
                 <!-- /.owl-carousel -->
-                <hr />
-                <div id="comments">
-                    <h3 class="mb-6">{{ $total_comments }} Comments</h3>
-                    <ol id="singlecomments" class="commentlist">
-            @include('frontend.comments', ['comments' => $comments])
-                    {{-- <li class="comment">
-                      <div class="comment-header d-md-flex align-items-center">
-                        <div class="d-flex align-items-center">
-                          <figure class="user-avatar"><img class="rounded-circle" alt="" src="img/avatars/u4.jpg" />
-                          </figure>
-                          <div>
-                            <h6 class="comment-author"><a href="#" class="link-dark">Lou Bloxham</a></h6>
-                            <ul class="post-meta">
-                              <li><i class="uil uil-calendar-alt"></i>3 May 2021</li>
-                            </ul>
-                            <!-- /.post-meta -->
-                          </div>
-                          <!-- /div -->
-                        </div>
-                        <!-- /div -->
-                        <div class="mt-3 mt-md-0 ms-auto">
-                          <a href="#" class="btn btn-soft-ash btn-sm rounded-pill btn-icon btn-icon-start mb-0"><i
-                              class="uil uil-comments"></i> Reply</a>
-                        </div>
-                        <!-- /div -->
-                      </div>
-                      <!-- /.comment-header -->
-                      <p>Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Cum
-                        sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
-                    </li> --}}
-                    <div class="ajax-load text-center" style="display: none;">
-                        <p><img width="100" src="{{ asset('img/loader.gif') }}" alt="">Loading More Comments</p>
-                    </div>
-                </ol>
-                @if($total_comments > 5)
-                <div>
-                    <button type="submit" class="loadmore btn btn-primary rounded-pill mb-0">Load more</button>
-                </div>
-                @endif
-                {{-- <button class="">CLick Me</button> --}}
-                </div>
+{{--                <hr />--}}
+{{--                <div id="comments">--}}
+{{--                    <h3 class="mb-6">{{ $total_comments }} Comments</h3>--}}
+{{--                    <ol id="singlecomments" class="commentlist">--}}
+{{--            @include('frontend.comments', ['comments' => $comments])--}}
+{{--                    --}}{{-- <li class="comment">--}}
+{{--                      <div class="comment-header d-md-flex align-items-center">--}}
+{{--                        <div class="d-flex align-items-center">--}}
+{{--                          <figure class="user-avatar"><img class="rounded-circle" alt="" src="img/avatars/u4.jpg" />--}}
+{{--                          </figure>--}}
+{{--                          <div>--}}
+{{--                            <h6 class="comment-author"><a href="#" class="link-dark">Lou Bloxham</a></h6>--}}
+{{--                            <ul class="post-meta">--}}
+{{--                              <li><i class="uil uil-calendar-alt"></i>3 May 2021</li>--}}
+{{--                            </ul>--}}
+{{--                            <!-- /.post-meta -->--}}
+{{--                          </div>--}}
+{{--                          <!-- /div -->--}}
+{{--                        </div>--}}
+{{--                        <!-- /div -->--}}
+{{--                        <div class="mt-3 mt-md-0 ms-auto">--}}
+{{--                          <a href="#" class="btn btn-soft-ash btn-sm rounded-pill btn-icon btn-icon-start mb-0"><i--}}
+{{--                              class="uil uil-comments"></i> Reply</a>--}}
+{{--                        </div>--}}
+{{--                        <!-- /div -->--}}
+{{--                      </div>--}}
+{{--                      <!-- /.comment-header -->--}}
+{{--                      <p>Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Cum--}}
+{{--                        sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>--}}
+{{--                    </li> --}}
+{{--                    <div class="ajax-load text-center" style="display: none;">--}}
+{{--                        <p><img width="100" src="{{ asset('img/loader.gif') }}" alt="">Loading More Comments</p>--}}
+{{--                    </div>--}}
+{{--                </ol>--}}
+{{--                @if($total_comments > 5)--}}
+{{--                <div>--}}
+{{--                    <button type="submit" class="loadmore btn btn-primary rounded-pill mb-0">Load more</button>--}}
+{{--                </div>--}}
+{{--                @endif--}}
+{{--                --}}{{-- <button class="">CLick Me</button> --}}
+{{--                </div>--}}
                 <!-- /#comments -->
                 <hr />
 
-                <h3 class="mb-3">Would you like to share your thoughts?</h3>
-                <p class="mb-7">Your email address will not be published. Required fields are marked *</p>
-                <form method="POST" action="{{ route('frontend.blog.addcomment', $blog_post->id) }}" class="comment-form">
-                    @csrf @method('POST')
-                  <div class="form-label-group mb-4">
-                    <input type="text" required class="form-control" name="name" placeholder="Name*" id="c-name">
-                    @error('name')
-                    <strong class="text-danger" role="alert">{{ $message }}</strong>
-                    @enderror
-                    <label for="c-name">Name *</label>
-                  </div>
-                  <div class="form-label-group mb-4">
-                    <input type="email" required class="form-control" name="email" placeholder="Email*" id="c-email">
-                    @error('email')
-                    <strong class="text-danger" role="alert">{{ $message }}</strong>
-                    @enderror
-                    <label for="c-email">Email*</label>
-                  </div>
-                  <div class="form-label-group mb-4">
-                    <textarea class="form-control" required name="comment" rows="5" placeholder="Comment"></textarea>
-                    @error('comment')
-                    <strong class="text-danger" role="alert">{{ $message }}</strong>
-                    @enderror
-                    <label>Comment *</label>
-                  </div>
-                  <button type="submit" class="btn btn-primary rounded-pill mb-0">Submit</button>
-                </form>
-                <!-- /.comment-form -->
+{{--                <h3 class="mb-3">Would you like to share your thoughts?</h3>--}}
+{{--                <p class="mb-7">Your email address will not be published. Required fields are marked *</p>--}}
+{{--                <form method="POST" action="{{ route('frontend.blog.addcomment', $blog_post->slug) }}" class="comment-form">--}}
+{{--                    @csrf @method('POST')--}}
+{{--                  <div class="form-label-group mb-4">--}}
+{{--                    <input type="text" required class="form-control" name="name" placeholder="Name*" id="c-name">--}}
+{{--                    @error('name')--}}
+{{--                    <strong class="text-danger" role="alert">{{ $message }}</strong>--}}
+{{--                    @enderror--}}
+{{--                    <label for="c-name">Name *</label>--}}
+{{--                  </div>--}}
+{{--                  <div class="form-label-group mb-4">--}}
+{{--                    <input type="email" required class="form-control" name="email" placeholder="Email*" id="c-email">--}}
+{{--                    @error('email')--}}
+{{--                    <strong class="text-danger" role="alert">{{ $message }}</strong>--}}
+{{--                    @enderror--}}
+{{--                    <label for="c-email">Email*</label>--}}
+{{--                  </div>--}}
+{{--                  <div class="form-label-group mb-4">--}}
+{{--                    <textarea class="form-control" required name="comment" rows="5" placeholder="Comment"></textarea>--}}
+{{--                    @error('comment')--}}
+{{--                    <strong class="text-danger" role="alert">{{ $message }}</strong>--}}
+{{--                    @enderror--}}
+{{--                    <label>Comment *</label>--}}
+{{--                  </div>--}}
+{{--                  <button type="submit" class="btn btn-primary rounded-pill mb-0">Submit</button>--}}
+{{--                </form>--}}
+{{--                <!-- /.comment-form -->--}}
               </div>
               <!-- /.card-body -->
             </div>

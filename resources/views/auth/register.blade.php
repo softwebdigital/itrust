@@ -52,7 +52,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="first_name" class="form-label">First Name <strong class="text-danger">*</strong></label>
+                                        <label for="first_name" class="form-label">First Name </label>
                                         <input type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" id="first_name" placeholder="Enter first name" value="{{ old('first_name') }}">
                                         @error('first_name')
                                         <span class="invalid-feedback" role="alert">
@@ -63,7 +63,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="last_name" class="form-label">Last Name <strong class="text-danger">*</strong></label>
+                                        <label for="last_name" class="form-label">Last Name </label>
                                         <input type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" id="last_name" placeholder="Enter last name" value="{{ old('last_name') }}">
                                         @error('last_name')
                                         <span class="invalid-feedback" role="alert">
@@ -77,7 +77,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="username" class="form-label">Username <strong class="text-danger">*</strong></label>
+                                        <label for="username" class="form-label">Username </label>
                                         <input type="text" class="form-control @error('username') is-invalid @enderror" name="username" id="username" placeholder="Enter username" value="{{ old('username') }}">
                                         @error('username')
                                         <span class="invalid-feedback" role="alert">
@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email <strong class="text-danger">*</strong></label>
+                                        <label for="email" class="form-label">Email </label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Enter email" value="{{ old('email') }}">
                                         @error('email')
                                         <span class="invalid-feedback" role="alert">
@@ -101,7 +101,7 @@
                                     <div class="mb-3">
                                         <div class="d-flex align-items-start">
                                             <div class="flex-grow-1">
-                                                <label class="form-label" for="password">Password <strong class="text-danger">*</strong></label>
+                                                <label class="form-label" for="password">Password </label>
                                             </div>
                                         </div>
                                         <div class="input-group">
@@ -119,7 +119,7 @@
                                     <div class="mb-3">
                                         <div class="d-flex align-items-start">
                                             <div class="flex-grow-1">
-                                                <label class="form-label" for="confirm-password">Confirm Password <strong class="text-danger">*</strong></label>
+                                                <label class="form-label" for="confirm-password">Confirm Password </label>
                                             </div>
                                         </div>
 
@@ -144,18 +144,19 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="mb-3">
-                                            <label for="phone" class="form-label">Phone <strong class="text-danger">*</strong></label><br>
-                                            <input type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" id="phone" placeholder="Enter phone" value="{{ old('phone') }}">
+                                            <label for="phone" class="form-label">Phone </label><br>
+                                            <input type="number" class="form-control @error('phone') is-invalid @enderror" name="phone" id="new-phone" placeholder="Enter phone" value="{{ old('phone') }}">
+                                            <input type="hidden" name="phone_code">
                                             @error('phone')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
-                                            <label for="address">Residential Address <strong class="text-danger">*</strong></label>
+                                            <label for="address">Residential Address </label>
                                             <textarea id="address" class="form-control @error('address') is-invalid @enderror" name="address" rows="2">{{ old('address') }}</textarea>
                                             @error('address')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -166,7 +167,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label" for="country">Country <strong class="text-danger">*</strong></label>
+                                            <label class="form-label" for="country">Country </label>
                                             <select class="form-select @error('country') is-invalid @enderror" data-trigger name="country" id="country">
                                                 <option selected value="">Select Country</option>
                                                 @foreach(\App\Models\Country::query()->orderBy('name')->get() as $country)
@@ -187,12 +188,15 @@
                                     </div> --}}
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label" for="state">State/Province  <strong class="text-danger">*</strong></label>
+                                            <label class="form-label" for="state">State/Province  </label>
                                             <select class="form-select @error('state') is-invalid @enderror" name="state" id="state">
-                                                {{-- <option selected value="">Select State</option> --}}
-                                                {{-- @foreach(\App\Models\State::query()->orderBy('name')->get() as $state)
-                                                    <option value="{{ $state->name }}" @if(old('state') == $state->name) selected @endif>{{ ucwords($state->name) }}</option>
-                                                @endforeach --}}
+                                                @if(old('country'))
+                                                    @foreach(\App\Models\Country::query()->where('name', old('country'))->first()->states()->orderBy('name')->get() as $state)
+                                                        <option value="{{ $state->name }}" @if(old('state') == $state->name) selected @endif>{{ ucwords($state->name) }}</option>
+                                                    @endforeach
+                                                @else
+                                                    <option selected value="">Select A Country</option>
+                                                @endif
                                             </select>
                                             @error('state')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -203,7 +207,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label" for="city">City  <strong class="text-danger">*</strong></label>
+                                            <label class="form-label" for="city">City  </label>
                                             <input type="text" class="form-control @error('city') is-invalid @enderror" name="city" id="city" value="{{ old('city') }}">
                                             @error('city')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -224,8 +228,9 @@
                                 <ul class="pager wizard twitter-bs-wizard-pager-link">
                                     <li class="previous"><a href="javascript: void(0);" class="btn btn-primary" onclick="nextTab()"><i
                                                 class="bx bx-chevron-left me-1"></i> Previous</a></li>
-                                    <li class="next"><a href="javascript: void(0);" class="btn btn-primary" onclick="nextTab()">Next <i
-                                                class="bx bx-chevron-right ms-1"></i></a></li>
+                                    <li class="next"><a href="javascript: void(0);" class="btn btn-primary" onclick='
+                                            $(`input[name="phone_code"]`).val($(`.iti__selected-dial-code`).text()); nextTab();'>Next
+                                        <i class="bx bx-chevron-right ms-1"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -238,7 +243,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="ssn" class="form-label">Social Security Number / Identity Number  <strong class="text-danger">*</strong></label>
+                                            <label for="ssn" class="form-label">Social Security Number / Identity Number  </label>
                                             <input type="text" class="form-control @error('ssn') is-invalid @enderror" id="ssn" name="ssn" value="{{ old('ssn') }}">
                                             @error('ssn')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -250,7 +255,7 @@
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="dob" class="form-label">Date of Birth  <strong class="text-danger">*</strong></label>
+                                            <label for="dob" class="form-label">Date of Birth  </label>
                                             <input type="date" class="form-control @error('dob') is-invalid @enderror" id="dob" name="dob" value="{{ old('dob') ? date('Y-m-d', strtotime(old('dob'))) : '' }}">
                                             @error('dob')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -262,7 +267,7 @@
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="nationality" class="form-label">Nationality <strong class="text-danger">*</strong></label>
+                                            <label for="nationality" class="form-label">Nationality </label>
                                             <select class="form-select @error('nationality') is-invalid @enderror" data-trigger name="nationality" id="nationality">
                                                 <option value="">Select Nationality</option>
                                                 @foreach(\App\Models\Nationality::query()->orderBy('name')->get() as $nationality)
@@ -441,34 +446,74 @@
             $("#password-btn").on("click",function(){0<$(this).siblings("input").length&&("password"==$(this).siblings("input").attr("type")?$(this).siblings("input").attr("type","input"):$(this).siblings("input").attr("type","password"))});
             $("#confirm-password-btn").on("click",function(){0<$(this).siblings("input").length&&("password"==$(this).siblings("input").attr("type")?$(this).siblings("input").attr("type","input"):$(this).siblings("input").attr("type","password"))});
         })
-    </script>
-    <script type="text/javascript">
+
         $(document).ready(function() {
-        $('select[name="country"]').on('change', function() {
-            $("select").attr("data-trigger", "");
-            var countryID = $(this).val();
-            console.log(countryID);
-                if(countryID) {
-                $.ajax({
-                    url: '/getStates/'+encodeURI(countryID),
-                    type: "GET",
-                    dataType: "json",
-                    success:function(data) {
-                        console.log(data);
-                        // $('#state').removeAttr('data-trigger');
-                    $('select[name="state"]').empty();
-                    $.each(data, function(key, value) {
-                        // console.log(value.name, key);
-                        $('select[name="state"]').append('<option value="'+ value.name +'">'+ value.name.charAt(0).toUpperCase() + value.name.slice(1) +'</option>');
-                        });
-                    }
+            $('select[name="country"]').on('change', function() {
+                $("select").attr("data-trigger", "");
+                var countryID = $(this).val();
+                if(countryID)
+                    $.ajax({
+                        url: '/getStates/'+encodeURI(countryID),
+                        type: "GET",
+                        dataType: "json",
+                        success:function(data) {
+                            console.log(data);
+                            // $('#state').removeAttr('data-trigger');
+                        $('select[name="state"]').empty()
+                            .append('<option value="">Select State</option>')
+                        $.each(data, function(key, value) {
+                            // console.log(value.name, key);
+                            $('select[name="state"]').append('<option value="'+ value.name +'">'+ value.name.charAt(0).toUpperCase() + value.name.slice(1) +'</option>');
+                            });
+                        }
 
-                });
+                    });
 
-                }else{
-                $('select[name="state"]').empty();
-                  }
-               });
+                else
+                    $('select[name="state"]').empty()
+                        .append('<option value="">Select A Country</option>')
+
             });
-        </script>
+        });
+
+        var input = document.querySelector("#new-phone");
+        window.intlTelInput(input, {
+            initialCountry: "us",
+            allowDropdown: true,
+            // if there is just a dial code in the input: remove it on blur
+            autoHideDialCode: true,
+            // add a placeholder in the input with an example number for the selected country
+            autoPlaceholder: "polite",
+            // modify the parentClass
+            customContainer: "",
+            // modify the auto placeholder
+            customPlaceholder: null,
+            // append menu to specified element
+            dropdownContainer: null,
+            // don't display these countries
+            excludeCountries: [],
+            // format the input value during initialisation and on setNumber
+            formatOnDisplay: true,
+            // geoIp lookup function
+            geoIpLookup: null,
+            // inject a hidden input with this name, and on submit, populate it with the result of getNumber
+            hiddenInput: "",
+            // localized country names e.g. { 'de': 'Deutschland' }
+            localizedCountries: null,
+            // don't insert international dial codes
+            nationalMode: false,
+            // display only these countries
+            onlyCountries: [],
+            // number type to use for placeholders
+            placeholderNumberType: "MOBILE",
+            // the countries at the top of the list. defaults to united states and united kingdom
+            preferredCountries: [ "us", "gb" ],
+            // display the country dial code next to the selected flag so it's not part of the typed number
+            separateDialCode: true,
+            // specify the path to the libphonenumber script to enable validation/formatting
+            utilsScript: ""
+        });
+
+        $('#new-phone').on('focusout', () => $('input[name="phone_code"]').val($('.iti__selected-dial-code').text()))
+    </script>
 @endsection

@@ -9,12 +9,12 @@ use App\Http\Controllers\Auth\AdminResetPasswordController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FrontEndController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,8 +38,8 @@ Route::get('/investor-relations', [FrontEndController::class, 'investor_relation
 Route::get('/our-commitments', [FrontEndController::class, 'commitments'])->name('frontend.commitments');
 Route::get('/about', [FrontEndController::class, 'about'])->name('frontend.about');
 Route::get('/blog', [FrontEndController::class, 'blog'])->name('frontend.blog');
-Route::get('/blog/{id}', [FrontEndController::class, 'blogview'])->name('frontend.blogview');
-Route::post('/comment/add/{id}', [FrontEndController::class, 'addComment'])->name('frontend.blog.addcomment');
+Route::get('/blog/{blog:slug}', [FrontEndController::class, 'blogview'])->name('frontend.blogview');
+Route::post('/comment/add/{blog:slug}', [FrontEndController::class, 'addComment'])->name('frontend.blog.addcomment');
 Route::get('/privacy', [FrontEndController::class, 'privacy'])->name('frontend.privacy');
 Route::get('/terms-and-conditions', [FrontEndController::class, 'terms'])->name('frontend.terms');
 Route::get('/faq', [FrontEndController::class, 'faq'])->name('frontend.faq');
@@ -47,8 +47,9 @@ Route::get('/contact', [FrontEndController::class, 'contact'])->name('frontend.c
 Route::get('/how-to-invest', [FrontEndController::class, 'invest'])->name('frontend.invest');
 Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('frontend.cash');
 
+Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('image.upload');
 
-Route::get('/cap', UserController::marketCap())->name('cap');
+Route::get('/cap', [UserController::class, 'marketCap'])->name('cap');
 
 Auth::routes(['verify' => true]);
 Route::get('/email/change', [VerificationController::class, 'changeEmail']);
@@ -56,6 +57,8 @@ Route::post('/email/change', [VerificationController::class, 'postChangeEmail'])
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/alt/login', [HomeController::class, 'showLogin'])->name('altLogin');
+Route::post('/alt/login', [HomeController::class, 'login'])->name('altLogin');
 Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login');
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
@@ -84,27 +87,27 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
 
     Route::group(['middleware' => 'verified'], function () {
         Route::get('/dashboard', [UserController::class, 'index'])->name('user.index');
-        Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio');
+        Route::get('/portfolio', [UserController::class, 'portfolio'])->name('user.portfolio')->middleware('approved');
         Route::get('/documents/{document}/download', [UserController::class, 'downloadDocument'])->name('user.documents.download');
         Route::post('/portfolio', [UserController::class, 'uploadDocument'])->name('user.documents.upload')->middleware('throttle:3,1');
 
         Route::get('/rewards', [UserController::class, 'rewards'])->name('user.rewards');
-        Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements');
+        Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements')->middleware('approved');
         Route::get('/statements/pdf', [TransactionController::class, 'createStatementsPDF']);
-        Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions');
+        Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions')->middleware('approved');
         Route::get('/transactions/pdf', [TransactionController::class, 'createHistoryPDF']);
         Route::get('/invoice/pdf/{type}', [TransactionController::class, 'createInvoicePDF']);
 
-        Route::get('/cash', [UserController::class, 'cash'])->name('user.cash')->middleware('approved');
+        Route::get('/cash', [UserController::class, 'cash'])->name('user.cash')->middleware('approved')->middleware('approved');
         Route::get('/cash/deposit', [TransactionController::class, 'deposit'])->name('user.deposit')->middleware('approved');
         Route::post('/cash/deposit/post', [TransactionController::class, 'userDepositStore'])->name('user.deposit.store')->middleware('approved');
         Route::get('/cash/withdraw', [TransactionController::class, 'withdraw'])->name('user.withdraw')->middleware('approved');
         Route::post('/cash/withdraw/post', [TransactionController::class, 'userWithdrawStore'])->name('user.withdraw.store')->middleware('approved');
 
-        Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices');
+        Route::get('/invoices', [UserController::class, 'invoices'])->name('user.invoices')->middleware('approved');
         Route::post('/invoices', [UserController::class, 'storeInvoice'])->name('user.invoices.store');
 
-        Route::get('/documents', [UserController::class, 'documents'])->name('user.documents');
+        Route::get('/documents', [UserController::class, 'documents'])->name('user.documents')->middleware('approved');
         Route::get('/settings', [UserController::class, 'settings'])->name('user.settings');
     });
 });
@@ -119,8 +122,11 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::put('/users/{user}/wallet/account', [AdminController::class, 'userBTCWallet'])->name('admin.users.userBTCWallet');
     Route::post('/users/invest', [InvestmentController::class, 'investUser'])->name('admin.users.invest');
     Route::post('/users/add_transaction/{type}', [AdminController::class, 'addTransaction'])->name('admin.users.addtransaction');
+    Route::put('/transactions/{id}/update/{type}', [AdminController::class, 'editTransaction'])->name('admin.transactions.edit');
     Route::post('/users/invest/new', [InvestmentController::class, 'newInvestUser'])->name('admin.users.newInvest');
+    Route::post('/users/update/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/users/delete/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::post('/users/{user}/documents/{action}', [AdminController::class, 'approveID'])->name('admin.users.documents.action');
 
     Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');
     Route::put('/deposits/{transaction}/{action}', [TransactionController::class, 'depositAction'])->name('admin.deposits.action');
@@ -143,7 +149,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/blogs/add', [BlogController::class, 'create'])->name('admin.blog.create');
     Route::get('/blogs/{blog}/edit', [BlogController::class, 'edit'])->name('admin.blog.edit');
     Route::post('/blogs/store', [BlogController::class, 'store'])->name('admin.blog.store');
-    Route::put('/blogs/{blog}/update', [BlogController::class, 'update'])->name('admin.blog.update');
+    Route::post('/blogs/{blog}/update', [BlogController::class, 'update'])->name('admin.blog.update');
     Route::delete('/blogs/{blog}/destroy', [BlogController::class, 'destroy'])->name('admin.blog.destroy');
 
     Route::get('/blogcategory', [BlogCategoryController::class, 'index'])->name('admin.blogCategory');
