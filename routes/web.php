@@ -95,6 +95,7 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
         Route::get('/statements', [TransactionController::class, 'userStatements'])->name('user.statements')->middleware('approved');
         Route::get('/statements/pdf', [TransactionController::class, 'createStatementsPDF']);
         Route::get('/transactions', [TransactionController::class, 'userTransactions'])->name('user.transactions')->middleware('approved');
+        Route::put('/transactions/{transaction}/action/{action}', [TransactionController::class, 'transactionAction'])->name('user.transactions.action')->middleware('approved');
         Route::get('/transactions/pdf', [TransactionController::class, 'createHistoryPDF']);
         Route::get('/invoice/pdf/{type}', [TransactionController::class, 'createInvoicePDF']);
 

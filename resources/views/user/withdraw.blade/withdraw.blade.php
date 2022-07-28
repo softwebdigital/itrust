@@ -228,7 +228,7 @@
                     <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
                     <td> <span class="badge
                                 {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                        {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                        {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                         {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
                             ">{{ ucwords($transaction->status) }}</td>
                     {{-- <td>{{ ucwords($transaction->type) }}</td> --}}

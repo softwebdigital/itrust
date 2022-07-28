@@ -11,6 +11,8 @@
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Statement</li>
+@endsection
+@section('style')
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css">
 @endsection
 
@@ -18,7 +20,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-end mb-4">
             <a class="btn btn-primary m-2" href="{{ URL::to('/statements/pdf') }}">Generate Account statement</a>
-            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>
+{{--            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
         </div>
         <div class="table-responsive">
             <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">

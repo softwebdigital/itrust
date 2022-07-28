@@ -113,7 +113,7 @@
                     </td>
                     <td> <span class="badge p-2
                                 {{ $payout->status == 'pending' ? 'bg-warning' : '' }}
-                        {{ $payout->status == 'declined' ? 'bg-danger' : '' }}
+                        {{ $payout->status == 'declined' || $payout->status == 'cancelled' ? 'bg-danger' : '' }}
                         {{ $payout->status == 'approved' ? 'bg-success' : '' }}
                             ">{{ ucwords($payout->status) }}</td>
 
