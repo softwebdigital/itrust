@@ -47,6 +47,13 @@ Route::get('/contact', [FrontEndController::class, 'contact'])->name('frontend.c
 Route::get('/how-to-invest', [FrontEndController::class, 'invest'])->name('frontend.invest');
 Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('frontend.cash');
 
+Route::get('/trading-bots', [FrontEndController::class, 'bot'])->name('frontend.bot');
+Route::get('/pro-tools', [FrontEndController::class, 'tools'])->name('frontend.tools');
+Route::get('/trailing-feature', [FrontEndController::class, 'tailing'])->name('frontend.tailing');
+Route::get('/copy-trading', [FrontEndController::class, 'copy'])->name('frontend.copy');
+Route::get('/automated-trading', [FrontEndController::class, 'automated'])->name('frontend.automated');
+Route::get('/ai-trading', [FrontEndController::class, 'ai'])->name('frontend.ai');
+
 Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('image.upload');
 
 Route::get('/cap', [UserController::class, 'marketCap'])->name('cap');

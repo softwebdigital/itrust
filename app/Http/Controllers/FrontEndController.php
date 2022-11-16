@@ -131,4 +131,36 @@ class FrontEndController extends Controller
         return view('frontend.investor_relations');
     }
 
+    public function bot()
+    {
+        return view('frontend.bot');
+    }
+
+    public function tools()
+    {
+        return view('frontend.pro-tools');
+    }
+
+    public function tailing()
+    {
+        return view('frontend.tailing-features');
+    }
+
+    public function copy()
+    {
+        return view('frontend.copy-trading');
+    }
+
+    public function automated()
+    {
+        return view('frontend.automated-trading');
+    }
+
+    public function ai()
+    {
+        return view('frontend.ai-trading');
+    }
+
+
+
 }
