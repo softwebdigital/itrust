@@ -40,7 +40,16 @@
                         <div class="col-6">
                             <span class="text-muted mb-3 lh-1 d-block text-truncate">Portfolio Value</span>
                             <h4 class="mb-3">
-                                $<span class="" data-target="">{{ number_format($portfolioValue, 2) }}</span>
+                                
+                                @php
+                                    $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                @endphp
+                                @foreach($symbol as $sym)
+                                    <span class="" data-target="">{{ $sym->symbol }}</span> 
+                                @endforeach
+                                
+                                <span class="" data-target="">{{ number_format($portfolioValue, 2) }}</span>
+                               
                             </h4>
                         </div>
                     </div>
@@ -87,7 +96,7 @@
                         </div>
                     @endif
                 @endif
-            </div>
+        </div>
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                   <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Crypto</button>
@@ -99,7 +108,7 @@
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <div class="card">
                         <div class="card-body px-0">
-                            <div class="table table-responsive">
+                            <div class="table table-responsive" style="height: 450px;">
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                     <tr>
@@ -138,9 +147,14 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div>
+                                <a href="#"></a>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                
                 <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <div class="card">
                         <div class="card-body px-0">
@@ -192,7 +206,61 @@
               </div>
         </div>
 
-        <div class="col-lg-4 order-lg-last order-first">
+        <div class="col-md-4 order-lg-last order-first">
+            <!-- New Bots -->
+            @php
+                    $copyBots = App\Models\CopyBot::query()->latest()->get();
+                    $user = App\Models\User::find(auth()->id());
+                @endphp
+
+                <h5 class="mt-5 mb-2">New Copy Bots</h5>
+                <div class="col-md-12 order-md-1 mt-4">
+                @foreach($copyBots as $copyBot)
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward" id="reward-1">
+                            <div class="col">
+                                <img src="{{ $copyBot->image ? asset($copyBot->image) : '' }}" alt="" width="75">
+                            </div>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="mt-4 mt-sm-0">
+                                    <p class="mb-1">{{ $copyBot->name }}</p>
+                                    <h6>${{ $copyBot->price }}</h6>
+                                </div>
+                                <div class="align-self-auto my-auto">
+                                @if($user->copy_bot !== $copyBot->id)
+                                    <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
+                                @else
+                                    <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
+                                @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                    <div class="modal-body">
+                                        <p>Are you sure you want this bot?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success">Add</button>
+                                    </div>
+                                    <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                </div>
+        </div>
+        <div class="col-lg-8 order-lg-last order-first">
             @if($portfolioValue > 0)
                 <div class="card">
                     <div class="card-body px-0 mx-auto">
@@ -211,6 +279,7 @@
                 </div>
             </div> --}}
         </div>
+        
     </div>
 
     <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">

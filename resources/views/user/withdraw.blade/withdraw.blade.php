@@ -230,6 +230,8 @@
                                 {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
                         {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
                         {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
+                        {{ $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
+                            {{ $transaction->status == 'progress' ? 'bg-secondary' : '' }}
                             ">{{ ucwords($transaction->status) }}</td>
                     {{-- <td>{{ ucwords($transaction->type) }}</td> --}}
                     <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>

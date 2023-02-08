@@ -23,6 +23,7 @@
             <th>Email</th>
             <th>Username</th>
             <th>Phone</th>
+            <th>Currency</th>
             <th>Approval</th>
             <th>Date Joined</th>
             <th></th>
@@ -32,12 +33,18 @@
 
         <tbody>
         @foreach($users as $index => $user)
+        @php
+            $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+        @endphp
             <tr>
                 <td>{{ $index +  1 }}</td>
                 <td>{{ $user->full_name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->username }}</td>
                 <td>{{ $user->phone }}</td>
+                @foreach($symbol as $sym)
+                    <td>{{ $sym->symbol }} ({{ $sym->name }})</td>
+                @endforeach
                 <td> <span class="badge
                     {{ $user->status == 'pending' ? 'bg-warning' : '' }}
                     {{ $user->status == 'declined' ? 'bg-danger' : '' }}
@@ -55,6 +62,8 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
                             <a class="dropdown-item" href="{{ route('admin.users.show', $user->id) }}">View User</a>
+                            
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-changeCurency-{{ $user->id }}">Change Currency</a>
 
                             @if($user->btc_wallet != null)
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
@@ -107,6 +116,39 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="staticBackdrop-changeCurency-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Change Curency</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.currency.update', [$user->id]) }}" method="post">@csrf @method('PUT')
+                        <div class="m-4">
+                            <label for="currency_id" class="form-label">Currency </label>
+                            <select class="form-select @error('currency') is-invalid @enderror" data-trigger name="currency_id" id="currency_id">
+                                <option value="">Select Currency</option>
+                                @foreach(\App\Models\Currency::latest()->get() as $currency)
+                                    <option value="{{ $currency->id }}" @if(old('currency_id') == $currency->name) selected @endif>{{ ucwords($currency->name) }}</option>
+                                @endforeach
+                            </select>
+                            @error('currency')
+                            <span class="invalid-feedback d-block" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+
+                            <input type="hidden" name="user_id" value="{{ $user->id }}">
+
+                            <button type="submit" class="mt-3 btn btn-primary">Submit</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="modal fade" id="staticBackdrop-approvewithWallet-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">

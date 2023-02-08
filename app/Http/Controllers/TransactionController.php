@@ -437,11 +437,31 @@ class TransactionController extends Controller
     }
 
     public function attributes()
-{
-    return [
-        'w_method' => 'method',
-        'w_amount' => 'amount',
-        'acct_type' => 'Account Type'
-    ];
-}
+    {
+        return [
+            'w_method' => 'method',
+            'w_amount' => 'amount',
+            'acct_type' => 'Account Type'
+        ];
+    }
+
+    public function update_cancel(Transaction $transaction, $action): RedirectResponse
+    {
+        // if (!$transaction || $transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
+        if (!in_array($action, ['cancelled'])) return back()->with('error', 'Invalid action');
+
+        if ($transaction->update(['status' => $action])) {
+            return back()->with('success', 'Transaction '.$action.' successfully');
+        } else return back()->with('error', 'An error occurred, try again.');
+    }
+
+    public function update_progress(Transaction $transaction, $action): RedirectResponse
+    {
+        // if (!$transaction || $transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
+        if (!in_array($action, ['progress'])) return back()->with('error', 'Invalid action');
+
+        if ($transaction->update(['status' => $action])) {
+            return back()->with('success', 'Transaction '.$action.' successfully');
+        } else return back()->with('error', 'An error occurred, try again.');
+    }
 }

@@ -64,9 +64,9 @@ class UserController extends Controller
 //        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
 
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
         $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
         $ira_roi = $user->ira_roi()->sum('ROI');
         $offshore_roi = $user->offshore_roi()->sum('ROI');
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
@@ -131,7 +131,7 @@ class UserController extends Controller
         $slot = request('slot') == 7 ? 7 : 30;
 
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
-        $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
+        $payouts = $user->payouts()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
         $closed_roi = $user->investments()->where('status', '=', 'closed')->sum('ROI');
         // dd($closed_roi);
         $open_inv = $user->roi()->where('status', '=', 'open')->sum('amount');

@@ -63,6 +63,7 @@ class RegisterController extends Controller
             'ssn' => 'required',
             'dob' => 'required',
             'nationality' => ['required', 'string'],
+            'currency_id' => 'required',
             'experience' => ['required', 'string'],
             'employment' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -97,9 +98,11 @@ class RegisterController extends Controller
             'ssn' => $data['ssn'],
             'dob' => $data['dob'],
             'nationality' => $data['nationality'],
+            'currency_id' => $data['currency_id'],
             'experience' => $data['experience'],
             'employment' => $data['employment'],
             'related' => $data['related'],
+            'referrer_id' => $data['referral'] ? $data['referral'] : null,
         ]);
     }
 }

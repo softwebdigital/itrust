@@ -6,20 +6,20 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\HtmlString;
 
-class WelcomeNotification extends Notification
+class BotNotification extends Notification
 {
     use Queueable;
-    private $welcomeData;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($welcomeData)
+    private $data;
+    public function __construct($data)
     {
-        $this->welcomeData = $welcomeData;
+        $this->data = $data;
     }
 
     /**
@@ -28,7 +28,7 @@ class WelcomeNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable): array
+    public function via($notifiable)
     {
         return ['mail', 'database'];
     }
@@ -37,16 +37,14 @@ class WelcomeNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return MailMessage
+     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Welcome to '.env('APP_NAME'))
-            ->greeting('Hi '.$this->welcomeData['name'])
-            ->line(new HtmlString($this->welcomeData['message']));
-            // ->action('Login Now', url('/login'))
-            // ->line('Thank you for choosing us!');
+                    ->subject('New Copy Bot Added')
+                    ->greeting('Hi '.$this->$data['name'])
+                    ->line('You have successully add a copy bot');
     }
 
     /**
@@ -55,11 +53,11 @@ class WelcomeNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable): array
+    public function toArray($notifiable)
     {
         return [
-            'title' => $this->welcomeData['title'],
-            'message' => $this->welcomeData['message'],
+            'title' => $this->$data['subject'],
+            'message' => $this->$data['body'],
         ];
     }
 }

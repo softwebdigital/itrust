@@ -354,4 +354,22 @@ class AdminController extends Controller
     {
         return round(json_decode(file_get_contents(public_path('data.json')))[0]->price, 2) ?? 50000;
     }
+
+    public function updateCurrencuy(Request $request)
+    {
+        // $user = Admin::find($request->user_id);
+        // $data = $user->update(['currency_id' => $request->currency_id]);
+
+        // $this->validate($request, [
+        //     'user' => 'required',
+        //     'currency_id' => 'required'
+        // ]);
+
+        // $user_id = input('user');
+        $user = User::find($request->user_id);
+
+        $user->update(['currency_id' => $request->currency_id]);
+        
+        return back()->with('success', ' Updated Successfully');
+    }
 }

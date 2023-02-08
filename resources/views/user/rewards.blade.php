@@ -19,8 +19,8 @@
             <div class="card">
                 <div class="card-header"><strong>Your referral link</strong></div>
                 <div class="card-body">
-                    <input type="text" name="" readonly class="form-control mb-3" value="{{ auth()->user()->username }}">
-                    <input type="text" name="" readonly class="d-none" value="{{ url('/referral?uid=').auth()->id().'&link='.auth()->user()->username}}" id="link">
+                    <input type="text" name="" readonly class="form-control mb-3" value="{{ route('register', 'ref='.auth()->user()->username) }}">
+                    <input type="text" name="" readonly class="d-none" value="{{ url('/register?ref=').auth()->user()->username}}" id="link">
                     <button class="btn btn-success btn-block w-100" onclick="copyToClipBoard()">Copy link</button>
                     <hr>
                     <button class="btn btn-info w-100"><i class="icon-sm" style="margin-right: 8px" data-feather="twitter"></i>Share on Twitter</button>

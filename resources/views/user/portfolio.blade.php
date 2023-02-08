@@ -324,7 +324,13 @@
                                 <div class="col-6">
                                     <span class="text-muted mb-3 lh-1 d-block text-truncate">IRA Balance</span>
                                     <h4 class="mb-3">
-                                        $<span class="" data-target="">{{ number_format($ira, 2) }}</span>
+                                        @php
+                                            $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                        @endphp
+                                        @foreach($symbol as $sym)
+                                            <span class="" data-target="">{{ $sym->symbol }}</span> 
+                                        @endforeach
+                                        <span class="" data-target="">{{ number_format($ira, 2) }}</span>
                                     </h4>
                                 </div>
                             </div>
@@ -347,8 +353,13 @@
                                     <span class="text-muted mb-3 lh-1 d-block text-truncate">Offshore Account
                                         Balance</span>
                                     <h4 class="mb-3">
-                                        $<span class=""
-                                            data-target="">{{ number_format($offshore, 2) }}</span>
+                                        @php
+                                            $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                        @endphp
+                                        @foreach($symbol as $sym)
+                                            <span class="" data-target="">{{ $sym->symbol }}</span> 
+                                        @endforeach
+                                        <span class="" data-target="">{{ number_format($offshore, 2) }}</span>
                                     </h4>
                                 </div>
                             </div>
@@ -383,70 +394,62 @@
                 </div>
                 <!--end card-->
             </div>
-
-            <div>
-                <h4>News</h4>
-                <hr>
-                <div class="">
-
-                    @foreach ($news as $info)
-                        {{-- <div class="row">
-                        <div class="col-9">
-                            <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
-                            <p>{!! $info->body !!}</p>
-                        </div>
-                        <div class="col-3">
-                            <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
-                        </div>
-                    </div> --}}
-                        <div class="card-body mb-3 border">
-                            <div class="row align-items-center reward{{ $info->id }}"
-                                id="reward-{{ $info->id }}">
-                                <div class="col">
-                                    <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" width="75">
-                                </div>
-                                <div class="col-10 align-self-center d-flex justify-content-between">
-                                    <div class="mt-4 mt-sm-0">
-                                        <p class="mb-1">{{ ucfirst($info->title) }} <small
-                                                class="text-info">{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
-                                        </p>
-                                        <h6>{{ ucfirst($info->heading) }}</h6>
-                                    </div>
-                                    <div class="align-self-auto my-auto"><a href="javascript:void(0)"
-                                            onclick="showReward({{ $info->id }})">Read More <i
-                                                class="mdi mdi-arrow-down"></i></a></div>
-                                </div>
-                            </div>
-                            <div class="d-none reward-panel{{ $info->id }}" id="reward-panel-{{ $info->id }}">
-                                <div class="row">
-                                    <div class="col-9">
-                                        <h6>{{ ucfirst($info->title) }}
-                                            <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
-                                        </h6>
-                                        <p>{!! $info->body !!}</p>
-                                    </div>
-                                    <div class="col-3">
-                                        <img src="{{ $info->image ? asset($info->image) : '' }}" alt=""
-                                            style="height: 100%; width: 100%; object-fit: contain;">
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="mx-4">
-                                    <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-                                        <button class="btn btn-success btn-block px-4">Share News</button>
-                                        <a href="javascript:void(0)" class=""
-                                            onclick="showLess({{ $info->id }})">View less <i
-                                                class="mdi mdi-arrow-up"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                    @endforeach
-                </div>
-            </div>
         </div>
         <div class="col-md-4">
+            <!-- New Bots -->
+            @php
+                    $copyBots = App\Models\CopyBot::query()->latest()->get();
+                    $user = App\Models\User::find(auth()->id());
+                @endphp
+
+                <h5 class="mt-1 mb-2">Active Copy Bots</h5>
+                <div class="col-md-12 order-md-1 mt-4">
+                @foreach($copyBots as $copyBot)
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward" id="reward-1">
+                            <div class="col">
+                                <img src="{{ $copyBot->image ? asset($copyBot->image) : '' }}" alt="" width="75">
+                            </div>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="mt-4 mt-sm-0">
+                                    <p class="mb-1">{{ $copyBot->name }}</p>
+                                    <h6>${{ $copyBot->price }}</h6>
+                                </div>
+                                <div class="align-self-auto my-auto">
+                                @if($user->copy_bot !== $copyBot->id)
+                                    <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
+                                @else
+                                    <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
+                                @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                    <div class="modal-body">
+                                        <p>Are you sure you want this bot?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success">Add</button>
+                                    </div>
+                                    <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                </div>
+        </div>
+        <div class="col-md-8">
             <div class="card w-100">
                 <div class="card-body">
                     <div class="table">
@@ -454,8 +457,14 @@
                             <h4>Current Holdings</h4>
                             <tr class="text-" style="border: 0 !important;">
                                 <td colspan="4">Cash</td>
+                                @php
+                                    $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                @endphp
+                                        
 
-                                <td class="float-end">${{ number_format($cash, 2) }}</td>
+                                <td class="float-end"> 
+                                    @foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="6">
@@ -515,6 +524,452 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col m-2 border">
+                    <h6 class="mt-3 mb-4">Average Holding Time</h6>
+                    <div class="table table-responsive" style="height: 370px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">Coin</th>
+                                <th scope="col">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>MASK</td>
+                                <td>less than a minute</td>
+                                </tr>
+                                <tr>
+                                <td>CELT</td>
+                                <td>less than a minute</td>
+                                </tr>
+                                <tr>
+                                <td>TON</td>
+                                <td>2 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>TON</td>
+                                <td>2 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>GTO</td>
+                                <td>2 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>NEAR</td>
+                                <td>5 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>ETHW</td>
+                                <td>5 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>YOU</td>
+                                <td>21 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>SAITAMA</td>
+                                <td>37 minutes</td>
+                                </tr>
+                                <tr>
+                                <td>APM</td>
+                                <td>1 hour</td>
+                                </tr>
+                                <tr>
+                                <td>QOM</td>
+                                <td>1 hour</td>
+                                </tr>
+                                <tr>
+                                <td>PERP</td>
+                                <td>1 hour</td>
+                                </tr>
+                                <tr>
+                                <td>UMEE</td>
+                                <td>3 hour</td>
+                                </tr>
+                                <tr>
+                                <td>CSPR</td>
+                                <td>5 hour</td>
+                                </tr>
+                                <tr>
+                                <td>XETA</td>
+                                <td>7 hour</td>
+                                </tr>
+                                <tr>
+                                <td>CVX</td>
+                                <td>13 hour</td>
+                                </tr>
+                                <tr>
+                                <td>CMT</td>
+                                <td>16 hour</td>
+                                </tr>
+                                <tr>
+                                <td>DHT</td>
+                                <td>1 day</td>
+                                </tr>
+                                <tr>
+                                <td>MXC</td>
+                                <td>1 day</td>
+                                </tr>
+                                <tr>
+                                <td>SUSHI</td>
+                                <td>1 day</td>
+                                </tr>
+                                <tr>
+                                <td>KISHU</td>
+                                <td>3 day</td>
+                                </tr>
+                                <tr>
+                                <td>MITH</td>
+                                <td>3 day</td>
+                                </tr>
+                                <tr>
+                                <td>APE</td>
+                                <td>3 day</td>
+                                </tr>
+                                <tr>
+                                <td>HEGIC</td>
+                                <td>4 day</td>
+                                </tr>
+                                <tr>
+                                <td>PST</td>
+                                <td>7 day</td>
+                                </tr>
+                                <tr>
+                                <td>CTC</td>
+                                <td>8 day</td>
+                                </tr>
+                                <tr>
+                                <td>PHA</td>
+                                <td>17 day</td>
+                                </tr>
+                                <tr>
+                                <td>MDT</td>
+                                <td>18 day</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col m-2 border">
+                    <h6 class="mt-3 mb-4">Average Profit Per Coin</h6>
+                    <div class="table table-responsive" style="height: 370px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">Coin</th>
+                                <th scope="col">Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>DNA</td>
+                                <td>7108413.26 %</td>
+                                </tr>
+                                <tr>
+                                <td>USDC</td>
+                                <td>166.16 %</td>
+                                </tr>
+                                <tr>
+                                <td>HEGIC</td>
+                                <td>154.45 %</td>
+                                </tr>
+                                <tr>
+                                <td>PHA</td>
+                                <td>91.51 %</td>
+                                </tr>
+                                <tr>
+                                <td>PST</td>
+                                <td>51.33 %</td>
+                                </tr>
+                                <tr>
+                                <td>SWFTC</td>
+                                <td>38.11 %</td>
+                                </tr>
+                                <tr>
+                                <td>MOVEZ</td>
+                                <td>36.26 %</td>
+                                </tr>
+                                <tr>
+                                <td>ERN</td>
+                                <td>28.94 %</td>
+                                </tr>
+                                <tr>
+                                <td>ZRX</td>
+                                <td>23.90 %</td>
+                                </tr>
+                                <tr>
+                                <td>SD</td>
+                                <td>23.85 %</td>
+                                </tr>
+                                <tr>
+                                <td>ACA</td>
+                                <td>21.59 %</td>
+                                </tr>
+                                <tr>
+                                <td>CLV</td>
+                                <td>18.53 %</td>
+                                </tr>
+                                <tr>
+                                <td>CHAT</td>
+                                <td>17.51 %</td>
+                                </tr>
+                                <tr>
+                                <td>WEMIX</td>
+                                <td>13.25 %</td>
+                                </tr>
+                                <tr>
+                                <td>PLG</td>
+                                <td>13.16 %</td>
+                                </tr>
+                                <tr>
+                                <td>AERGO</td>
+                                <td>13.05 %</td>
+                                </tr>
+                                <tr>
+                                <td>LDN</td>
+                                <td>12.90 %</td>
+                                </tr>
+                                <tr>
+                                <td>LAMB</td>
+                                <td>12.73 %</td>
+                                </tr>
+                                <tr>
+                                <td>CTC</td>
+                                <td>12.56 %</td>
+                                </tr>
+                                <tr>
+                                <td>SC</td>
+                                <td>12.40 %</td>
+                                </tr>
+                                <tr>
+                                <td>HBAR</td>
+                                <td>12.36 %</td>
+                                </tr>
+                                <tr>
+                                <td>USTC</td>
+                                <td>12.32 %</td>
+                                </tr>
+                                <tr>
+                                <td>UMEE</td>
+                                <td>12.21 %</td>
+                                </tr>
+                                <tr>
+                                <td>LOON</td>
+                                <td>11.79 %</td>
+                                </tr>
+                                <tr>
+                                <td>SUN</td>
+                                <td>11.60 %</td>
+                                </tr>
+                                <tr>
+                                <td>ONT</td>
+                                <td>11.58 %</td>
+                                </tr>
+                                <tr>
+                                <td>SRM </td>
+                                <td>11.55 %</td>
+                                </tr>
+                                <tr>
+                                <td>KNC</td>
+                                <td>11.23 %</td>
+                                </tr>
+                                <tr>
+                                <td>MATIC </td>
+                                <td>11.18 %</td>
+                                </tr>
+                                <tr>
+                                <td>BHP</td>
+                                <td>11.16 %</td>
+                                </tr>
+                                <tr>
+                                <td>YOU</td>
+                                <td>11.13 %</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col m-2 border">
+                    <h6 class="mt-3 mb-4">Most Traded Coin</h6>
+                    <div class="table table-responsive" style="height: 370px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                <th scope="col">Coin</th>
+                                <th scope="col">Trades</th>
+                                <th scope="col">Percent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>BTC</td>
+                                <td>1660</td>
+                                <td>10.54%</td>
+                                </tr>
+                                <tr>
+                                <td>ETH</td>
+                                <td>1232</td>
+                                <td>8.50%</td>
+                                </tr>
+                                <tr>
+                                <td>SWFTC</td>
+                                <td>332</td>
+                                <td>5.30%</td>
+                                </tr>
+                                <tr>
+                                <td>ADA</td>
+                                <td>287</td>
+                                <td>4.58%</td>
+                                </tr>
+                                <tr>
+                                <td>LINK</td>
+                                <td>257</td>
+                                <td>4.10%</td>
+                                </tr>
+                                <tr>
+                                <td>SOL</td>
+                                <td>249</td>
+                                <td>3.98%</td>
+                                </tr>
+                                <tr>
+                                <td>FIL</td>
+                                <td>202</td>
+                                <td>3.23%</td>
+                                </tr>
+                                <tr>
+                                <td>RVN</td>
+                                <td>201</td>
+                                <td>3.21%</td>
+                                </tr>
+                                <tr>
+                                <td>EGLD</td>
+                                <td>188</td>
+                                <td>3.00%</td>
+                                </tr>
+                                <tr>
+                                <td>YFI</td>
+                                <td>179</td>
+                                <td>2.86%</td>
+                                </tr>
+                                <tr>
+                                <td>AAVE</td>
+                                <td>159</td>
+                                <td>2.54%</td>
+                                </tr>
+                                <tr>
+                                <td>XRP</td>
+                                <td>144</td>
+                                <td>2.30%</td>
+                                </tr>
+                                <tr>
+                                <td>AVAX</td>
+                                <td>141</td>
+                                <td>2.25%</td>
+                                </tr>
+                                <tr>
+                                <td>LTC</td>
+                                <td>137</td>
+                                <td>2.19%</td>
+                                </tr>
+                                <tr>
+                                <td>OKT</td>
+                                <td>120</td>
+                                <td>1.92%</td>
+                                </tr>
+                                <tr>
+                                <td>ATOM</td>
+                                <td>106</td>
+                                <td>1.69%</td>
+                                </tr>
+                                <tr>
+                                <td>AZY</td>
+                                <td>104</td>
+                                <td>1.66%</td>
+                                </tr>
+                                <tr>
+                                <td>IOTA</td>
+                                <td>102</td>
+                                <td>1.63%</td>
+                                </tr>
+                                <tr>
+                                <td>JST</td>
+                                <td>77</td>
+                                <td>1.23%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            
+            <h4>News</h4>
+            <hr>
+            <div class="">
+
+                @foreach ($news as $info)
+                    {{-- <div class="row">
+                    <div class="col-9">
+                        <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
+                        <p>{!! $info->body !!}</p>
+                    </div>
+                    <div class="col-3">
+                        <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
+                    </div>
+                </div> --}}
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward{{ $info->id }}"
+                            id="reward-{{ $info->id }}">
+                            <div class="col">
+                                <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" width="75">
+                            </div>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="mt-4 mt-sm-0">
+                                    <p class="mb-1">{{ ucfirst($info->title) }} <small
+                                            class="text-info">{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
+                                    </p>
+                                    <h6>{{ ucfirst($info->heading) }}</h6>
+                                </div>
+                                <div class="align-self-auto my-auto"><a href="javascript:void(0)"
+                                        onclick="showReward({{ $info->id }})">Read More <i
+                                            class="mdi mdi-arrow-down"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="d-none reward-panel{{ $info->id }}" id="reward-panel-{{ $info->id }}">
+                            <div class="row">
+                                <div class="col-9">
+                                    <h6>{{ ucfirst($info->title) }}
+                                        <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
+                                    </h6>
+                                    <p>{!! $info->body !!}</p>
+                                </div>
+                                <div class="col-3">
+                                    <img src="{{ $info->image ? asset($info->image) : '' }}" alt=""
+                                        style="height: 100%; width: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="mx-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+                                    <button class="btn btn-success btn-block px-4">Share News</button>
+                                    <a href="javascript:void(0)" class=""
+                                        onclick="showLess({{ $info->id }})">View less <i
+                                            class="mdi mdi-arrow-up"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                @endforeach
             </div>
         </div>
     </div>
