@@ -28,10 +28,10 @@ class AdminController extends Controller
     public function index()
     {
         $admin = auth('admin')->user();
-        $deposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->sum('actual_amount');
-        $totalDeposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . now()->format('t')])->get();
-        $payouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->sum('actual_amount');
-        $totalPayouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . now()->format('t')])->get();
+        $deposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->where('status', '!=', 'cancelled')->sum('actual_amount');
+        $totalDeposits = Transaction::query()->where('type', 'deposit')->where('status', '!=', 'declined')->where('status', '!=', 'cancelled')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . now()->format('t')])->get();
+        $payouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->where('status', '!=', 'cancelled')->sum('actual_amount');
+        $totalPayouts = Transaction::query()->where('type', 'payout')->where('status', '!=', 'declined')->where('status', '!=', 'cancelled')->whereBetween('created_at', [now()->format('Y-m-') . '1', now()->format('Y-m-') . now()->format('t')])->get();
         $depositArr = $depositData = $payoutArr = $payoutData = $days = [];
         for ($i = 1; $i <= now()->format('t'); $i++) {
             $days[] = $i . now()->format('-M');
@@ -39,7 +39,6 @@ class AdminController extends Controller
             $payoutArr[$i] = 0;
         }
         foreach ($totalDeposits as $deposit) {
-            $day = Carbon::make($deposit->created_at)->format('d');
             $day = Carbon::make($deposit->created_at)->format('d');
             $first_letter = substr($day, 0, 1);
             if ($first_letter == 0) {

@@ -19,7 +19,10 @@
         <p>We generate monthly account statements for every month in which you have trading activity. These statements are typically available within two weeks of the end of the month</p>
         <div class="d-flex justify-content-end mb-4">
             <a class="btn btn-primary m-2" href="{{ URL::to('/transactions/pdf') }}">Generate Account History</a>
-            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>
+            @if(count($documents) > 0)
+                <a class="btn btn-primary m-2" href="{{ route('user.documents.download', App\Models\Document::where('user_id', auth()->id())->latest()->first()) }}">Generate latest invoice</a>
+{{--                <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
+            @endif
         </div>
         @foreach($documents as $document)
         <div class="card-body mb-3 border">

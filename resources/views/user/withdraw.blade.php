@@ -343,7 +343,7 @@
                         <td> <span
                                 class="badge
                                 {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                        {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                        {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                         {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
                         {{ $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                             {{ $transaction->status == 'progress' ? 'bg-secondary' : '' }}

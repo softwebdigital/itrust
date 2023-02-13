@@ -31,7 +31,7 @@
             btc(bitcoin deposit)] to
             [Bank Details(bank deposit) or Deposit adddress(bitcoin deposit)],</p> --}}
         <li>Bank Name: {{ $setting['bank_name'] }}</li>
-        <li>Account Number: {{ $setting['acct_name'] }}</li>
+        <li>Account Name: {{ $setting['acct_name'] }}</li>
         <li>Account Number: {{ $setting['acct_no'] }}</li>
         </div>
         <div class="modal-footer">
@@ -179,7 +179,7 @@
                     <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
                     <td> <span class="badge
                                 {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                        {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                        {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                         {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
                             ">{{ ucwords($transaction->status) }}</td>
                     {{-- <td>{{ ucwords($transaction->type) }}</td> --}}
