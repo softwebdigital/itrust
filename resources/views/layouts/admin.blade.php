@@ -187,9 +187,16 @@
                         </a>
                     </li>
 
+                    <li class="{{ Route::currentRouteNamed(['admin.bot', 'admin.bot.create', 'admin.bot.edit']) ? 'mm-active' : '' }}">
+                        <a href="{{ route('admin.bot') }}">
+                            <i data-feather="codesandbox"></i>
+                            <span data-key="t-news">Copy Bot</span>
+                        </a>
+                    </li>
+
                     <li class="{{ Route::currentRouteNamed(['admin.news', 'admin.news.create', 'admin.news.edit']) ? 'mm-active' : '' }}">
                         <a href="{{ route('admin.news') }}">
-                            <i data-feather="book-open"></i>
+                            <i data-feather="book"></i>
                             <span data-key="t-news">News</span>
                         </a>
                     </li>

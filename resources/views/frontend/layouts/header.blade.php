@@ -26,6 +26,16 @@
               <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.investor_relations') }}">Investor Relations</a></li>
               <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.blog') }}">Blog</a></li>
             </ul>
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#!">Features</a>
+            <ul class="dropdown-menu">
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.bot') }}">Trading Bots</a></li>
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.tools') }}">Pro Tools</a></li>
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.tailing') }}">Trailing Features</a></li>
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.copy') }}">Copy Trading</a></li>
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.automated') }}">Automated Trading</a></li>
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.ai') }}">AI Trading</a></li>
+
+            </ul>
           <li class="nav-item"><a class="nav-link" href="{{ route('frontend.faq') }}">F.A.Q</a>
         </ul>
         <!-- /.navbar-nav -->

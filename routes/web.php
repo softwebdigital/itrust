@@ -14,6 +14,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\CopyBotController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,13 @@ Route::get('/faq', [FrontEndController::class, 'faq'])->name('frontend.faq');
 Route::get('/contact', [FrontEndController::class, 'contact'])->name('frontend.contact');
 Route::get('/how-to-invest', [FrontEndController::class, 'invest'])->name('frontend.invest');
 Route::get('/cash-management', [FrontEndController::class, 'cash'])->name('frontend.cash');
+
+Route::get('/trading-bots', [FrontEndController::class, 'bot'])->name('frontend.bot');
+Route::get('/pro-tools', [FrontEndController::class, 'tools'])->name('frontend.tools');
+Route::get('/trailing-feature', [FrontEndController::class, 'tailing'])->name('frontend.tailing');
+Route::get('/copy-trading', [FrontEndController::class, 'copy'])->name('frontend.copy');
+Route::get('/automated-trading', [FrontEndController::class, 'automated'])->name('frontend.automated');
+Route::get('/ai-trading', [FrontEndController::class, 'ai'])->name('frontend.ai');
 
 Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('image.upload');
 
@@ -110,6 +118,10 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
 
         Route::get('/documents', [UserController::class, 'documents'])->name('user.documents')->middleware('approved');
         Route::get('/settings', [UserController::class, 'settings'])->name('user.settings');
+
+        Route::put('/bot/user/{bot}/assign', [CopyBotController::class, 'assign_bot'])->name('user.bot.assign');
+
+        Route::put('/transaction/{transaction}/{action}/update', [TransactionController::class, 'update_cancel'])->name('user.transaction.cancel');
     });
 });
 
@@ -128,6 +140,7 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::post('/users/update/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::post('/users/delete/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
     Route::post('/users/{user}/documents/{action}', [AdminController::class, 'approveID'])->name('admin.users.documents.action');
+    Route::put('/users/{user}/currency', [AdminController::class, 'updateCurrencuy'])->name('admin.users.currency.update');
 
     Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');
     Route::put('/deposits/{transaction}/{action}', [TransactionController::class, 'depositAction'])->name('admin.deposits.action');
@@ -176,4 +189,13 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::post('/investments/addroi/{id}', [InvestmentController::class, 'addRoi'])->name('admin.investments.addroi');
     Route::get('/investments/{id}/action/{type}', [InvestmentController::class, 'updateStatus'])->name('admin.investments.updatestatus');
     Route::post('/investments/delete/{id}', [InvestmentController::class, 'delete'])->name('admin.investments.delete');
+
+    Route::get('/bot', [CopyBotController::class, 'index'])->name('admin.bot');
+    Route::get('/bot/add', [CopyBotController::class, 'create'])->name('admin.bot.create');
+    Route::get('/bot/edit/{bot}', [CopyBotController::class, 'edit'])->name('admin.bot.edit');
+    Route::post('/bot/store', [CopyBotController::class, 'store'])->name('admin.bot.store');
+    Route::post('/bot/{bot}/update', [CopyBotController::class, 'update'])->name('admin.bot.update');
+    Route::delete('/bot/{bot}/delete', [CopyBotController::class, 'destroy'])->name('admin.bot.destroy');
+
+    Route::put('/transaction/{transaction}/{action}/update', [TransactionController::class, 'update_progress'])->name('admin.transaction.progress');
 });

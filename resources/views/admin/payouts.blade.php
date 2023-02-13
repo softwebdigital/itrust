@@ -115,6 +115,8 @@
                                 {{ $payout->status == 'pending' ? 'bg-warning' : '' }}
                         {{ $payout->status == 'declined' || $payout->status == 'cancelled' ? 'bg-danger' : '' }}
                         {{ $payout->status == 'approved' ? 'bg-success' : '' }}
+                        {{ $payout->status == 'cancelled' ? 'bg-danger' : '' }}
+                            {{ $payout->status == 'progress' ? 'bg-secondary' : '' }}
                             ">{{ ucwords($payout->status) }}</td>
 
                     <td>{{ $payout->status != 'pending' ? \Carbon\Carbon::make($payout->updated_at)->format('Y/m/d') : '-----' }}</td>
@@ -127,10 +129,11 @@
                                 </svg>
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuReference1">
-                                @if($payout->status == 'pending')
+                                @if($payout->status == 'pending' || $payout->status == 'progress')
                                     <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-view-{{ $payout->id }}">View</a>
                                     <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-approve-{{ $payout->id }}">Approve</a>
                                     <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-decline-{{ $payout->id }}">Decline</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-progress-{{ $payout->id }}">Progress</a>
                                 @endif
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-edit-{{ $payout->id }}">Edit</a>
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-delete-{{ $payout->id }}">Delete</a>
@@ -192,6 +195,26 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="staticBackdrop-progress-{{ $payout->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Confirm Progress</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('admin.transaction.progress', [$payout->id, 'progress']) }}" method="post">@csrf @method('PUT')
+                                <div class="modal-body">
+                                    <p>Are you sure you want to mark payout as progress?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
                             </form>
                         </div>
