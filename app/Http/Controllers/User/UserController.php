@@ -166,8 +166,8 @@ class UserController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $iraPercentage = ($ira_roi) * 100 / ($ira);
-        $offshorePercentage = ($offshore_roi) * 100 / ($offshore);
+        $iraPercentage = $ira ? ($ira_roi) * 100 / ($ira) : 0;
+        $offshorePercentage = $offshore ? ($offshore_roi) * 100 / ($offshore) : 0;
 
         $days = [];
         if ($all) {
