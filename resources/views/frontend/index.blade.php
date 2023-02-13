@@ -113,7 +113,7 @@
                   <div class="icon btn btn-block btn-lg btn-soft-primary pe-none mb-6"> <i class="uil uil-robot"></i> </div>
                   <h4>Trading Bots</h4>
                   <p class="mb-2">Copy other traders easily, or trade automatically with our unique trading A.I.</p>
-                  <a href="trading-bots.html" class="more hover link-yellow">Learn More</a>
+                  <a href="/trading-bots" class="more hover link-yellow">Learn More</a>
                 </div>
                 <!--/.card-body -->
               </div>
@@ -127,7 +127,7 @@
                   <div class="icon btn btn-block btn-lg btn-soft-primary pe-none mb-6"> <i class="uil uil-chart-line"></i> </div>
                   <h4>Pro Tools</h4>
                   <p class="mb-2">Use tools like DCA, Market-Making, Arbitrage or our own free of charge charting software.</p>
-                  <a href="pro-tools.html" class="more hover link-green">Learn More</a>
+                  <a href="/pro-tools" class="more hover link-green">Learn More</a>
                 </div>
                 <!--/.card-body -->
               </div>
@@ -141,7 +141,7 @@
                   <div class="icon btn btn-block btn-lg btn-soft-primary pe-none mb-6"> <i class="uil uil-external-link-alt"></i> </div>
                   <h4>Trailing Features</h4>
                   <p class="mb-2">Follow the price movement and sell/buy automatically when the price goes in another direction.</p>
-                  <a href="trailing-features.html" class="more hover link-blue">Learn More</a>
+                  <a href="/trailing-feature" class="more hover link-blue">Learn More</a>
                 </div>
                 <!--/.card-body -->
               </div>

@@ -281,6 +281,24 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="currency_id" class="form-label">Currency </label>
+                                            <select class="form-select @error('currency') is-invalid @enderror" data-trigger name="currency_id" id="currency_id">
+                                                <option value="">Select Currency</option>
+                                                @foreach(\App\Models\Currency::latest()->get() as $currency)
+                                                    <option value="{{ $currency->id }}" @if(old('currency_id') == $currency->name) selected @endif>{{ ucwords($currency->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('currency')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
                                     <h6>Further Questions</h6>
                                     <hr>
                                     <div class="col-md-12">
@@ -336,6 +354,17 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="referral" class="form-label">Referral Code (Optional):</label>
+                                            <input type="text" class="form-control @error('referral') is-invalid @enderror" id="referral" name="referral" value="{{ old('referral') }}">
+                                            @error('referral')
+                                            <span class="invalid-feedback d-block" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                                 <div class="form-check mt-2 mb-3">

@@ -45,6 +45,8 @@ class CreateUsersTable extends Migration
             $table->string('drivers_license')->nullable();
             $table->string('state_id')->nullable();
             $table->enum('status', ['pending', 'approved', 'declined', 'suspended'])->default('pending');
+            $table->unsignedBigInteger('referrer_id')->nullable();
+            $table->foreign('referrer_id')->references('id')->on('users');
             $table->rememberToken();
             $table->timestamps();
         });
