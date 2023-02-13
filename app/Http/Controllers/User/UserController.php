@@ -73,6 +73,10 @@ class UserController extends Controller
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
         $portfolioValue = ($ira + $offshore);
+
+
+        $percentage = ($ira_roi + $offshore_roi) * 100 / ($portfolioValue);
+
         // dd($portfolioValue, $withdrawable);
         $data = self::marketCap();
         $stocks_data = self::stock();
@@ -107,6 +111,8 @@ class UserController extends Controller
             'NFT’S' => ['label' => 'NFT’S', 'value' => round($NFT + $NFT_roi, 2), 'color' => "#ffff00"],
             'Options' => ['label' => 'Options', 'value' => round($options + $options_roi, 2), 'color' => "#076262"]
         ];
+
+        $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
 //         dd($assets);
 //        $new_assets = [];
         foreach ($assets as $key => $asset)
@@ -118,7 +124,7 @@ class UserController extends Controller
 //         dd($assets, $new_assets);
         $total_assets = $investment->count();
 
-        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data']));
+        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data', 'symbol', 'percentage']));
     }
 
     public function portfolio()
@@ -152,13 +158,17 @@ class UserController extends Controller
         $total_assets = $total_assets_amount + $total_assets_roi + $cash;
         $setting = Settings::first();
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
         $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
         $ira_roi = $user->ira_roi()->sum('ROI');
         $offshore_roi = $user->offshore_roi()->sum('ROI');
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+
+        $iraPercentage = ($ira_roi) * 100 / ($ira);
+        $offshorePercentage = ($offshore_roi) * 100 / ($offshore);
+
         $days = [];
         if ($all) {
             $diff = now()->diffInMonths(Carbon::make($user['created_at'])) + 1;
@@ -405,7 +415,7 @@ class UserController extends Controller
                 $offshoreData[] = round($total + $oldTotal, 2);
             }
         }
-        return view('user.portfolio', compact('news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
+        return view('user.portfolio', compact('iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
     }
 
     protected static function formatAmount($amount): array

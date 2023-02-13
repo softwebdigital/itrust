@@ -43,8 +43,8 @@ class BotNotification extends Notification
     {
         return (new MailMessage)
                     ->subject('New Copy Bot Added')
-                    ->greeting('Hi '.$this->$data['name'])
-                    ->line('You have successully add a copy bot');
+                    ->greeting('Hi '.$this->data['name'])
+                    ->line($this->data['body']);
     }
 
     /**
@@ -56,8 +56,8 @@ class BotNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'title' => $this->$data['subject'],
-            'message' => $this->$data['body'],
+            'title' => $this->data['subject'],
+            'message' => $this->data['body'],
         ];
     }
 }

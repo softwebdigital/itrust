@@ -94,14 +94,23 @@ class CopyBotController extends Controller
         $user = User::find(auth()->id());
         $bot = $request['copy_bot'];
 
+        $getBot = CopyBot::find($bot);
+
         $data = [
             'user' => $user,
             'link' => $request['copy_bot'],
         ];
+
+        $mail = [
+            'name' => $user->name,
+            'subject' => 'Added a Bot',
+            'body' => 'You have successully added '.$getBot->name
+        ];
         // $data = CopyBot::find($bot);
 
         if ($user->update(['copy_bot' => $request['copy_bot']]))
-            Notification::send($user, new BotNotification($data));
+            // Notification::send($user, new BotNotification($data));
+            MailController::sendBotNotification($user, $mail);
             return redirect()->route('user.index')->with('success', 'Bot added successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }
