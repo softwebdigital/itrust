@@ -18,7 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->foreignId('user_id');
             $table->enum('type', ['deposit', 'payout']);
             $table->double('amount');
-            $table->enum('status', ['pending', 'approved', 'declined'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'declined', 'cancelled'])->default('pending');
             $table->enum('method', ['bitcoin', 'bank'])->nullable();
             $table->double('actual_amount');
             $table->timestamps();

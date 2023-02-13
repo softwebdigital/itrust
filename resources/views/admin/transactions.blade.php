@@ -36,7 +36,7 @@
                         <td>{{ $transaction->method == 'bank' ? '$'.number_format($transaction->amount, 2) : round($transaction->amount, 8).' BTC' }}</td>
                         <td> <span class="badge
                                     {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                            {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                            {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                             {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
                                 ">{{ ucwords($transaction->status) }}</td>
                         <td>{{ ucwords($transaction->type) }}</td>

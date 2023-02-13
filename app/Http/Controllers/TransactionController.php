@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Models\Document;
 use App\Models\Investment;
 use App\Models\Settings;
 use App\Models\Transaction;
@@ -131,6 +132,10 @@ class TransactionController extends Controller
         return view('user.statement', compact('investments'));
     }
 
+    public function latestInvoice()
+    {
+        return route('user.documents.download', Document::where('user_id', auth()->id())->latest()->first());
+    }
 
     public function createStatementsPDF()
     {
@@ -138,27 +143,30 @@ class TransactionController extends Controller
         $user = Auth::user();
         $array = [
             'inv' => $investments,
-            'user' => $user['email']
+            'user' => $user['email'],
+            'logo' => 'https://itrustinvestment.com/img/itrust-logo-large.png'
         ];
 
+        if ($investments) {
+            // // share data to view
+            view()->share('investments', $array);
+            $pdf = PDF::loadView('user.pdfstatement', $array);
+            $pdf->stream('pdf_file.pdf');
+            // dd($pdf->output());
 
-        // // share data to view
-        view()->share('investments',$array);
-        $pdf = PDF::loadView('user.pdfstatement', $array);
-        $pdf->stream('pdf_file.pdf');
-        // dd($pdf->output());
+            $name = $user['name'] . 'StatementOFAccount' . rand(10, 190718);
+            $url = "public/pdf/$name.pdf";
+            $public = "storage/pdf/$name.pdf";
+            Storage::put($url, $pdf->output());
+            $data = [
+                'user' => $user,
+                'pdf' => $pdf->output(),
+                'link' => $public
+            ];
 
-        $name = $user['name'].'StatementOFAccount'.rand(10, 190718);
-        $url = "public/pdf/$name.pdf";
-        $public = "storage/pdf/$name.pdf";
-        Storage::put($url, $pdf->output());
-        $data = [
-            'user' => $user,
-            'pdf' => $public
-        ];
-
-        // return $pdf->download('invoice.pdf');
-        Notification::send($user, new SendEmailStatementOfAccount($data));
+            // return $pdf->download('invoice.pdf');
+            Notification::send($user, new SendEmailStatementOfAccount($data));
+        }
         return back()->with('success', 'Account Statement Successfully sent to your email');
 
 
@@ -172,28 +180,29 @@ class TransactionController extends Controller
         $array = [
             'inv' => $transactions,
             'user' => $user->email,
-            'logo' => asset('img/itrust-logo-large.png')
+            'logo' => 'https://itrustinvestment.com/img/itrust-logo-large.png'
         ];
 
+        if ($transactions) {
+            // // share data to view
+            view()->share('investments', $array);
+            $pdf = PDF::loadView('user.pdftrxn', $array);
+            $pdf->stream('pdf_file.pdf');
+            // dd($pdf->output());
 
-        // // share data to view
-        view()->share('investments',$array);
-        $pdf = PDF::loadView('user.pdftrxn', $array);
-        $pdf->stream('pdf_file.pdf');
-        // dd($pdf->output());
+            $name = $user->name . 'StatementOFAccount' . rand(10, 190718);
+            $url = "public/pdf/$name.pdf";
+            $public = "storage/pdf/$name.pdf";
+            Storage::put($url, $pdf->output());
+            $data = [
+                'user' => $user,
+                'link' => $public,
+                'pdf' => $pdf->output()
+            ];
 
-        $name = $user->name.'StatementOFAccount'.rand(10, 190718);
-        $url = "public/pdf/$name.pdf";
-        $public = "storage/pdf/$name.pdf";
-        Storage::put($url, $pdf->output());
-        $data = [
-            'user' => $user,
-            'link' => $public,
-            'pdf' => $pdf->output()
-        ];
-
-        // return $pdf->download('invoice.pdf');
-        Notification::send($user, new SendEmailHistoryOfAccount($data));
+            // return $pdf->download('invoice.pdf');
+            Notification::send($user, new SendEmailHistoryOfAccount($data));
+        }
         return back()->with('success', 'Account Statement Successfully sent to your email');
 
 
@@ -217,7 +226,7 @@ class TransactionController extends Controller
             'type' => $type,
             'withdrawable' => $withdrawable,
             'data' => $data,
-            'logo' => asset('img/itrust-logo-large.png')
+            'logo' => 'https://itrustinvestment.com/img/itrust-logo-large.png'
         ];
 //         return view('user.invoice', compact('array'));
 
@@ -250,6 +259,15 @@ class TransactionController extends Controller
         $user = User::find(auth()->id());
         $transactions = $user->transactions()->latest()->get();
         return view('user.transactions', compact('user', 'transactions'));
+    }
+
+    public function transactionAction(Transaction $transaction, string $action)
+    {
+        if ($action == 'cancel') {
+            $transaction->update(['status' => 'cancelled']);
+            $action = 'cancelled';
+        }
+        return back()->with('success', 'Transaction '.$action.' successfully.');
     }
 
     public function deposit()
@@ -294,6 +312,8 @@ class TransactionController extends Controller
 
 
         if ($request['method'] == 'bank' && (float) $request['amount'] > 0) {
+            if (!$setting || !$setting['bank_name'] || !$setting['acct_name'] || !$setting['acct_no'])
+                return back()->with(['validation' => true, 'method' => $request['method'], 'warning' => 'Deposit is temporarily unavailable.'])->withInput();
             if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['amount'], 'type' => 'deposit', 'actual_amount' => (float) $request['amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
                 $mail['body'] = 'You’ve requested a Bank deposit of '.number_format($request['amount'], 2).', kindly make a
@@ -308,6 +328,8 @@ class TransactionController extends Controller
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
         } elseif ($request['method'] == 'bitcoin' && $request['btc_amount'] > 0) {
+            if (!$user->btc_wallet)
+                return back()->with(['validation' => true, 'method' => $request['method'], 'warning' => 'Deposit is temporarily unavailable.'])->withInput();
             $amount = round((float) $request['btc_amount'] / AdminController::getBTC(), 8);
             if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';

@@ -17,7 +17,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-end mb-4">
             <a class="btn btn-primary m-2" href="{{ URL::to('/transactions/pdf') }}">Generate Account History</a>
-            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>
+{{--            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
         </div>
         <div class="table-responsive">
             <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
@@ -50,8 +50,11 @@
                         <td>{{ $transaction->method == 'bank' ? '$'.number_format($transaction->amount, 2) : '$'.number_format($transaction->actual_amount, 2).' ('.round($transaction->amount, 8).'BTC)' }}</td>
                         <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
                         <td> <span class="badge
+
                             {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
                             {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                                    {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
+                            {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                             {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
                             {{ $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
                             {{ $transaction->status == 'progress' ? 'bg-secondary' : '' }}

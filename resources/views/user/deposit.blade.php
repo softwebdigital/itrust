@@ -32,7 +32,7 @@
             btc(bitcoin deposit)] to
             [Bank Details(bank deposit) or Deposit adddress(bitcoin deposit)],</p> --}}
                     <li>Bank Name: {{ $setting['bank_name'] ?? '' }}</li>
-                    <li>Account Number: {{ $setting['acct_name'] ?? '' }}</li>
+                    <li>Account Name: {{ $setting['acct_name'] ?? '' }}</li>
                     <li>Account Number: {{ $setting['acct_no'] ?? '' }}</li>
                     <br>
                     <p>Deposits will be processed after we’ve confirmed your payment. Thank you!</p>
@@ -103,8 +103,8 @@
                                     <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
                                         id="acct_type">
                                         <option value="">Select Account</option>
-                                        <option value="basic_ira">Basic IRA </option>
-                                        <option value="offshore"> Offshore Account </option>
+                                        <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
+                                        <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account </option>
                                     </select>
                                     @error('acct_type') <strong class="text-danger"
                                         role="alert">{{ $message }}</strong> @enderror
@@ -187,8 +187,8 @@
                                     <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
                                         id="acct_type">
                                         <option value="">Select Account</option>
-                                        <option value="basic_ira">Basic IRA </option>
-                                        <option value="offshore"> Offshore Account </option>
+                                        <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
+                                        <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account </option>
                                     </select>
                                     @error('acct_type') <strong class="text-danger"
                                         role="alert">{{ $message }}</strong> @enderror
@@ -215,7 +215,7 @@
                                             <p class="mt-3"><strong>Wallet Address:</strong></p>
                                         </div>
                                         <div class="col-8">
-                                            <p class="mt-3">{{ $user['btc_wallet'] ?? 'NULL' }}</p>
+                                            <p class="mt-3">{{ $user['btc_wallet'] ?? '' }}</p>
                                         </div>
                                         <div class="col-4">
                                             <p><strong>Amount:</strong></p>
@@ -286,7 +286,7 @@
                     <th>Amount</th>
                     <th>Method</th>
                     <th>Status</th>
-                    {{-- <th>type</th> --}}
+                     <th>Action</th>
                 </tr>
             </thead>
 
@@ -309,11 +309,35 @@
                         <td> <span
                                 class="badge
                                 {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                        {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
-                        {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
+                                {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
+                                {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
                             ">{{ ucwords($transaction->status) }}
                         </td>
-                        {{-- <td>{{ ucwords($transaction->type) }}</td> --}}
+                         <td>
+                            @if($transaction->status == 'pending')
+                                 <a class="btn btn-sm btn-danger" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-cancel-{{ $transaction->id }}">Cancel</a>
+
+                                 <div class="modal fade" id="staticBackdrop-cancel-{{ $transaction->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                     <div class="modal-dialog modal-dialog-centered" role="document">
+                                         <div class="modal-content">
+                                             <div class="modal-header">
+                                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Decline</h5>
+                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                             </div>
+                                             <form action="{{ route('user.transactions.action', [$transaction->id, 'cancel']) }}" method="post">@csrf @method('PUT')
+                                                 <div class="modal-body">
+                                                     <p>Are you sure you want to cancel this deposit?</p>
+                                                 </div>
+                                                 <div class="modal-footer">
+                                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                     <button type="submit" class="btn btn-danger">Cancel</button>
+                                                 </div>
+                                             </form>
+                                         </div>
+                                     </div>
+                                 </div>
+                             @endif
+                         </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -370,7 +394,6 @@
         const user = {!! json_encode(auth()->user()) !!};
         if (user['status'] === 'pending') $('#staticBackdrop-btn').click()
 
-        console.log({!! json_encode(session()) !!})
         const validation = {!! json_encode(session('validation')) !!};
         const method = {!! json_encode(session('method')) !!};
         const w_method = {!! json_encode(session('w_method')) !!};
