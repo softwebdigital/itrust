@@ -286,9 +286,9 @@
                                         <div class="mb-3">
                                             <label for="currency_id" class="form-label">Currency </label>
                                             <select class="form-select @error('currency') is-invalid @enderror" data-trigger name="currency_id" id="currency_id">
-                                                <option value="">Select Currency</option>
+                                                <!-- <option value="">Select Currency</option> -->
                                                 @foreach(\App\Models\Currency::latest()->get() as $currency)
-                                                    <option value="{{ $currency->id }}" @if(old('currency_id') == $currency->name) selected @endif>{{ ucwords($currency->name) }}</option>
+                                                    <option value="{{ $currency->id }}" @if(old('currency_id') == $currency->name) selected @endif>{{ ucwords($currency->name) }} ({{ ucwords($currency->symbol) }})</option>
                                                 @endforeach
                                             </select>
                                             @error('currency')

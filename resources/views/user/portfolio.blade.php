@@ -501,11 +501,12 @@
                                             <h6>${{ $copyBot->price }}</h6>
                                         </div>
                                         <div class="align-self-auto my-auto">
-                                        @if($user->copy_bot !== $copyBot->id)
+                                        <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)">Active</a>
+                                        {{-- @if($user->copy_bot !== $copyBot->id)
                                             <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
                                         @else
-                                            <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
-                                        @endif
+                                            <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)">Added</a>
+                                        @endif --}}
                                         </div>
                                     </div>
                                 </div>

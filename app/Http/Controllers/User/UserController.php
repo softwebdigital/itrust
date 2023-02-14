@@ -75,7 +75,7 @@ class UserController extends Controller
         $portfolioValue = ($ira + $offshore);
 
 
-        $percentage = ($ira_roi + $offshore_roi) * 100 / ($portfolioValue);
+        $percentage = // ($ira_roi + $offshore_roi) * 100 / ($portfolioValue);
 
         // dd($portfolioValue, $withdrawable);
         $data = self::marketCap();
@@ -166,8 +166,8 @@ class UserController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $iraPercentage = $ira ? ($ira_roi) * 100 / ($ira) : 0;
-        $offshorePercentage = $offshore ? ($offshore_roi) * 100 / ($offshore) : 0;
+        // $iraPercentage = $ira ? ($ira_roi) * 100 / ($ira) : 0;
+        // $offshorePercentage = $offshore ? ($offshore_roi) * 100 / ($offshore) : 0;
 
         $days = [];
         if ($all) {
@@ -415,7 +415,7 @@ class UserController extends Controller
                 $offshoreData[] = round($total + $oldTotal, 2);
             }
         }
-        return view('user.portfolio', compact('iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
+        return view('user.portfolio', compact('news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
     }
 
     protected static function formatAmount($amount): array
