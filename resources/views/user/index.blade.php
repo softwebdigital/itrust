@@ -273,7 +273,7 @@
                                 <h5>Copy Bot</h5>
                                 <div class="col-10 align-self-center d-flex justify-content-between">
                                     <div class="col align-self-center d-flex justify-content-between">
-                                        <img src="img/bot.png" alt="" width="75">
+                                        <img src="{{ asset('img/dummy/bot.png') }}" alt="" width="75">
                                     </div>
 
                                     <input type="checkbox" id="bot" checked />
@@ -291,7 +291,7 @@
                                 <h5>Buying</h5>
                                 <div class="col-10 align-self-center d-flex justify-content-between">
                                     <div class="col align-self-center d-flex justify-content-between">
-                                        <img src="img/buy.png" alt="" width="75">
+                                        <img src="img/dummy/buy.png" alt="" width="75">
                                     </div>
 
                                     <input type="checkbox" id="buy" checked />
@@ -309,7 +309,7 @@
                                 <h5>Selling</h5>
                                 <div class="col-10 align-self-center d-flex justify-content-between">
                                     <div class="col align-self-center d-flex justify-content-between">
-                                        <img src="img/sell.png" alt="" width="75">
+                                        <img src="img/dummy/sell.png" alt="" width="75">
                                     </div>
 
                                     <input type="checkbox" id="sell" />
