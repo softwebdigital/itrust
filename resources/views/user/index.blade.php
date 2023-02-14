@@ -26,6 +26,47 @@
             #trad { display: none !important; }
             #trad-mobile { display: block !important; }
         }
+        input[type=checkbox]{
+            height: 0;
+            width: 0;
+            visibility: hidden;
+        }
+
+        .toggle {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 50px;
+            height: 25px;
+            background: grey;
+            display: block;
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .toggle:after {
+            content: '';
+            position: absolute;
+            top: 1.2px;
+            left: 1.2px;
+            width: 23px;
+            height: 23px;
+            background: #fff;
+            border-radius: 23px;
+            transition: 0.3s;
+        }
+
+        input:checked + .toggle {
+            background: #bada55;
+        }
+
+        input:checked + .toggle:after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+        }
+
+        .toggle:active:after {
+            width: 130px;
+        }
     </style>
 @endsection
 
@@ -106,7 +147,7 @@
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <div class="card">
                         <div class="card-body px-0">
-                            <div class="table table-responsive" style="height: 450px;">
+                            <div class="table table-responsive" style="height: 730px;">
                                 <table class="table table-borderless table-hover">
                                     <thead>
                                     <tr>
@@ -224,66 +265,124 @@
                     </div>
                 </div> --}}
             </div>
-            
-            <div class="col-md-12">
-                <!-- New Bots -->
-                @php
-                        $copyBots = App\Models\CopyBot::query()->latest()->get();
-                        $user = App\Models\User::find(auth()->id());
-                    @endphp
 
-                    <h5 class="mt-5 mb-2">New Copy Bots</h5>
+            <div class="col-md-12">
                     <div class="col-md-12 order-md-1 mt-4">
-                    @foreach($copyBots as $copyBot)
                         <div class="card-body mb-3 border">
                             <div class="row align-items-center reward" id="reward-1">
-                                <div class="col">
-                                    <img src="{{ $copyBot->image ? asset($copyBot->image) : '' }}" alt="" width="75">
-                                </div>
+                                <h5>Copy Bot</h5>
                                 <div class="col-10 align-self-center d-flex justify-content-between">
-                                    <div class="mt-4 mt-sm-0">
-                                        <p class="mb-1">{{ $copyBot->name }}</p>
-                                        <h6>${{ $copyBot->price }}</h6>
+                                    <div class="col align-self-center d-flex justify-content-between">
+                                        <img src="img/bot.png" alt="" width="75">
                                     </div>
-                                    <div class="align-self-auto my-auto">
-                                    @if($user->copy_bot !== $copyBot->id)
-                                        <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
-                                    @else
-                                        <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
-                                    @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
-                                        <div class="modal-body">
-                                            <p>Are you sure you want this bot?</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-success">Add</button>
-                                        </div>
-                                        <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
-                                    </form>
+                                    <input type="checkbox" id="bot" checked />
+                                    <label class="toggle" for="bot">Toggle</label>
+
+                                    <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
+
+                    <div class="col-md-12 order-md-1 mt-4">
+                        <div class="card-body mb-3 border">
+                            <div class="row align-items-center reward" id="reward-1">
+                                <h5>Buying</h5>
+                                <div class="col-10 align-self-center d-flex justify-content-between">
+                                    <div class="col align-self-center d-flex justify-content-between">
+                                        <img src="img/buy.png" alt="" width="75">
+                                    </div>
+
+                                    <input type="checkbox" id="buy" checked />
+                                    <label class="toggle" for="buy">Buying</label>
+
+                                    <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 order-md-1 mt-4">
+                        <div class="card-body mb-3 border">
+                            <div class="row align-items-center reward" id="reward-1">
+                                <h5>Selling</h5>
+                                <div class="col-10 align-self-center d-flex justify-content-between">
+                                    <div class="col align-self-center d-flex justify-content-between">
+                                        <img src="img/sell.png" alt="" width="75">
+                                    </div>
+
+                                    <input type="checkbox" id="sell" />
+                                    <label class="toggle" for="sell">Selling</label>
+
+                                    <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
             </div>
+            
+            
         </div>
         
         
         
     </div>
+    <div class="col-md-8">
+        <!-- New Bots -->
+        @php
+                $copyBots = App\Models\CopyBot::query()->latest()->get();
+                $user = App\Models\User::find(auth()->id());
+            @endphp
+
+            <h5 class="mt-5 mb-2">New Copy Bots</h5>
+            <div class="col-md-12 order-md-1 mt-4">
+            @foreach($copyBots as $copyBot)
+                <div class="card-body mb-3 border">
+                    <div class="row align-items-center reward" id="reward-1">
+                        <div class="col">
+                            <img src="{{ $copyBot->image ? asset($copyBot->image) : '' }}" alt="" width="75">
+                        </div>
+                        <div class="col-10 align-self-center d-flex justify-content-between">
+                            <div class="mt-4 mt-sm-0">
+                                <p class="mb-1">{{ $copyBot->name }}</p>
+                                <h6>${{ $copyBot->price }}</h6>
+                            </div>
+                            <div class="align-self-auto my-auto">
+                            @if($user->copy_bot !== $copyBot->id)
+                                <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
+                            @else
+                                <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
+                            @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                <div class="modal-body">
+                                    <p>Are you sure you want this bot?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success">Add</button>
+                                </div>
+                                <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+            </div>
+    </div>
+
 
     <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -426,6 +525,50 @@
     <button class="d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop-buy" id="buy">Buy</button>
     <button class="d-none" data-bs-toggle="modal" data-bs-target="#staticBackdrop-sell" id="sell">Sell</button>
 
+
+    <style>
+        input[type=checkbox]{
+            height: 0;
+            width: 0;
+            visibility: hidden;
+        }
+
+        .toggle {
+            cursor: pointer;
+            text-indent: -9999px;
+            width: 50px;
+            height: 25px;
+            background: grey;
+            display: block;
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .toggle:after {
+            content: '';
+            position: absolute;
+            top: 1.2px;
+            left: 1.2px;
+            width: 23px;
+            height: 23px;
+            background: #fff;
+            border-radius: 23px;
+            transition: 0.3s;
+        }
+
+        input:checked + .toggle {
+            background: #2ab57d80;
+        }
+
+        input:checked + .toggle:after {
+            left: calc(100% - 1.5px);
+            transform: translateX(-100%);
+        }
+
+        .toggle:active:after {
+            width: 130px;
+        }
+    </style>
 
     <!-- TradingView Widget BEGIN -->
 

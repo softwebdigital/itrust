@@ -50,7 +50,7 @@
                 <p></p>
                 <h4>Manage Your Portfolio</h4>
                 <p class="mb-2">Keep your portfolio in your pocket. Everything you need to manage your assets is available in a single app. </p>
-                <a href="#" class="more hover link-violet">Learn More</a>
+                <a href="{{ route('register') }}" class="more hover link-violet">Learn More</a>
                 <p></p>
               </div>
               <!--/.card-body -->
@@ -65,7 +65,7 @@
                 <p></p>
                 <h4>Learn as You Grow</h4>
                 <p class="mb-2">Our goal is to make investing in financial markets more affordable, more intuitive, and more fun, no matter how much experience you have (or don’t have).</p>
-                <a href="#" class="more hover link-aqua">Learn More</a>
+                <a href="{{ route('register') }}" class="more hover link-aqua">Learn More</a>
               </div>
               <!--/.card-body -->
             </div>
@@ -78,7 +78,7 @@
                 <p></p>
                 <h4>Keep Tabs on Your Money</h4>
                 <p class="mb-2">Set up customized news and notifications to stay on top of your assets as casually or as relentlessly as you like. Controlling the flow of info is up to you.</p>
-                <a href="#" class="more hover link-red">Learn More</a>
+                <a href="{{ route('register') }}" class="more hover link-red">Learn More</a>
               </div>
               <!--/.card-body -->
             </div>
@@ -173,7 +173,7 @@
             <h4>Copy Trading</h4>
             <p class="mb-3">Start copy trading for free!</p>
             <p class="mb-3">Don’t let the fear of a market shift keep you up at night. With our A.I., your bot can automatically recognize trends and switch to a better strategy.</p>
-            <a href="copy-trading.html" class="more hover link-primary">Learn More</a>
+            <a href="/copy-trading" class="more hover link-primary">Learn More</a>
           </div>
           <!--/column -->
           <div class="col-md-6 col-lg-4">
@@ -181,7 +181,7 @@
             <h4>Automatic Trading</h4>
             <p class="mb-3">Bots don't need sleep.</p>
             <p class="mb-3">Bots don't need sleep. Cryptotrading is 24/7. So is your bot. Give yourself an edge, and while everyone else sleeps, you’ll never miss a beat.</p>
-            <a href="automated-trading.html" class="more hover link-primary">Learn More</a>
+            <a href="/automated-trading" class="more hover link-primary">Learn More</a>
           </div>
           <!--/column -->
           <div class="col-md-6 col-lg-4">
@@ -189,7 +189,7 @@
             <h4>AI Trading</h4>
             <p class="mb-3">Let your bot learn and decide by itself</p>
             <p class="mb-3">A break-through innovation in trading - this is what the hedge-funds don’t want you to know. AI analyses all the strategies you feed it, and can decide on its own which one it should use.</p>
-            <a href="ai-trading.html" class="more hover link-primary">Learn More</a>
+            <a href="/ai-trading" class="more hover link-primary">Learn More</a>
           </div>
           <!--/column -->
           

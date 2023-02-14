@@ -36,7 +36,7 @@ class CopyBotController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'price' => 'required|numeric',
+            'price' => 'required',
         ]);
         if ($validator->fails()) return back()->withInput()->with('error', $validator->getMessageBag());
 
@@ -59,7 +59,7 @@ class CopyBotController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'price' => 'required|numeric',
+            'price' => 'required',
         ]);
         if ($validator->fails()) return back()->withInput()->with('error', $validator->getMessageBag());
 
@@ -104,7 +104,7 @@ class CopyBotController extends Controller
         $mail = [
             'name' => $user->name,
             'subject' => 'Added a Bot',
-            'body' => 'You have successully added '.$getBot->name
+            'body' => 'New Copy Bot added to portfolio '.$getBot->name
         ];
         // $data = CopyBot::find($bot);
 

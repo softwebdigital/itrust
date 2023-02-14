@@ -32,7 +32,7 @@
             @foreach($news as $info)
                 <tr>
                     <td>{{ $info->name }}</td>
-                    <td>${{ $info->price }}</td>
+                    <td>{{ $info->price }}</td>
                     
                     <td><img src="{{ $info->image ? asset($info->image) : '' }}" width="50" alt=""></td>
                     <td>{{ \Carbon\Carbon::make($info->created_at)->format('Y/m/d') }}</td>
