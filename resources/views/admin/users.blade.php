@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-<div style="min-height: 500px">
+<div class="table-responsive" style="min-height: 500px; border-color: white;">
     <table id="datatable" class="table table-borderless table-striped table-responsive nowrap w-100">
         <thead>
         <tr>

@@ -221,7 +221,7 @@
                                             <p><strong>Amount:</strong></p>
                                         </div>
                                         <div class="col-8">
-                                            <p id="crypto-amount">0.00 BTC</p>
+                                            <p id="crypto-amount">0.00 USD</p>
                                         </div>
                                     </div>
                                 </div>
@@ -441,12 +441,15 @@
         }
 
         function calcEquiv(id) {
-            if ($(id).val().length > 0) $('#crypto-amount').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) + ' BTC');
+            if ($(id).val().length > 0) $('#crypto-amount').html((parseFloat($(id).val()) + ' USD'));
+            // if ($(id).val().length > 0) $('#crypto-amount').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) + ' BTC');
         }
 
         function calcEquivWithdraw(id) {
-            if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) +
-                ' BTC');
+            if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) +
+                ' USD'));
+            // if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) +
+            // ' BTC');
         }
 
         function depositFormBtc() {

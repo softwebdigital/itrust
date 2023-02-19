@@ -82,7 +82,7 @@
         {{-- <a href="{{ route('admin.inv.create') }}" type="button" c>Add Investment</a> --}}
         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add" class="btn btn-primary">Add Deposit</a>
     </div>
-    <div style="min-height: 500px">
+    <div class="table-responsive" style="min-height: 500px; border-color: white">
         <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
             <thead>
             <tr>
