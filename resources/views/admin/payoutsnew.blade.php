@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-    <div class="card-body">
+    <div class="table-responsive card-body" style="border-color: white;">
         <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
             <thead>
             <tr>
