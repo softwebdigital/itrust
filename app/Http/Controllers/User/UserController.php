@@ -77,9 +77,19 @@ class UserController extends Controller
 
         $percentage = // ($ira_roi + $offshore_roi) * 100 / ($portfolioValue);
 
-        // dd($portfolioValue, $withdrawable);
-        $data = self::marketCap();
-        $stocks_data = self::stock();
+        
+        $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc%2Ceth&category=tokenized-stock&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+        
+        $response = Http::get($url);
+        $data = $response->json();
+
+        $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
+        
+        $res = Http::get($urlStock);
+        $stocks_data = $res->json();
+
+        // $stocks_data = self::stock();
+
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
         $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
         $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('ROI');
@@ -112,7 +122,7 @@ class UserController extends Controller
             'Options' => ['label' => 'Options', 'value' => round($options + $options_roi, 2), 'color' => "#076262"]
         ];
 
-        $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+        $symbol = \App\Models\Currency::where('id', $user->currency_id)->first();
 //         dd($assets);
 //        $new_assets = [];
         foreach ($assets as $key => $asset)
@@ -696,24 +706,20 @@ class UserController extends Controller
 
     public static function marketCap()
     {
+        // // Fetch JSON data from the API
+        // $url = 'https://api.coingecko.com/api/v3/simple/price?ids=Bitcoin%2CEthereum%2CBinance%20Coin%2CTether%2CCardano%2CSolana%2CXRP%2CPolkadot%2CShiba%20Inu%2CDogecoin%2CUSD%20Coin%2CTerra%2CUniswap%2CChainlink%2CAvalanche%2CWrapped%20Bitcoin%2CBinance%20USD%2CLitecoin%2CPolygon%2CAlgorand%2CBitcoin%20Cash%2CTRON%2CStellar%2CDecentraland%2CTerraUSD%2CVeChain%2CInternet%20Computer%2CElrond%2CFilecoin%2CCosmos%2CTHETA%2CDai%2CEthereum%20Classic%2CHedera%20Hashgraph%2CFantom%2CNEAR%20Protocol%2CTezos%2CMonero%2CThe%20Graph%2CIOTA%2CEOS%2CKlaytn%2CGala%2CLoopring%2CStacks%2CLEO%20Token%2CAave%2CPancakeSwap%2CFeathercoin%2C1inch%2CIOTA%2CGala%2CAave&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
+        
+        // $response = Http::get($url);
+
+        // // Decode the JSON response
+        // $data = $response->json();
+
         $data = json_decode(file_get_contents(public_path('data.json')), true);
         foreach ($data as $key => $datum)
             if (isset($datum['market_cap']))
                 $data[$key]['market_cap'] = self::cap($datum['market_cap']);
 
-        // $total=count($data);
-        // // dd($total);
-        // $per_page = 50;
-        // $current_page = $request->input("page") ?? 1;
-
-        // $starting_point = ($current_page * $per_page) - $per_page;
-
-        // $data = array_slice($data, $starting_point, $per_page, true);
-        // $data = new Paginator($data, $per_page, $current_page, [
-        //     'path' => $request->url(),
-        //     'query' => $request->query(),
-        // ]);
-        // dd($data);
+                // dd($data);
         return $data;
     }
 
@@ -722,32 +728,12 @@ class UserController extends Controller
         // $array = ['DXLG', 'IBM', 'TGLS', 'LWLG', 'CAR', 'DDS', 'RRD', 'SGML', 'NOTV', 'CLMT','CAR', 'ZIM', 'SLI'];
         // $base_url = 'https://cloud.iexapis.com/';
         $stocks = [];
-        // foreach($array as $stock){
+
         $data = json_decode(file_get_contents(public_path('stock.json')), true);
-        // }
-//        $data = $data->json();
-        // dd($data);
         foreach ($data as $key => $datum) {
             $data[$key]['marketCap'] = self::cap($datum['marketCap']);
-//            $symbol = $datum['symbol'];
-//            $logo = Http::get("https://cloud.iexapis.com/stable/stock/$symbol/logo?token=pk_cc0d743e69ec47eeb4a9edf281793933"); //&ids=BTC,ETH,XRP
-//            $data[$key]['logo'] = $logo->json()['url'];
             $data[$key]['logo'] = 'https://storage.googleapis.com/iexcloud-hl37opg/api/logos/'.$datum['symbol'].'.png';
         }
-
-        // $total=count($data);
-        // // dd($total);
-        // $per_page = 50;
-        // $current_page = $request->input("page") ?? 1;
-
-        // $starting_point = ($current_page * $per_page) - $per_page;
-
-        // $data = array_slice($data, $starting_point, $per_page, true);
-        // $data = new Paginator($data, $per_page, $current_page, [
-        //     'path' => $request->url(),
-        //     'query' => $request->query(),
-        // ]);
-        // dd($data);
          return $data;
     }
 
@@ -887,11 +873,11 @@ class UserController extends Controller
 
     public static function updateMarketCap() {
         try {
-            $data = json_decode(Http::get('https://api.nomics.com/v1/currencies/ticker?key=aba7d7994847e207e4e405132c98374a3c061c5e&interval=1h,1d,30d&convert=USD&per-page=100&page=1&ids=BTC,ETH,BNB,USDT,ADA,SOL,XRP,DOT,SHIB,DOGE,USDC,LUNA,UNI,LINK,AVAX,WBTC,BUSD,LTC,MATIC,ALGO,BCH,TRX,XLM,MANA,UST,VET,ICP,EGLD,FIL,ATOM,THETA,DAI,ETC,HBAR,FTM,NEAR,XTZ,XMR,GRT,MIOTA,EOS,KLAY,GALA,LRC,STX,LEO,AAVE,CAKE,FTETH,1INCH,IOT,GALA,AAVE'), true) ?? [];
+            $data = json_decode(Http::get('https://api.coingecko.com/api/v3/simple/price?ids=Bitcoin%2CEthereum%2CBinance%20Coin%2CTether%2CCardano%2CSolana%2CXRP%2CPolkadot%2CShiba%20Inu%2CDogecoin%2CUSD%20Coin%2CTerra%2CUniswap%2CChainlink%2CAvalanche%2CWrapped%20Bitcoin%2CBinance%20USD%2CLitecoin%2CPolygon%2CAlgorand%2CBitcoin%20Cash%2CTRON%2CStellar%2CDecentraland%2CTerraUSD%2CVeChain%2CInternet%20Computer%2CElrond%2CFilecoin%2CCosmos%2CTHETA%2CDai%2CEthereum%20Classic%2CHedera%20Hashgraph%2CFantom%2CNEAR%20Protocol%2CTezos%2CMonero%2CThe%20Graph%2CIOTA%2CEOS%2CKlaytn%2CGala%2CLoopring%2CStacks%2CLEO%20Token%2CAave%2CPancakeSwap%2CFeathercoin%2C1inch%2CIOTA%2CGala%2CAave&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true'), true) ?? [];
             if (count($data) > 1)
                 file_put_contents(public_path('data.json'), json_encode($data));
         } catch (Exception $e) {
-
+            dd('Some kind of error');
         }
     }
 

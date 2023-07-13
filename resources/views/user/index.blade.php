@@ -70,6 +70,27 @@
     </style>
 @endsection
 
+@php 
+function formatValues($number)
+{
+    $absNumber = abs($number);
+    $suffix = '';
+
+    if ($absNumber >= 1000 && $absNumber < 1000000) {
+        $number = $number / 1000;
+        $suffix = 'K';
+    } elseif ($absNumber >= 1000000 && $absNumber < 1000000000) {
+        $number = $number / 1000000;
+        $suffix = 'M';
+    } elseif ($absNumber >= 1000000000) {
+        $number = $number / 1000000000;
+        $suffix = 'B';
+    }
+
+    return number_format($number, 2) . $suffix;
+}
+@endphp
+
 @section('content')
     <div class="row">
         <div class="col-xl-4 col-md-6">
@@ -82,9 +103,7 @@
                             <span class="text-muted mb-3 lh-1 d-block text-truncate">Portfolio Value</span>
                             <h4 class="mb-3">
                                 
-                                @foreach($symbol as $sym)
-                                    <span class="" data-target="">{{ $sym->symbol }}</span> 
-                                @endforeach
+                                <span class="" data-target="">{{ $symbol->symbol }}</span>
                                 
                                 <span class="" data-target="">{{ number_format($portfolioValue, 2) }}</span>
                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
@@ -156,9 +175,9 @@
                                         <th>Symbol</th>
                                         <th>Price</th>
                                         <th>Market Cap</th>
-                                        <th>1H Change</th>
-                                        <th>1D Change</th>
-                                        <th>30D Change</th>
+                                        <th>24H Change</th>
+                                        <th>High</th>
+                                        <th>Low</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -166,13 +185,17 @@
                                     @foreach($data as $key => $market)
                                         <tr>
                                             <th>{{ $key + 1 }}</th>
-                                            <td><img src="{{ $market['logo_url'] }}" alt="" height="20"> {{ $market['name'] }}</td>
+                                            <td><img src="{{ $market['image'] }}" alt="" height="20"> {{ $market['name'] }}</td>
                                             <td>{{ $market['symbol'] }}</td>
-                                            <td>${{ number_format($market['price'], 2) }}</td>
-                                            <td>${{ $market['market_cap'] ?? '' }}</td>
-                                            <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
+                                            <td>${{ number_format($market['current_price'], 2) }}</td>
+                                            <td>${{ formatValues($market['market_cap']) }}</td>
+                                            <td class="{{ $market["price_change_percentage_24h"] < 0 ? 'text-danger' : 'text-success' }}">{{ number_format($market["price_change_percentage_24h"], 2) . '%' }}</td>
+                                            <td class="text-success">${{ number_format($market['high_24h'], 2) }}</td>
+                                            <td class="text-danger">${{ number_format($market['low_24h'], 2) }}</td>
+
+                                            <!-- <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
                                             <td class="{{ isset($market["1d"]) ? ($market["1d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1d"]) ? ($market['1d']['price_change_pct'] * 100).'%' : '' }}</td>
-                                            <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td>
+                                            <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td> -->
                                             <td>
                                                 <div class="d-flex">
 {{--                                                    <button class="btn btn-sm btn-success mx-1" onclick="toggleModal('{{ $market['symbol'] }}', '#buy')">Buy</button>--}}
@@ -219,13 +242,13 @@
                                                         <img src="{{ $market['logo'] ?? '' }}" alt="" height="20">
                                                     </div>
                                                     <div class="col-9">
-                                                        {{ $market['companyName'] }}
+                                                        {{ $market['name'] }}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>{{ $market['symbol'] }}</td>
-                                            <td>${{ number_format($market['iexRealtimePrice'], 2) }}</td>
-                                            <td>${{ $market['marketCap'] ?? '' }}</td>
+                                            <td>${{ number_format($market['price'], 2) }}</td>
+                                            <td>${{ formatValues($market['marketCap']) ?? '' }}</td>
                                             <td>
                                                 <div class="d-flex">
 {{--                                                    <button class="btn btn-sm btn-success mx-1" onclick="toggleModal('{{ $market['symbol'] }}', '#buy')">Buy</button>--}}

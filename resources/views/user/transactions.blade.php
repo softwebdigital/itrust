@@ -13,6 +13,11 @@
     <li class="breadcrumb-item active">Transactions</li>
 @endsection
 
+@php
+    $user = \App\Models\User::find(auth()->id());
+    $symbol = \App\Models\Currency::where('id', $user->currency_id)->first();
+@endphp
+
 @section('content')
     <div class="card-body">
         <div class="d-flex justify-content-end mb-4">
@@ -47,7 +52,7 @@
                             -----
                             @endif
                         </td>
-                        <td>{{ $transaction->method == 'bank' ? '$'.number_format($transaction->amount, 2) : '$'.number_format($transaction->actual_amount, 2).' ('.round($transaction->amount, 8).'BTC)' }}</td>
+                        <td>{{ $transaction->method == 'bank' ? $symbol->symbol.number_format($transaction->amount, 2) : $symbol->symbol.number_format($transaction->actual_amount, 2).' ('.round($transaction->amount, 8).'BTC)' }}</td>
                         <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
                         <td> <span class="badge
 

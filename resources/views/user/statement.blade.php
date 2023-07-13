@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css">
 @endsection
 
+@php
+    $user = \App\Models\User::find(auth()->id());
+    $symbol = \App\Models\Currency::where('id', $user->currency_id)->first();
+@endphp
+
 @section('content')
     <div class="card-body">
         <div class="d-flex justify-content-end mb-4">
@@ -48,8 +53,8 @@
                         -----
                         @endif
                     </td>
-                    <td>${{ number_format($investment->amount, 2) }}</td>
-                    <td>${{ number_format($investment->ROI, 2) }}</td>
+                    <td>{{ $symbol->symbol }}{{ number_format($investment->amount, 2) }}</td>
+                    <td>{{ $symbol->symbol }}{{ number_format($investment->ROI, 2) }}</td>
                        <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
                        <td> <span class="badge p-2
                                {{ $investment->status == 'open' ? 'bg-success' : '' }}

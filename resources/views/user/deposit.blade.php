@@ -13,6 +13,11 @@
     <li class="breadcrumb-item active">Transactions</li>
 @endsection
 
+@php
+    $user = \App\Models\User::find(auth()->id());
+    $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
+@endphp
+
 @section('content')
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenterbank" tabindex="-1" role="dialog"
@@ -303,7 +308,7 @@
                             -----
                             @endif
                         </td>
-                        <td>{{ $transaction->method == 'bank' ? '$' . number_format($transaction->amount, 2) : round($transaction->amount, 8) . ' ($' . $transaction->actual_amount . ')' }}
+                        <td>{{ $transaction->method == 'bank' ? $sym->symbol . number_format($transaction->amount, 2) : round($transaction->amount, 8) .  '(' . $sym->symbol . $transaction->actual_amount . ')' }}
                         </td>
                         <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
                         <td> <span
