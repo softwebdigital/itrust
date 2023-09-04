@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Admin;
 use App\Models\Settings;
 use App\Models\Transaction;
-use App\Models\User;
-use App\Notifications\WebNotification;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\RedirectResponse;
+use App\Notifications\WebNotification;
 use function Symfony\Component\String\u;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -351,7 +352,18 @@ class AdminController extends Controller
 
     public static function getBTC()
     {
-        return round(json_decode(file_get_contents(public_path('data.json')))[0]->price, 2) ?? 50000;
+        $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+
+        $response = Http::get($url);
+        $data = $response->json();
+
+        // Check if the response is not empty and if 'current_price' key exists
+        if (!empty($data) && isset($data[0]['current_price'])) {
+            $priceBTC = $data[0]['current_price'];
+            return $priceBTC;
+        } else {
+            return 31200;
+        }
     }
 
     public function updateCurrencuy(Request $request)

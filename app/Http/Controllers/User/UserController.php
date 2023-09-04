@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
-use App\Models\Document;
-use App\Models\Investment;
-use App\Models\News;
-use App\Models\Settings;
-use App\Models\Transaction;
-use App\Models\User;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
+use App\Models\News;
+use App\Models\User;
+use App\Models\Document;
+use App\Models\Settings;
+use App\Models\Investment;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserController extends Controller
@@ -78,10 +79,28 @@ class UserController extends Controller
         $percentage = // ($ira_roi + $offshore_roi) * 100 / ($portfolioValue);
 
         
-        $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc%2Ceth&category=tokenized-stock&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+        // $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc%2Ceth&category=tokenized-stock&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
         
-        $response = Http::get($url);
-        $data = $response->json();
+        // $response = Http::get($url);
+        // $data = $response->json();
+
+        // $jsonData = Storage::get('crypto.json');
+        // $data = json_decode($jsonData, true);
+
+        $jsonFilePath = public_path('crypto.json');
+
+        if (file_exists($jsonFilePath)) {
+            $jsonData = file_get_contents($jsonFilePath);
+            $data = json_decode($jsonData, true);
+        } else {
+            $data = null;
+        }
+
+        // if ($data !== null) {
+        //     // Process the data from the JSON file
+        // } else {
+        //     // Handle the case where the JSON file is empty or doesn't exist
+        // }
 
         $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
         
