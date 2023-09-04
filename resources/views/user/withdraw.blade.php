@@ -295,7 +295,8 @@
                                     <div class="text-center d-grid gap-2">
                                         <button type="button" class="btn btn-success btn-block"
                                             onclick="startWithdrawalbtc()" data-toggle="modal"
-                                            data-target="#exampleModalCenterbtc">Request Withdraw</button>
+                                            data-target="#exampleModalCenterbtc">Request Withdraw  {{ \App\Http\Controllers\Admin\AdminController::getBTC() }}
+                                        </button>
                                     </div>
                                 </div>
                             </form>
