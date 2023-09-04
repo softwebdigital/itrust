@@ -6,6 +6,7 @@
 
         @media (max-width: 992px) {
             .mockup { width: 100% }
+            .position-lg-absolute { width: inherit; }
         }
     </style>
 @endsection
@@ -19,7 +20,7 @@
         <div class="row gx-0 align-items-center">
           <div class="col-md-10 offset-md-1 col-lg-5 offset-lg-7 offset-xxl-6 ps-xxl-12 mt-md-n9 text-center text-lg-start" data-cues="slideInDown" data-group="page-title" data-delay="600">
             <h1 class="display-3 mb-4 mx-sm-n2 mx-md-0">World class automated stocks and crypto trading bot</h1>
-            <p class="lead fs-lg mb-7 px-md-10 px-lg-0">Become a better trader. Powerful, AI-powered stocks and crypto trading bot to help you save time, trade 24/7, and automate your trading.   </p>
+            <p class="lead fs-lg mb-7 px-md-10 px-lg-0">Become a better trader. Powerful, AI-powered stocks and crypto trading bot to help you save time, trade 24/7, and automate your trading.</p>
             <div class="d-flex justify-content-center justify-content-lg-start" data-cues="slideInDown" data-group="page-title-buttons" data-delay="900">
               <span><a href="{{ route('register') }}" class="btn btn-primary btn-icon btn-icon-start rounded me-2"><i class="uil uil-user"></i> Sign Up</a></span>
               <!-- <span><a class="btn btn-green btn-icon btn-icon-start rounded"><i class="uil uil-google-play"></i> Google Play</a></span> -->
@@ -49,7 +50,7 @@
                 <!-- <i class="display-1 uil uil-chart"></i> -->
                 <p></p>
                 <h4>Manage Your Portfolio</h4>
-                <p class="mb-2">Keep your portfolio in your pocket. Everything you need to manage your assets is available in a single app. </p>
+                <p class="mb-2">Keep your portfolio in your pocket. Everything you need to manage your assets is available in a single app.</p>
                 <a href="{{ route('register') }}" class="more hover link-violet">Learn More</a>
                 <p></p>
               </div>
@@ -214,7 +215,7 @@
           <div class="row gy-6 gx-xxl-8 process-wrapper" data-cues="slideInUp" data-group="process">
               <div class="col-md-6 col-lg-4"> <span class="icon btn btn-circle btn-lg btn-soft-purple disabled mb-4"><span class="number">01</span></span>
                 <h4 class="mb-1">Invest Any Amount</h4>
-                <p>Choose how much you want  to invest, and we’ll convert from dollars to parts of a whole share.</p>
+                <p>Choose how much you want to invest, and we’ll convertfrom dollars to parts of a whole share.</p>
               </div>
               <!--/column -->
               <div class="col-md-6 col-lg-4"> <span class="icon btn btn-circle btn-lg btn-purple disabled mb-4"><span class="number">02</span></span>
@@ -224,7 +225,7 @@
               <!--/column -->
               <div class="col-md-6 col-lg-4"> <span class="icon btn btn-circle btn-lg btn-soft-purple disabled mb-4"><span class="number">03</span></span>
                 <h4 class="mb-1">Trade in Real Time</h4>
-                <p>Trades placed during market hours are executed at that  time, so you’ll always know the share price.</p>
+                <p>Trades placed during market hours are executed at that time, so you’ll always know the share price.</p>
               </div>
               <!--/column -->
             </div>
