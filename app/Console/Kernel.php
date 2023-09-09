@@ -29,6 +29,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('stock:fetch')
             ->everyMinute()
             ->withoutOverlapping();
+
+        $schedule->command('crypto:update')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

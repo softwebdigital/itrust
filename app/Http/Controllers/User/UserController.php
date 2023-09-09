@@ -85,7 +85,7 @@ class UserController extends Controller
         // $data = $response->json();
 
         // $jsonData = Storage::get('crypto.json');
-        // $data = json_decode($jsonData, true);
+        // $data = json_decode($jsonData, true); //price: 25984btc 25882btc
 
         $jsonFilePath = public_path('crypto.json');
 
