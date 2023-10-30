@@ -18,10 +18,12 @@ class UpdateCryptoData extends Command
         $response = Http::get($url);
         $data = $response->json();
 
-        file_put_contents(public_path('crypto.json'), json_encode($data));
-
-        logger(json_encode($data));
-
-        $this->info('Cryptocurrency data has been updated.');
+        if (isset($data['status']['error_code']) && $data['status']['error_code'] == 429) {
+            logger(json_encode($data));
+        } else {
+            file_put_contents(public_path('crypto.json'), json_encode($data));
+            logger(json_encode($data));
+            $this->info('Cryptocurrency data has been updated.');
+        }
     }
 }

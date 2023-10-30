@@ -100,7 +100,11 @@
                 @foreach($payouts as $payout)
                     <tr>
                         <td>{{ \Carbon\Carbon::make($payout->created_at)->format('Y/m/d') }}</td>
-                        <td>{{ $payout->user->username }}</td>
+                        @if($payout->user)
+                            <td>{{ $payout->user->username }}</td>
+                        @else
+                            <td>( Deleted User )</td>
+                        @endif
                         <td>${{ number_format($payout->actual_amount, 2) }}</td>
                         <td>{{ ucwords($payout->method) }}</td>
                         <td>
