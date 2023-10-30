@@ -101,7 +101,11 @@
             @foreach($deposits as $deposit)
                 <tr>
                     <td>{{ \Carbon\Carbon::make($deposit->created_at)->format('Y/m/d') }}</td>
-                    <td>{{ $deposit->user->username }}</td>
+                    @if($deposit->user)
+                        <td>{{ $deposit->user->username }}</td>
+                    @else
+                        <td>( Deleted User )</td>
+                    @endif
                     <td>{{ $deposit->method == 'bank' ? '$'.number_format($deposit->amount, 2) : round($deposit->amount, 8).' BTC' }}</td>
                     <td>{{ ucwords($deposit->method) }}</td>
                     <td>

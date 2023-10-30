@@ -32,7 +32,11 @@
                 @foreach($transactions as $transaction)
                     <tr>
                         <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
-                        <td>{{ $transaction->user->username }}</td>
+                        @if($transaction->user)
+                            <td>{{ $transaction->user->username }}</td>
+                        @else
+                            <td>( Deleted User )</td>
+                        @endif
                         <td>{{ $transaction->method == 'bank' ? '$'.number_format($transaction->amount, 2) : round($transaction->amount, 8).' BTC' }}</td>
                         <td> <span class="badge
                                     {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}

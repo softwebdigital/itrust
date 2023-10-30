@@ -40,8 +40,14 @@
             @foreach($investments as $investment)
                 <tr>
                     <td>{{ date('d/M/Y', strtotime($investment->created_at)) }}</td>
-                    <td>{{ $investment->user->full_name }}</td>
-                    <td>{{ $investment->user->email }}</td>
+                    @if($investment->user)
+                        <td>{{ $investment->user->full_name }}</td>
+                        <td>{{ $investment->user->email }}</td>
+                    @else
+                    <td>( Deleted Account )</td>
+                    <td></td>
+                    @endif
+                    
                     <td>{{ number_format($investment->amount, 2) }}</td>
                     <td>{{ number_format($investment->ROI, 2) }}</td>
                     <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>

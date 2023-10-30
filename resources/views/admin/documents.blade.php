@@ -34,7 +34,11 @@
                 <tbody>
                 @foreach($documents as $document)
                     <tr>
+                        @if($document->user)
                         <td>{{ $document->user->email }}</td>
+                        @else
+                        <td>( Deleted User )</td>
+                        @endif
                         <td>{{ strlen($document->title) > 20 ? substr($document->title, 0, 20).'...' : $document->title }}</td>
                         <td>{!! strlen($document->description) > 25 ? substr($document->description, 0, 25).'...' : $document->description !!}</td>
                         <td><span class="badge p-2 bg-soft-dark">{{ ucfirst($document->type) }}</td>
