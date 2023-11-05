@@ -8,7 +8,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta property="og:image" content="{{ asset('card.jpeg') }}">
+    <meta property="og:image" content="{{ asset('seo.jpeg') }}">
     <meta property="og:title" content="Access The Most Powerful Stock & Crypto Trading Bot - Itrust Investment">
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">

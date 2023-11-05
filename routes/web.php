@@ -141,6 +141,9 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::post('/users/delete/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
     Route::post('/users/{user}/documents/{action}', [AdminController::class, 'approveID'])->name('admin.users.documents.action');
     Route::put('/users/{user}/currency', [AdminController::class, 'updateCurrencuy'])->name('admin.users.currency.update');
+    Route::put('/users/{user}/bot', [AdminController::class, 'updateCopyBot'])->name('admin.users.bot.update');
+    Route::put('/users/{user}/diactivate/bot', [AdminController::class, 'diactivateCopyBot'])->name('admin.users.bot.diactivate');
+
 
     Route::get('/deposits', [TransactionController::class, 'deposits'])->name('admin.deposits');
     Route::put('/deposits/{transaction}/{action}', [TransactionController::class, 'depositAction'])->name('admin.deposits.action');

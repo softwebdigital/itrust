@@ -23,13 +23,17 @@ class CopyBotController extends Controller
     public function edit(CopyBot $bot)
     {
         $edit = true;
-        return view('admin.bot-form', compact('edit', 'bot'));
+        $users = User::query()->orderBy('first_name', 'asc')->get();
+
+        return view('admin.bot-form', compact('edit', 'bot', 'users'));
     }
 
     public function create()
     {
         $edit = false;
-        return view('admin.bot-form', compact('edit'));
+        $users = User::query()->orderBy('first_name', 'asc')->get();
+
+        return view('admin.bot-form', compact('edit', 'users'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -37,6 +41,10 @@ class CopyBotController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'price' => 'required',
+            'creator' => 'required|string',
+            'yield' => 'required|string',
+            'rate' => 'required|string',
+            'aum' => 'required',
         ]);
         if ($validator->fails()) return back()->withInput()->with('error', $validator->getMessageBag());
 
@@ -48,7 +56,18 @@ class CopyBotController extends Controller
             $pic = $image->move('img/bots', $name);
         } else $pic = null;
 
-        if (CopyBot::query()->create(['name' => $request['name'], 'price' => $request['price'], 'image' => $pic,]))
+        $chatBot = CopyBot::query()->create(
+        [   
+            'name' => $request['name'],
+            'price' => $request['price'], 
+            'creator' => $request['creator'], 
+            'yield' => $request['yield'], 
+            'rate' => $request['rate'], 
+            'aum' => $request['aum'], 
+            'image' => $pic,
+        ]);
+
+        if ($chatBot)
             return redirect()->route('admin.bot')->with('success', 'Bot added successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }
@@ -60,6 +79,10 @@ class CopyBotController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'price' => 'required',
+            'creator' => 'required|string',
+            'yield' => 'required|string',
+            'rate' => 'required|string',
+            'aum' => 'required',
         ]);
         if ($validator->fails()) return back()->withInput()->with('error', $validator->getMessageBag());
 
@@ -71,14 +94,18 @@ class CopyBotController extends Controller
             $pic = $image->move('img/bots', $name);
         } else $pic = $copyBot['image'];
 
-        if ($copyBot->update(['name' => $request['name'], 'price' => $request['price'], 'image' => $pic,]))
+        if ($copyBot->update(
+            [
+                'name' => $request['name'],
+                'price' => $request['price'], 
+                'creator' => $request['creator'], 
+                'yield' => $request['yield'], 
+                'rate' => $request['rate'], 
+                'aum' => $request['aum'], 
+                'image' => $pic,
+            ]))
             return redirect()->route('admin.bot')->with('success', 'Bot Updated successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
-
-        
-        // if ($blog->update(['title' => $request['title'], 'category' => $request['category'], 'heading' => $request['heading'], 'body' => $request['body'], 'image' => $pic, 'created_at' => $request['date'], 'updated_at' => $request['date']]))
-        //     return redirect()->route('admin.blog')->with('success', 'Blog Updated successfully');
-        // return back()->with('error', 'An error occurred, try again.')->withInput();
     }
 
     public function destroy($id)
@@ -110,7 +137,7 @@ class CopyBotController extends Controller
 
         if ($user->update(['copy_bot' => $request['copy_bot']]))
             // Notification::send($user, new BotNotification($data));
-            MailController::sendBotNotification($user, $mail);
+            // MailController::sendBotNotification($user, $mail);
             return redirect()->route('user.index')->with('success', 'Bot added successfully');
         return back()->with('error', 'An error occurred, try again.')->withInput();
     }

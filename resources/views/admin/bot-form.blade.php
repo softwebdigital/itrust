@@ -16,7 +16,6 @@
 
 @section('content')
 <div class="mx-auto col-md-10">
-{{--    <form class="form" method="post" enctype="multipart/form-data" action="#">--}}
     <form class="form" method="post" enctype="multipart/form-data" action="{{ $edit ? route('admin.bot.update', $bot->id) : route('admin.bot.store') }}">
         @csrf
         <div class="form-group mb-3">
@@ -25,11 +24,37 @@
             @error('name')<strong class="text-danger" role="alert">{{ $message }}</strong>@enderror
             <div class="text-danger" role="alert" id="name-err"></div>
         </div>
+
         <div class="form-group mb-3">
             <label for="price" class="form-label">Price </label>
             <input type="text" name="price" id="price" class="form-control form-control-lg" value="{{ old('price') ?? ($edit ? $bot['price'] : '') }}">
             <div class="text-danger" role="alert" id="price-err"></div>
         </div>
+
+        <div class="form-group mb-3">
+            <label for="creator" class="form-label">Creator </label>
+            <input type="text" name="creator" id="creator" class="form-control form-control-lg" value="{{ old('creator') ?? ($edit ? $bot['creator'] : '') }}">
+            <div class="text-danger" role="alert" id="creator-err"></div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="yield" class="form-label">30D Yield </label>
+            <input type="text" name="yield" id="yield" class="form-control form-control-lg" value="{{ old('yield') ?? ($edit ? $bot['yield'] : '') }}">
+            <div class="text-danger" role="alert" id="yield-err"></div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="rate" class="form-label">Win Rate </label>
+            <input type="text" name="rate" id="rate" class="form-control form-control-lg" value="{{ old('rate') ?? ($edit ? $bot['rate'] : '') }}">
+            <div class="text-danger" role="alert" id="rate-err"></div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="aum" class="form-label">AUM (USDT) </label>
+            <input type="text" name="aum" id="aum" class="form-control form-control-lg" value="{{ old('aum') ?? ($edit ? $bot['aum'] : '') }}">
+            <div class="text-danger" role="alert" id="aum-err"></div>
+        </div>
+
         <div class="form-group mb-3">
             <label for="" class="form-label">Image </label>
             <input type="file" class="dropify" name="image" data-allowed-file-extensions="jpg png jpeg" data-default-file="{{ $edit ? ($bot['image'] ? asset($bot['image']) : '') : '' }}" data-max-file="1" data-max-file-size="1M" />

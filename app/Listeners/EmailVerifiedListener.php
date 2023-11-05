@@ -38,7 +38,7 @@ class EmailVerifiedListener
             </p><p>So let us begin with the best ways to get you started:</p><ul><li><b>Copy Other Traders</b></li></ul><p>Pick &amp; choose templates and strategies</p><ul><li><b>
             Use The Best Trading Bot</b></li></ul><p>
             Configure how your bot should buy &amp; sell
-            </p><ul><li>1<b>00% Automated Trading
+            </p><ul><li>1<b>100% Automated Trading
             </b></li></ul><p>Use Automated signals that trades on your behalf
             </p><p><b>Questions?
             </b></p><p>Write <a href="support@itrustinvestment.com" target="_blank">support@itrustinvestment.com</a>, and we will get back to you as soon as possible</p>'

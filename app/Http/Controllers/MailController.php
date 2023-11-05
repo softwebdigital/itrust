@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Notifications\BotNotification;
+use App\Notifications\WebNotification;
+use App\Notifications\VerifiedNotification;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\TransactionNotification;
 use App\Notifications\SendActionDepositNotification;
-use App\Notifications\SendActionWithdrawalNotification;
 use App\Notifications\SendRequestDepositNotification;
+use App\Notifications\SendActionWithdrawalNotification;
 use App\Notifications\SendRequestWithdrawalNotification;
 use App\Notifications\SendRequestWithdrawalNotificationToAdmin;
-use App\Notifications\TransactionNotification;
-use App\Notifications\WebNotification;
-use App\Notifications\BotNotification;
-use Illuminate\Support\Facades\Notification;
 
 class MailController extends Controller
 {
@@ -28,6 +29,11 @@ class MailController extends Controller
     public static function sendBotNotification($user, $data)
     {
         Notification::send($user, new BotNotification($data));
+    }
+
+    public static function sendVerifiedNotification($user, $data)
+    {
+        Notification::send($user, new VerifiedNotification($data));
     }
 
 
