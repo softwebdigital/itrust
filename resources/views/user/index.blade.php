@@ -354,55 +354,75 @@ function formatValues($number)
     <div class="col-md-8">
         <!-- New Bots -->
         @php
-                $copyBots = App\Models\CopyBot::query()->latest()->get();
+                
+                $copyBots = auth()->user()->copyBots;
                 $user = App\Models\User::find(auth()->id());
             @endphp
 
             <h5 class="mt-5 mb-2">New Copy Bots</h5>
-            <div class="col-md-12 order-md-1 mt-4">
-            @foreach($copyBots as $copyBot)
-                <div class="card-body mb-3 border">
-                    <div class="row align-items-center reward" id="reward-1">
-                        <div class="col">
-                            <img src="{{ $copyBot->image ? asset($copyBot->image) : '' }}" alt="" width="75">
-                        </div>
-                        <div class="col-10 align-self-center d-flex justify-content-between">
-                            <div class="mt-4 mt-sm-0">
-                                <p class="mb-1">{{ $copyBot->name }}</p>
-                                <h6>${{ $copyBot->price }}</h6>
+            <div class="col-lg-8 col-md-12 order-md-1 mt-4">
+                @foreach($copyBots as $copyBot)
+                    <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px; padding: 30px;">
+                        <div class="row border-bottom pb-4">
+                            <div class="col-2">
+                                <img style="border-radius: 999px; width: 60px; height: 60px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
                             </div>
-                            <div class="align-self-auto my-auto">
-                            @if($user->copy_bot !== $copyBot->id)
-                                <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
-                            @else
-                                <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
-                            @endif
+                            <div class="col-10">
+                                <h2>{{ $copyBot->name }}</h2>
+                                <p>From {{ $copyBot->creator }}</p>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="row mt-4">
+                            <div class="col">
+                                <h1 class="text-success">{{ $copyBot->yield }}</h1>
+                                <p>30D Yield</p>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-6">
+                                <h4 class="font-bold">{{ $copyBot->rate }}</h4>
+                                <p>Subscribe win rate</p>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="font-bold">{{ $copyBot->aum }}</h4>
+                                <p>AMU (USDT)</p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
 
-                <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
-                                <div class="modal-body">
-                                    <p>Are you sure you want this bot?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-success">Add</button>
-                                </div>
-                                <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
-                            </form>
+                            <div class="col-6">
+                                @if($user->copy_bot !== $copyBot->id)
+                                    <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
+                                @else
+                                    <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+
+                    <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                    <div class="modal-body">
+                                        <p>Are you sure you want this bot?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success">Add</button>
+                                    </div>
+                                    <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
     </div>
 

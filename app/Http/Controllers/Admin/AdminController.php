@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\CopyBot;
 use App\Models\Settings;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -12,13 +13,18 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\RedirectResponse;
 use App\Notifications\WebNotification;
+use App\Http\Controllers\MailController;
+
 use function Symfony\Component\String\u;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\VerifiedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class AdminController extends Controller
 {
@@ -112,11 +118,31 @@ class AdminController extends Controller
     public function approveID(User $user, $action): RedirectResponse
     {
         if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
-        $data = [
-            'subject' => 'Document '.$action,
-            'body' => 'Your means of identification has been <b>'.$action.'</b>.'
-        ];
+        
+        if ($action == 'approved') {
+            $data = [
+                'name' => $user->name,
+                'subject' => 'Account Successfully Verified',
+                'body' => '<p>Your FICA document has been verified successfully ,</p>
+                <p>You can start investing by making a deposit to your account.</p>
+                <br>
+                <p>Deposits can be made via <b>Cryptocurrency(bitcoin)</b> or direct Bank <b>Deposit(Wire Transfer)</b></p>
+                <br>
+                <br>
+                <p>For more enquires!</p>
+                <p>Write support@itrustinvestment.com</p>
+                '
+            ];
+        } else if($action == 'declined') {
+            $data = [
+                'name' => $user->name,
+                'subject' => 'Document '.$action,
+                'body' => 'Your means of identification has been <b>'.$action.'</b>.'
+            ];
+        }
+
         if ($user->update(['id_approved' => $action == 'approved' ? '1' : '2', 'id_date_approved' => now()])) {
+                Notification::send($user, new VerifiedNotification($data));
             $user->notify(new WebNotification($data));
             return back()->with('success', 'User document ' . $action . ' successfully');
         }
@@ -368,19 +394,34 @@ class AdminController extends Controller
 
     public function updateCurrencuy(Request $request)
     {
-        // $user = Admin::find($request->user_id);
-        // $data = $user->update(['currency_id' => $request->currency_id]);
-
-        // $this->validate($request, [
-        //     'user' => 'required',
-        //     'currency_id' => 'required'
-        // ]);
-
-        // $user_id = input('user');
         $user = User::find($request->user_id);
 
         $user->update(['currency_id' => $request->currency_id]);
         
         return back()->with('success', ' Updated Successfully');
+    }
+
+    public function updateCopyBot(Request $request, $id)
+    {
+        $copyBot = User::findOrFail($id);
+
+        $botId = $request->copy_bot;
+
+        $copyBot->copyBots()->attach($botId);
+
+        return back()->with('success', ' Updated Successfully');
+
+    }
+
+    public function diactivateCopyBot(Request $request, $id)
+    {
+        $copyBot = User::findOrFail($id);
+
+        $botId = $request->copy_bot;
+
+        $copyBot->copyBots()->detach($botId);
+
+        return back()->with('success', ' Updated Successfully');
+
     }
 }

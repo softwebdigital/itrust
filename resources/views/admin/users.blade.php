@@ -35,6 +35,14 @@
         @foreach($users as $index => $user)
         @php
             $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+
+
+            $assignedCopyBotIds = $user->copyBots->pluck('id')->toArray();
+
+            $copyBots = \App\Models\CopyBot::whereNotIn('id', $assignedCopyBotIds)->latest()->get();
+
+            $copyBotsNotAssigned = \App\Models\CopyBot::whereIn('id', $assignedCopyBotIds)->latest()->get();
+
         @endphp
             <tr>
                 <td>{{ $index +  1 }}</td>
@@ -64,6 +72,10 @@
                             <a class="dropdown-item" href="{{ route('admin.users.show', $user->id) }}">View User</a>
                             
                             <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-changeCurency-{{ $user->id }}">Change Currency</a>
+
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-activateBot-{{ $user->id }}">Activate Copy Bot</a>
+                            
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-diactivateBot-{{ $user->id }}">Diactivate Copy Bot</a>
 
                             @if($user->btc_wallet != null)
                                 <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-editwallet-{{ $user->id }}">Edit Wallet</a>
@@ -104,7 +116,7 @@
                             <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{{ route('admin.users.account', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
+                        <form action="{{ route('admin.users.documents.action', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
                             <div class="modal-body">
                                 <p>Are you sure you want to approve this user?</p>
                             </div>
@@ -114,6 +126,86 @@
                             </div>
                         </form>
                     </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="staticBackdrop-activateBot-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    @if($copyBots->count() > 0)
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Activate Bots</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.bot.update', [$user->id]) }}" method="post">@csrf @method('PUT')
+                        <div class="m-4">
+                            <label for="currency_id" class="form-label">Copy Bot </label>
+                            <select class="form-select @error('currency') is-invalid @enderror" data-trigger name="copy_bot" id="copy_bot">
+                                <option value="">Select Bot</option>
+                                @foreach($copyBots as $bot)
+                                    <option value="{{ $bot->id }}" @if(old('bot_id') == $bot->name) selected @endif>{{ ucwords($bot->name) }}</option>
+                                @endforeach
+                            </select>
+                            @error('bot')
+                            <span class="invalid-feedback d-block" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+
+                            <input type="hidden" name="user_id" value="{{ $user->id }}">
+
+                            <button type="submit" class="mt-3 btn btn-primary">Submit</button>
+                        </div>
+                        </form>
+                    </div>
+                    @else
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <p class="pt-5 pb-5 text-center">All bots has been assigned</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="modal fade" id="staticBackdrop-diactivateBot-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    @if($copyBots->count() > 0)
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Diactivate Bots</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.users.bot.diactivate', [$user->id]) }}" method="post">@csrf @method('PUT')
+                        <div class="m-4">
+                            <label for="currency_id" class="form-label">Copy Bot </label>
+                            <select class="form-select @error('currency') is-invalid @enderror" data-trigger name="copy_bot" id="copy_bot">
+                                <option value="">Select Bot</option>
+                                @foreach($copyBotsNotAssigned as $bot)
+                                    <option value="{{ $bot->id }}" @if(old('bot_id') == $bot->name) selected @endif>{{ ucwords($bot->name) }}</option>
+                                @endforeach
+                            </select>
+                            @error('bot')
+                            <span class="invalid-feedback d-block" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+
+                            <input type="hidden" name="user_id" value="{{ $user->id }}">
+
+                            <button type="submit" class="mt-3 btn btn-primary">Submit</button>
+                        </div>
+                        </form>
+                    </div>
+                    @else
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <p class="pt-5 pb-5 text-center">All bots has been assigned</p>
+                    </div>
+                    @endif
                 </div>
             </div>
 

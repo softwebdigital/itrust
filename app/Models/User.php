@@ -150,4 +150,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->attributes['status'] == 'suspended';
     }
+
+    public function copyBots()
+    {
+        return $this->belongsToMany(CopyBot::class);
+    }
 }
