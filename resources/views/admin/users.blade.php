@@ -116,7 +116,7 @@
                             <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{{ route('admin.users.documents.action', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
+                        <form action="{{ route('admin.users.account', [$user->id, 'approved']) }}" method="post">@csrf @method('PUT')
                             <div class="modal-body">
                                 <p>Are you sure you want to approve this user?</p>
                             </div>
