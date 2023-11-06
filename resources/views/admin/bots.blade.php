@@ -25,8 +25,11 @@
                     <th>Name</th>
                     <th>Price</th>
                     <th>Image</th>
+                    <th>Creator</th>
+                    <th>Rate</th>
+                    <th>Yield</th>
+                    <th>AUM(USDT)</th>
                     <th>Date Added</th>
-                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,8 +37,11 @@
                     <tr>
                         <td>{{ $info->name }}</td>
                         <td>{{ $info->price }}</td>
-                        
                         <td><img src="{{ $info->image ? asset($info->image) : '' }}" width="50" alt=""></td>
+                        <td>{{ $info->creator }}</td>
+                        <td>{{ $info->rate }}</td>
+                        <td>{{ $info->yield }}</td>
+                        <td>{{ $info->aum }}</td>
                         <td>{{ \Carbon\Carbon::make($info->created_at)->format('Y/m/d') }}</td>
                         <td>
                             <div class="btn-group">
