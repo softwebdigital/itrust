@@ -365,7 +365,7 @@
 
             </div>
             <div class="col-5 mb-4">
-                <button style="margin-top: -71px; margin-left: -13px;" class="btn btn-primary w-md" type="button" data-toggle="modal" data-target="#requestFund">Request Funds</button>
+                <button style="margin-top: -71px; margin-left: -13px;" class="btn btn-primary w-md" type="button" data-toggle="modal" data-target="#requestFund">Get Funded</button>
             </div>
             
         </div>
