@@ -254,10 +254,10 @@ class AdminController extends Controller
             $withdrawable = ($deposits - $payouts) + $inv;
         }
 
-        // if ($request['method'] == 'bank') {
+        if ($request['method'] == 'bank') {
             $amount = $request['amount'];
-        // } else
-        //     $amount = $request['amount'] / ($btc ?? 50000);
+        } else
+            $amount = $request['amount'] / ($btc ?? 50000);
 
         $data = [
             'user_id' => $user_id,

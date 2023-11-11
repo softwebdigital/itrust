@@ -295,7 +295,7 @@
                                         <div class="form-group mb-3">
                                             <label for="">Amount <span class="text-danger">*</span></label>
                                             <input type="number" step="any" class="form-control @error('amount') is-invalid @enderror"
-                                                name="amount" value="{{ old('amount') ?? $payout['amount'] }}" id="amount" placeholder="Amount Invested">
+                                                name="amount" value="{{ old('amount') ?? $payout['actual_amount'] }}" id="amount" placeholder="Amount Invested">
                                             @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                             @enderror
                                         </div>

@@ -56,6 +56,7 @@ Route::get('/trailing-feature', [FrontEndController::class, 'tailing'])->name('f
 Route::get('/copy-trading', [FrontEndController::class, 'copy'])->name('frontend.copy');
 Route::get('/automated-trading', [FrontEndController::class, 'automated'])->name('frontend.automated');
 Route::get('/ai-trading', [FrontEndController::class, 'ai'])->name('frontend.ai');
+Route::get('/get-funded', [FrontEndController::class, 'funds'])->name('frontend.funds');
 
 Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('image.upload');
 
