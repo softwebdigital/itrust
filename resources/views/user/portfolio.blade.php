@@ -455,147 +455,8 @@
                 </div>
                 <!--end card-->
             </div>
-        </div>
-        <div class="col-md-4">
-            <!-- <div class="row"> -->
-                <div class="col-md-12">
-                    <div class="card w-100">
-                        <div class="card-body">
-                            <div class="table">
-                                <table class="table table-borderless">
-                                    <h4>Current Holdings</h4>
-                                    <tr class="text-" style="border: 0 !important;">
-                                        <td colspan="4">Cash</td>
-                                        @php
-                                            $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
-                                        @endphp
-                                                
 
-                                        <td class="float-end"> 
-                                            @foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar"
-                                                    style="width: {{ ($cash / $total_assets) * 100 }}%; background-color: #90bcbc;"
-                                                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @foreach ($assets as $asset)
-                                        @php
-                                            $percentage = (($asset->amount + $asset->ROI) / $total_assets) * 100;
-                                            switch ($asset->type) {
-                                                case 'stocks':
-                                                    $color = '#62d9d7';
-                                                    break;
-                                                case 'Fixed income(bonds)':
-                                                    $color = '#0d1189';
-                                                    break;
-                                                case 'Properties': case 'Cash':
-                                                    $color = '#deb2d2';
-                                                    break;
-                                                case 'Cryptocurrencies':
-                                                    $color = '#6c96d3';
-                                                    break;
-                                                case 'ETF’S':
-                                                    $color = '#ef6b6b';
-                                                    break;
-                                                case 'gold':
-                                                    $color = '#69382c';
-                                                    break;
-                                                case 'Options':
-                                                    $color = '#076262';
-                                                    break;
-                                                default:
-                                                    $color = '#ffff00';
-                                            }
-                                        @endphp
-
-                                        <tr class="text-" style="border: 0 !important;">
-                                            <td colspan="4">{{ ucwords(str_replace('_', ' ', $asset->type)) }}</td>
-
-                                            <td class="float-end">@foreach($symbol as $sym) {{ $sym->symbol }} @endforeach{{ number_format($asset->amount + $asset->ROI, 2) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="6">
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar"
-                                                        style="width: {{ $percentage }}%; background-color: {{ $color }};"
-                                                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <!-- New Bots -->
-                    @php
-                            $copyBots = App\Models\CopyBot::query()->latest()->get();
-                            $user = App\Models\User::find(auth()->id());
-                        @endphp
-
-                        <h5 class="mt-1 mb-2">Active Copy Bots</h5>
-                        <div class="col-md-12 order-md-1 mt-4">
-                        @foreach($copyBots as $copyBot)
-                            <div class="card-body mb-3 border">
-                                <div class="row align-items-center reward" id="reward-1">
-                                    <div class="col">
-                                        <img src="{{ $copyBot->image ? asset($copyBot->image) : '' }}" alt="" width="75">
-                                    </div>
-                                    <div class="col-10 align-self-center d-flex justify-content-between">
-                                        <div class="mt-4 mt-sm-0">
-                                            <p class="mb-1">{{ $copyBot->name }}</p>
-                                            <h6>${{ $copyBot->price }}</h6>
-                                        </div>
-                                        <div class="align-self-auto my-auto">
-                                        <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)">Active</a>
-                                        {{-- @if($user->copy_bot !== $copyBot->id)
-                                            <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
-                                        @else
-                                            <a class="btn btn-md btn-secondary mx-1" href="javascript:void(0)">Added</a>
-                                        @endif --}}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
-                                            <div class="modal-body">
-                                                <p>Are you sure you want this bot?</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-success">Add</button>
-                                            </div>
-                                            <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                        </div>
-                </div>
-            <!-- </div> -->
-        </div>
-        
-        
-        
-        <div class="col-md-12">
+            <div class="col-md-12">
             <div class="row">
                 <div class="col m-2 border">
                     <h6 class="mt-3 mb-4">Average Holding Time</h6>
@@ -976,69 +837,227 @@
                     
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-12">
-            
-            <h4>News</h4>
-            <hr>
-            <div class="">
+            <div class="col-md-12">
+                
+                <h4>News</h4>
+                <hr>
+                <div class="">
 
-                @foreach ($news as $info)
-                    {{-- <div class="row">
-                    <div class="col-9">
-                        <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
-                        <p>{!! $info->body !!}</p>
-                    </div>
-                    <div class="col-3">
-                        <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
-                    </div>
-                </div> --}}
-                    <div class="card-body mb-3 border">
-                        <div class="row align-items-center reward{{ $info->id }}"
-                            id="reward-{{ $info->id }}">
-                            <div class="col">
-                                <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" width="75">
-                            </div>
-                            <div class="col-10 align-self-center d-flex justify-content-between">
-                                <div class="mt-4 mt-sm-0">
-                                    <p class="mb-1">{{ ucfirst($info->title) }} <small
-                                            class="text-info">{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
-                                    </p>
-                                    <h6>{{ ucfirst($info->heading) }}</h6>
+                    @foreach ($news as $info)
+                        {{-- <div class="row">
+                        <div class="col-9">
+                            <h6>{{ ucfirst($info->title)  }} <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small></h6>
+                            <p>{!! $info->body !!}</p>
+                        </div>
+                        <div class="col-3">
+                            <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" style="height: 100%; width: 100%; object-fit: contain;">
+                        </div>
+                    </div> --}}
+                        <div class="card-body mb-3 border">
+                            <div class="row align-items-center reward{{ $info->id }}"
+                                id="reward-{{ $info->id }}">
+                                <div class="col">
+                                    <img src="{{ $info->image ? asset($info->image) : '' }}" alt="" width="75">
                                 </div>
-                                <div class="align-self-auto my-auto"><a href="javascript:void(0)"
-                                        onclick="showReward({{ $info->id }})">Read More <i
-                                            class="mdi mdi-arrow-down"></i></a></div>
+                                <div class="col-10 align-self-center d-flex justify-content-between">
+                                    <div class="mt-4 mt-sm-0">
+                                        <p class="mb-1">{{ ucfirst($info->title) }} <small
+                                                class="text-info">{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
+                                        </p>
+                                        <h6>{{ ucfirst($info->heading) }}</h6>
+                                    </div>
+                                    <div class="align-self-auto my-auto"><a href="javascript:void(0)"
+                                            onclick="showReward({{ $info->id }})">Read More <i
+                                                class="mdi mdi-arrow-down"></i></a></div>
+                                </div>
+                            </div>
+                            <div class="d-none reward-panel{{ $info->id }}" id="reward-panel-{{ $info->id }}">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <h6>{{ ucfirst($info->title) }}
+                                            <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
+                                        </h6>
+                                        <p>{!! $info->body !!}</p>
+                                    </div>
+                                    <div class="col-3">
+                                        <img src="{{ $info->image ? asset($info->image) : '' }}" alt=""
+                                            style="height: 100%; width: 100%; object-fit: contain;">
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="mx-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+                                        <button class="btn btn-success btn-block px-4">Share News</button>
+                                        <a href="javascript:void(0)" class=""
+                                            onclick="showLess({{ $info->id }})">View less <i
+                                                class="mdi mdi-arrow-up"></i></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-none reward-panel{{ $info->id }}" id="reward-panel-{{ $info->id }}">
-                            <div class="row">
-                                <div class="col-9">
-                                    <h6>{{ ucfirst($info->title) }}
-                                        <small>{{ \Carbon\Carbon::make($info->date_range)->shortAbsoluteDiffForHumans() }}</small>
-                                    </h6>
-                                    <p>{!! $info->body !!}</p>
-                                </div>
-                                <div class="col-3">
-                                    <img src="{{ $info->image ? asset($info->image) : '' }}" alt=""
-                                        style="height: 100%; width: 100%; object-fit: contain;">
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="mx-4">
-                                <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-                                    <button class="btn btn-success btn-block px-4">Share News</button>
-                                    <a href="javascript:void(0)" class=""
-                                        onclick="showLess({{ $info->id }})">View less <i
-                                            class="mdi mdi-arrow-up"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                @endforeach
+                        <hr>
+                    @endforeach
+                </div>
             </div>
+        </div>
+        </div>
+        <div class="col-md-4">
+            <!-- <div class="row"> -->
+                <div class="col-md-12">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <div class="table">
+                                <table class="table table-borderless">
+                                    <h4>Current Holdings</h4>
+                                    <tr class="text-" style="border: 0 !important;">
+                                        <td colspan="4">Cash</td>
+                                        @php
+                                            $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                        @endphp
+                                                
+
+                                        <td class="float-end"> 
+                                            @foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="progress">
+                                                <div class="progress-bar" role="progressbar"
+                                                    style="width: {{ ($cash / $total_assets) * 100 }}%; background-color: #90bcbc;"
+                                                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @foreach ($assets as $asset)
+                                        @php
+                                            $percentage = (($asset->amount + $asset->ROI) / $total_assets) * 100;
+                                            switch ($asset->type) {
+                                                case 'stocks':
+                                                    $color = '#62d9d7';
+                                                    break;
+                                                case 'Fixed income(bonds)':
+                                                    $color = '#0d1189';
+                                                    break;
+                                                case 'Properties': case 'Cash':
+                                                    $color = '#deb2d2';
+                                                    break;
+                                                case 'Cryptocurrencies':
+                                                    $color = '#6c96d3';
+                                                    break;
+                                                case 'ETF’S':
+                                                    $color = '#ef6b6b';
+                                                    break;
+                                                case 'gold':
+                                                    $color = '#69382c';
+                                                    break;
+                                                case 'Options':
+                                                    $color = '#076262';
+                                                    break;
+                                                default:
+                                                    $color = '#ffff00';
+                                            }
+                                        @endphp
+
+                                        <tr class="text-" style="border: 0 !important;">
+                                            <td colspan="4">{{ ucwords(str_replace('_', ' ', $asset->type)) }}</td>
+
+                                            <td class="float-end">@foreach($symbol as $sym) {{ $sym->symbol }} @endforeach{{ number_format($asset->amount + $asset->ROI, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar"
+                                                        style="width: {{ $percentage }}%; background-color: {{ $color }};"
+                                                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <!-- New Bots -->
+                    @php
+                                            
+                            $copyBots = auth()->user()->copyBots;
+                            $user = App\Models\User::find(auth()->id());
+                        @endphp
+
+                        <h5 class="mt-1 mb-2">Active Copy Bots</h5>
+                        <div class="col-md-12 order-md-1 mt-4">
+                        @foreach($copyBots as $copyBot)
+                            <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px; padding: 30px;">
+                                <div class="row border-bottom pb-4">
+                                    <div class="col-2">
+                                        <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
+                                    </div>
+                                    <div class="col-10">
+                                        <h4>{{ $copyBot->name }}</h4>
+                                        <p>From {{ $copyBot->creator }}</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col">
+                                        <h1 class="text-success">{{ $copyBot->yield }}</h1>
+                                        <p>30D Yield</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col-6">
+                                        <h4 class="font-bold">{{ $copyBot->rate }}</h4>
+                                        <p>Subscribe win rate</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 class="font-bold">{{ $copyBot->aum }}</h4>
+                                        <p>AMU (USDT)</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+
+                                    </div>
+                                    <div class="col-6">
+                                        <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active <i class="mdi mdi-plus"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                            <div class="modal-body">
+                                                <p>Contact a third party signal provider for your bot configuration</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                <!-- <button type="submit" class="btn btn-success">Add</button> -->
+                                            </div>
+                                            <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        @if($copyBots->count() <= 0)
+                            <div>
+                                <p class="text-muted pt-4 pb-6">No Copy Bot Available...</p>
+                            </div>
+                        @endif
+                        </div>
+                </div>
+            <!-- </div> -->
         </div>
     </div>
 

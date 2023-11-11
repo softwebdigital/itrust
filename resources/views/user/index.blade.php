@@ -91,7 +91,7 @@ function formatValues($number)
 }
 
                 
-$copyBots = auth()->user()->copyBots;
+$copyBots = App\Models\CopyBot::query()->latest()->paginate(5);
 $user = App\Models\User::find(auth()->id());
 
 @endphp
@@ -301,10 +301,10 @@ $user = App\Models\User::find(auth()->id());
                         <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px; padding: 30px;">
                             <div class="row border-bottom pb-4">
                                 <div class="col-2">
-                                    <img style="border-radius: 999px; width: 60px; height: 60px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
+                                    <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
                                 </div>
                                 <div class="col-10">
-                                    <h3>{{ $copyBot->name }}</h3>
+                                    <h4>{{ $copyBot->name }}</h4>
                                     <p>From {{ $copyBot->creator }}</p>
                                 </div>
                             </div>
@@ -329,10 +329,10 @@ $user = App\Models\User::find(auth()->id());
 
                                 </div>
                                 <div class="col-6">
-                                    @if($user->copy_bot !== $copyBot->id)
+                                    @if($user->copy_bot == $copyBot->id)
                                         <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
                                     @else
-                                        <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-secondary mx-1" href="javascript:void(0)" onclick="showReward(1)">Added</a>
+                                        <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-secondary mx-1" href="javascript:void(0)">Active</a>
                                     @endif
                                 </div>
                             </div>
@@ -347,11 +347,11 @@ $user = App\Models\User::find(auth()->id());
                                     </div>
                                     <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
                                         <div class="modal-body">
-                                            <p>Are you sure you want this bot?</p>
+                                            <p>Contact a third party signal provider for your bot configuration</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-success">Add</button>
+                                            <!-- <button type="submit" class="btn btn-success">Add</button> -->
                                         </div>
                                         <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
                                     </form>
@@ -360,7 +360,7 @@ $user = App\Models\User::find(auth()->id());
                         </div>
                     @endforeach
 
-                    @if($copyBot->count() <= 0)
+                    @if($copyBots->count() <= 0)
                         <div>
                             <p class="text-muted pt-4 pb-6">No Copy Bot Available...</p>
                         </div>
