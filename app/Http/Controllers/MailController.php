@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Notifications\BotNotification;
+use App\Notifications\FundsNotification;
 use App\Notifications\WebNotification;
 use App\Notifications\VerifiedNotification;
 use Illuminate\Support\Facades\Notification;
@@ -36,7 +37,10 @@ class MailController extends Controller
         Notification::send($user, new VerifiedNotification($data));
     }
 
-
+    public static function sendFundNotification($user, $data)
+    {
+        Notification::send($user, new FundsNotification($data));
+    }
 
     //NEW
 

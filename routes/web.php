@@ -15,6 +15,8 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\CopyBotController;
+use App\Http\Controllers\RequestFundController;
+use App\Models\RequestFund;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -122,6 +124,8 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
         Route::put('/bot/user/{bot}/assign', [CopyBotController::class, 'assign_bot'])->name('user.bot.assign');
 
         Route::put('/transaction/{transaction}/{action}/update', [TransactionController::class, 'update_cancel'])->name('user.transaction.cancel');
+
+        Route::post('/request/funds', [RequestFundController::class, 'store'])->name('user.funds.request')->middleware('approved');
     });
 });
 
@@ -201,4 +205,8 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::delete('/bot/{bot}/delete', [CopyBotController::class, 'destroy'])->name('admin.bot.destroy');
 
     Route::put('/transaction/{transaction}/{action}/update', [TransactionController::class, 'update_progress'])->name('admin.transaction.progress');
+
+    Route::get('/request/funds', [RequestFundController::class, 'index'])->name('admin.funds.get');
+    Route::put('/request/{requestFund}/funds/{action}', [RequestFundController::class, 'update'])->name('admin.funds.update');
+
 });

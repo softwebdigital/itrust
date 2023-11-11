@@ -177,6 +177,12 @@
                                     <span data-key="t-transactions">Transactions</span>
                                 </a>
                             </li>
+
+                            <li class="{{ Route::currentRouteNamed('admin.funds.get') ? 'mm-active' : '' }}">
+                                <a href="{{ route('admin.funds.get') }}">
+                                    <span data-key="t-transactions">Requests</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
