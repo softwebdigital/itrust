@@ -34,6 +34,7 @@
               <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.copy') }}">Copy Trading</a></li>
               <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.automated') }}">Automated Trading</a></li>
               <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.ai') }}">AI Trading</a></li>
+              <li class="nav-item"><a class="dropdown-item" href="{{ route('frontend.funds') }}">Get Funded</a></li>
 
             </ul>
           <li class="nav-item"><a class="nav-link" href="{{ route('frontend.faq') }}">F.A.Q</a>

@@ -161,6 +161,11 @@ class FrontEndController extends Controller
         return view('frontend.ai-trading');
     }
 
+    public function funds()
+    {
+        return view('frontend.get-funded');
+    }
 
+    
 
 }

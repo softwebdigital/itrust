@@ -359,6 +359,12 @@ $user = App\Models\User::find(auth()->id());
                             </div>
                         </div>
                     @endforeach
+
+                    @if($copyBot->count() <= 0)
+                        <div>
+                            <p class="text-muted pt-4 pb-6">No Copy Bot Available...</p>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="col-md-12">
