@@ -1023,7 +1023,7 @@
 
                                     </div>
                                     <div class="col-6">
-                                        <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active <i class="mdi mdi-plus"></i></a>
+                                        <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active</a>
                                     </div>
                                 </div>
                             </div>
