@@ -993,18 +993,18 @@
                         <div class="col-md-12 order-md-1 mt-4">
                         @foreach($copyBots as $copyBot)
                             <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px; padding: 30px;">
-                                <div class="row border-bottom pb-4">
+                                <div class="row border-bottom pb-1">
                                     <div class="col-2">
                                         <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
                                     </div>
                                     <div class="col-10">
-                                        <h4>{{ $copyBot->name }}</h4>
-                                        <p>From {{ $copyBot->creator }}</p>
+                                        <h4 class="m-0 p-0">{{ $copyBot->name }}</h4>
+                                        <p class="m-0 p-0">From {{ $copyBot->creator }}</p>
                                     </div>
                                 </div>
-                                <div class="row mt-4">
+                                <div class="row mt-1">
                                     <div class="col">
-                                        <h1 class="text-success">{{ $copyBot->yield }}</h1>
+                                        <h3 class="text-success">{{ $copyBot->yield }}</h3>
                                         <p>30D Yield</p>
                                     </div>
                                 </div>
