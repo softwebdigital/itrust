@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Admin\AdminController;
-use App\Models\Document;
-use App\Models\Investment;
-use App\Models\Settings;
-use App\Models\Transaction;
+use PDF;
 use App\Models\User;
+use App\Models\Currency;
+use App\Models\Document;
+use App\Models\Settings;
+use App\Models\Investment;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
+use App\Http\Controllers\Admin\AdminController;
 use App\Notifications\SendEmailHistoryOfAccount;
 use App\Notifications\SendEmailStatementOfAccount;
 use App\Notifications\SendLatestInvoiceNotification;
-use PDF;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -288,13 +290,29 @@ class TransactionController extends Controller
         $setting = Settings::first();
         $offshore = Transaction::where(['user_id' => $user->id,'acct_type' => 'offshore', 'status' => 'approved'])->count();
 
-        return view('user.withdraw', compact('user', 'transactions', 'setting', 'offshore'));
+
+        $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+        $payouts = $user->payouts()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $closed_roi = $user->investments()->where('status', '=', 'closed')->sum('ROI');
+        $open_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
+        $cash = ($deposits - $payouts - $open_inv) + $closed_roi;
+
+        $assets = DB::table('investments')
+            ->where('user_id', '=', $user->id)
+            ->where('status', '=', 'open')
+            ->select('type', DB::raw('count(*) as total'), DB::raw('sum(amount) as amount'), DB::raw('sum(ROI) as ROI'))
+            ->groupBy('type')
+            ->get();
+
+        return view('user.withdraw', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'assets'));
     }
 
     public function userDepositStore(Request $request): RedirectResponse
     {
 
         $user = User::find(auth()->id());
+        $symbol = Currency::where('id', $user->currency_id)->first();
+
         $validator = Validator::make($request->all(), [
             'method' => 'required|string',
             'amount' => 'required_if:method,bank',
@@ -323,7 +341,7 @@ class TransactionController extends Controller
                 $mail['number'] = $setting['acct_no'];
                 $mail['type'] = 'bank';
 
-                $mailBody = '<p>A Bank deposit request of $'.number_format($request['amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A Bank deposit request of '. $symbol .number_format($request['amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
@@ -335,7 +353,7 @@ class TransactionController extends Controller
                 $msg = 'Deposit successful and is pending confirmation';
                 $mail['body'] = 'You’ve requested a Bitcoin deposit of $'.number_format($request['btc_amount'], 2).', kindly make a payment of $'.number_format($request['btc_amount'], 2).' ('.$amount.'btc) to '.$user->btc_wallet;
                 $mail['type'] = 'btc';
-                $mailBody = '<p>A Bitcoin deposit request of $'.number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A Bitcoin deposit request of '. $symbol .number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
@@ -359,6 +377,7 @@ class TransactionController extends Controller
     {
 
         $user = User::find(auth()->id());
+        $symbol = Currency::where('id', $user->currency_id)->first();
 
         $validator = Validator::make($request->all(), [
             'w_method' => 'required|string',
@@ -407,9 +426,9 @@ class TransactionController extends Controller
             if ($user->transactions()->create(['method' => 'bank', 'info' => $request['info'], 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount'], 'bank_name' => $request['bank_name'], 'acct_name' => $request['acct_name'], 'acct_no' => $request['acct_no'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Withdrawal successful and is pending confirmation';
                 // $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
-                $body = '<p>Your Bank withdrawal request of $'.number_format($request['bank_amount'], 2).' has been received
+                $body = '<p>Your Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' has been received
                 and is in process. We will update the status of your transaction in less than 2/3 working days</p>';
-                $mailBody = '<p>A Bank withdrawal request of $'.number_format($request['bank_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
@@ -429,9 +448,9 @@ class TransactionController extends Controller
             if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Withdrawal successful and is pending confirmation';
                 // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
-                $body = '<p>Your Bitcoin withdrawal request of $'.(float) $request['w_amount'].' has been received
+                $body = '<p>Your Bitcoin withdrawal request of '. $symbol .(float) $request['w_amount'].' has been received
                 and is in process. We will update the status of your transaction in  less than 24hrs</p>';
-                $mailBody = '<p>A Bitcoin withdrawal request of $'.(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A Bitcoin withdrawal request of '. $symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();

@@ -277,7 +277,7 @@
                             </div>
                         </li>
 
-                        <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
+                        <!-- <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-history" role="button">
                                 <i data-feather="dollar-sign"></i><span data-key="t-history">Cash</span> <div class="arrow-down"></div>
                             </a>
@@ -287,7 +287,7 @@
                                 <a href="{{ route('user.withdraw') }}" class="dropdown-item" data-key="t-chat">Withdrawal</a>
 
                             </div>
-                        </li>
+                        </li> -->
 
                         <li class="nav-item dropdown {{ Route::currentRouteNamed('user.cash') ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.cash') }}" id="topnav-cash" role="button">
@@ -897,7 +897,7 @@
 
 @yield('script')
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
         var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
@@ -907,7 +907,9 @@
         s1.setAttribute('crossorigin','*');
         s0.parentNode.insertBefore(s1,s0);
     })();
-</script>
+</script> -->
+
+<script src="//code.tidio.co/24agp2azq6tkrizvwrrl8q8w1rawkfun.js" async></script>
 </body>
 
 </html>
