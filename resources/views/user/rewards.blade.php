@@ -15,6 +15,15 @@
 
 @section('content')
     <div class="row">
+    <div class="row">
+            <div class="col-7">
+
+            </div>
+            <div class="col-5 mb-4">
+                <button style="margin-top: -71px; margin-left: -13px;" class="btn btn-primary w-md" type="button" data-toggle="modal" data-target="#requestFund">Get Funded</button>
+            </div>
+            
+        </div>
         <div class="col-md-4 order-md-2">
             <div class="card">
                 <div class="card-header"><strong>Your referral link</strong></div>
@@ -153,6 +162,52 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="requestFund" tabindex="-1" role="dialog"
+            aria-labelledby="requestFundTitle" aria-hidden="true">
+            <form action="{{ route('user.funds.request') }}" method="post">
+                @csrf
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="requestFundTitle">Request Funds</h5>
+                        </div>
+                        <div class="modal-body border p-3">
+                            <div class="form-group mb-3">
+                                <label for="account">Account</label>
+                                <select class="form-select @error('acct_type') is-invalid @enderror" name="account"
+                                    id="acct_type">
+                                    <option value="">Select Account</option>
+                                    <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
+                                    <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="amount">Amount</label>
+                                <input type="text" class="form-control" name="amount" value="">
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="code">Code (optional)</label>
+                                <input type="text" class="form-control" name="code" value="">
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="reason">Reason</label>
+                                <textarea name="reason" id="reason" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+
+                            <input type="hidden" class="form-control" name="user_id" value="">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
 @endsection
 
 @section('script')

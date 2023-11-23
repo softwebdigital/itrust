@@ -311,64 +311,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="requestFund" tabindex="-1" role="dialog"
-        aria-labelledby="requestFundTitle" aria-hidden="true">
-        <form action="{{ route('user.funds.request') }}" method="post">
-            @csrf
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="requestFundTitle">Request Funds</h5>
-                    </div>
-                    <div class="modal-body border p-3">
-                        <div class="form-group mb-3">
-                            <label for="account">Account</label>
-                            <select class="form-select @error('acct_type') is-invalid @enderror" name="account"
-                                id="acct_type">
-                                <option value="">Select Account</option>
-                                <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
-                                <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account </option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="amount">Amount</label>
-                            <input type="text" class="form-control" name="amount" value="">
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label for="code">Code (optional)</label>
-                            <input type="text" class="form-control" name="code" value="">
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="reason">Reason</label>
-                            <textarea name="reason" id="reason" cols="30" rows="10" class="form-control"></textarea>
-                        </div>
-
-                        <input type="hidden" class="form-control" name="user_id" value="">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Confirm</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
+    
     @php
       if ($total_assets == 0) $total_assets = 1;
     @endphp
     <div class="row">
-        <div class="row">
-            <div class="col-7">
-
-            </div>
-            <div class="col-5 mb-4">
-                <button style="margin-top: -71px; margin-left: -13px;" class="btn btn-primary w-md" type="button" data-toggle="modal" data-target="#requestFund">Get Funded</button>
-            </div>
-            
-        </div>
         <div class="col-md-8">
             <div class="row">
                 <div class="col-xl-6 col-md-6">
@@ -990,40 +937,44 @@
                         @endphp
 
                         <h5 class="mt-1 mb-2">Active Copy Bots</h5>
-                        <div class="col-md-12 order-md-1 mt-4">
+                        <div class="col-md-12 col-lg-10 order-md-1 mt-4">
                         @foreach($copyBots as $copyBot)
-                            <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px; padding: 30px;">
+                            <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px;">
                                 <div class="row border-bottom pb-1">
                                     <div class="col-2">
                                         <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
                                     </div>
                                     <div class="col-10">
-                                        <h4 class="m-0 p-0">{{ $copyBot->name }}</h4>
+                                        <h5 class="m-0 p-0">{{ $copyBot->name }}</h5>
                                         <p class="m-0 p-0">From {{ $copyBot->creator }}</p>
                                     </div>
                                 </div>
                                 <div class="row mt-1">
-                                    <div class="col">
-                                        <h3 class="text-success">{{ $copyBot->yield }}</h3>
+                                    <div class="col-6">
+                                        <h4 class="text-success">{{ $copyBot->yield }}</h4>
                                         <p>30D Yield</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 class="text-dark">${{ number_format($copyBot->price) }}</h4>
+                                        <p>Price</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-0">
+                                    <div class="col-6">
+                                        <h5 class="font-bold">{{ $copyBot->rate }}</h5>
+                                        <p>Subscribe win rate</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 class="font-bold">{{ $copyBot->aum }}</h5>
+                                        <p>AMU (USDT)</p>
                                     </div>
                                 </div>
                                 <div class="row mt-1">
                                     <div class="col-6">
-                                        <h4 class="font-bold">{{ $copyBot->rate }}</h4>
-                                        <p>Subscribe win rate</p>
-                                    </div>
-                                    <div class="col-6">
-                                        <h4 class="font-bold">{{ $copyBot->aum }}</h4>
-                                        <p>AMU (USDT)</p>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-6">
 
                                     </div>
                                     <div class="col-6">
-                                        <a style="width: 150px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active</a>
+                                        <a style="width: 130px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active</a>
                                     </div>
                                 </div>
                             </div>

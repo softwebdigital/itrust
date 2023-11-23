@@ -15,8 +15,8 @@
             <input autocomplete="off" name="email" type="text" style="display:none;">
             @csrf
             <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" autocomplete="false" class="form-control @error('username') is-invalid @enderror" name="username" placeholder="Enter username" value="{{ $user ?? old('username') }}">
+                <label class="form-label">Username or Email</label>
+                <input type="text" autocomplete="false" class="form-control @error('username') is-invalid @enderror" name="username" placeholder="Enter username or email" value="{{ $user ?? old('username') }}">
                 @error('username')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>

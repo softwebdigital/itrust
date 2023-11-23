@@ -66,6 +66,29 @@
     </div>
     <div class="card-body">
 
+        <div class="col-md-8">
+            <div class="card w-100">
+                <div class="card-body">
+                    <div class="table">
+                        <table class="table table-borderless">
+                            
+                            <tr class="text-" style="border: 0 !important;">
+                                <td colspan="4"><h4>Available Cash Balance:</h4></td>
+                                @php
+                                    $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                @endphp
+                                        
+
+                                <td class="float-end"> 
+                                    <h3 class="text-success text-bold">@foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}</h3>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-md-8 order-md-1">
             <div class="card-body mb-3 border">
                 <div class="row align-items-center reward" id="reward-1">
@@ -295,7 +318,7 @@
                                     <div class="text-center d-grid gap-2">
                                         <button type="button" class="btn btn-success btn-block"
                                             onclick="startWithdrawalbtc()" data-toggle="modal"
-                                            data-target="#exampleModalCenterbtc">Request Withdraw  {{ \App\Http\Controllers\Admin\AdminController::getBTC() }}
+                                            data-target="#exampleModalCenterbtc">Request Withdraw
                                         </button>
                                     </div>
                                 </div>

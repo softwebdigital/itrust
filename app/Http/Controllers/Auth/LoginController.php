@@ -46,6 +46,18 @@ class LoginController extends Controller
         return 'username';
     }
 
+    protected function attemptLogin(Request $request)
+    {
+        $usernameOrEmail = $request->input($this->username());
+
+        $field = filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        return $this->guard()->attempt(
+            [$field => $usernameOrEmail, 'password' => $request->input('password')],
+            $request->filled('remember')
+        );
+    }
+
     /**
      * Send the response after the user was authenticated.
      *

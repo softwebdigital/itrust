@@ -13,7 +13,7 @@
           <div class="widget">
             <h4 class="widget-title mb-3">Need Help?</h4>
             <ul class="list-unstyled text-reset mb-0">
-              <li><a href="{{ route('frontend.contact') }}">Contact</a></li>
+              <!-- <li><a href="{{ route('frontend.contact') }}">Contact</a></li> -->
               <li><a href="{{ route('frontend.invest') }}">How to Invest</a></li>
               <li><a href="{{ route('frontend.faq') }}">F.A.Q</a></li>
               <li><a href="{{ route('frontend.terms') }}">Terms of Use</a></li>
@@ -41,7 +41,8 @@
           <div class="widget">
             <h4 class="widget-title mb-3">Get in Touch</h4>
             <address>57 Stamford St London, London, SE1 9LX. United Kingdom</address>
-            <a href="mailto:info@itrustinvestment.com" class="link-body">info@itrustinvestment.com</a><br><a href="tel:+447418442063"> +44 7418-4420630</a>
+            <a href="mailto:info@itrustinvestment.com" class="link-body">info@itrustinvestment.com</a>
+            <!-- <br><a href="tel:+447418442063"> +44 7418-4420630</a> -->
           </div>
           <!-- /.widget -->
         </div>
@@ -50,14 +51,10 @@
       <!--/.row -->
       <hr class="mt-13 mt-md-15 mb-7" />
       <div class="d-md-flex align-items-center justify-content-between">
-        <p class="mb-2 mb-lg-0">© 2021 Itrust Investment. All rights reserved.<br>
-            Itrust means Itrust Markets and web experiences with its family of wholly
-          owned subsidiaries which includes Itrust investment, Itrust Securities, and
-          Itrust Crypto.<br>
-          All investments involve risk and loss of capital.<br>
-          Securities trading is offered to self-directed customers by Itrust
-          Investment. Itrust Investment is a member of the Financial Industry
-            Regulatory Authority (FINRA).</p>
+        <p class="mb-2 mb-lg-0">© 2021 Itrust Investment. All rights reserved.
+          Itrust means Itrust Markets and web experiences with its family of wholly owned subsidiaries which includes Itrust investment, Itrust Securities, and Itrust Crypto.
+          All investments involve risk and loss of capital.
+          Securities trading is offered to self-directed customers by Itrust Investment. Itrust Investment operates as a subsidiary of Itrust Asset Management a member of the Financial Industry Regulatory Authority (FINRA). With FINRA number is 164193, and the SEC number is 801-115048.
         <nav class="nav social text-md-end">
           <!-- <a href="#"><i class="uil uil-facebook-f"></i></a> -->
         </nav>
