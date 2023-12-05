@@ -13,6 +13,11 @@
     <li class="breadcrumb-item active">Transactions</li>
 @endsection
 
+@php
+    $user = \App\Models\User::find(auth()->id());
+    $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
+@endphp
+
 @section('content')
     <div class="modal fade" id="exampleModalCenterbank" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -232,7 +237,7 @@
                     </div>
                     <div class="col-10 align-self-center d-flex justify-content-between">
                         <div class="mt-4 mt-sm-0">
-                            <p class="mb-1">Bitcoin</p>
+                            <p class="mb-1">Cryptocurrency</p>
                             {{-- <h6>Get a free stock. Limitations apply</h6> --}}
                         </div>
                         <div class="align-self-auto my-auto"><a href="javascript:void(0)" class="btn btn-primary" onclick="showReward(2)">Withdraw
@@ -246,7 +251,7 @@
                         </div>
                         <div class="col-12">
                             <div class="mt-4 mt-sm-0">
-                                <p class="mb-1 mt-2">Bitcoin</p>
+                                <p class="mb-1 mt-2">Cryptocurrency</p>
                                 {{-- <h6>Get a free stock. Limitations apply</h6> --}}
                             </div>
                             {{-- <div class="align-self-auto my-auto"><a href="javascript:void(0)" onclick="showReward(2)">Withdraw Now <i class="mdi mdi-arrow-down"></i></a></div> --}}
@@ -254,8 +259,8 @@
                                 @csrf
                                 <input type="hidden" value="bitcoin" name="w_method">
                                 <div id="crypto-method-withdraw">
-                                    {{-- <p class="mb-1">Bitcoin</p> --}}
-                                    <label>Add Amount in USD:</label>
+                                    {{-- <p class="mb-1">Cryptocurrency</p> --}}
+                                    <label>Add Amount in {{ $sym->name }}:</label>
                                     <div class="form-group">
                                         @if($offshore != 0)
                                         <div class="form-group mb-3">
@@ -273,7 +278,7 @@
                                         <input type="hidden" name="acct_type" value="basic_ira">
                                         @endif
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="w_amount"><strong>$</strong></label>
+                                            <label class="input-group-text" for="w_amount"><strong>{{ $sym->symbol }}</strong></label>
                                             <input type="number" id="w_amount" step="any" name="w_amount"
                                                 value="{{ old('w_amount') }}"
                                                 class="form-control @error('w_amount') is-invalid @enderror"
@@ -286,7 +291,7 @@
 
                                     <div class="form-group">
                                         <div class="input-group mb-3">
-                                            {{-- <label class="input-group-text" for="btc_wallet"><strong>$</strong></label> --}}
+                                            {{-- <label class="input-group-text" for="btc_wallet"><strong>{{ $sym->symbol }}</strong></label> --}}
                                             <input type="text" id="btc_wallet" step="any" name="btc_wallet"
                                                 value="{{ old('btc_wallet') }}"
                                                 class="form-control @error('btc_wallet') is-invalid @enderror"
@@ -361,7 +366,7 @@
                             -----
                             @endif
                         </td>
-                        <td>{{ $transaction->method == 'bank' ? '$' . number_format($transaction->amount, 2) : round($transaction->amount, 8) . ' ($' . $transaction->actual_amount . ')' }}
+                        <td>{{ $transaction->method == 'bank' ? $sym->symbol . number_format($transaction->amount, 2) : round($transaction->amount, 8) . ' (' . $sym->symbol . $transaction->actual_amount . ')' }}
                         </td>
                         <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
                         <td> <span

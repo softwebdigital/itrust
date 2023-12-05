@@ -88,5 +88,6 @@
       <!-- /.container -->
     </section>
     <!-- /section -->
+    @include('frontend.layouts.bots')
 
 @endsection

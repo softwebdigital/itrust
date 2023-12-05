@@ -40,6 +40,8 @@
       </div>
       <!-- /.container -->
     </section>
+
+    @include('frontend.layouts.bots')
     <!-- /section -->
 
 @endsection

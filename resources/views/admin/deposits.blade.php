@@ -106,7 +106,8 @@
                     @else
                         <td>( Deleted User )</td>
                     @endif
-                    <td>{{ $deposit->method == 'bank' ? '$'.number_format($deposit->amount, 2) : round($deposit->amount, 8).' BTC' }}</td>
+                    <!-- <td>{{ $deposit->method == 'bank' ? '$' .number_format($deposit->amount, 2) : round($deposit->amount, 8).' BTC' }}</td> -->
+                    <td>{{ '$' .number_format($deposit->actual_amount, 2) }} {{ $deposit->method == 'bitcoin' ? ' (' . round($deposit->amount, 8) .' BTC)' : '' }}</td>
                     <td>{{ ucwords($deposit->method) }}</td>
                     <td>
                         @if($deposit->acct_type == 'offshore')

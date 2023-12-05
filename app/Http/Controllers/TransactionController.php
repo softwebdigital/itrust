@@ -43,6 +43,9 @@ class TransactionController extends Controller
 
     public function depositAction(Transaction $transaction, $action): RedirectResponse
     {
+        $user = User::find($transaction['user_id']);
+        $symbol = Currency::where('id', $user->currency_id)->first();
+
         if ($transaction['type'] != 'deposit') return back()->with('warning', 'Please check that you are taking action on the right deposit.');
         if (!in_array($action, ['approved', 'declined', 'delete'])) return back()->with('error', 'Invalid action');
 
@@ -51,7 +54,9 @@ class TransactionController extends Controller
         }
         else {
             if ($transaction->update(['status' => $action])) {
-                $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
+                // $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
+                $amount = $symbol->symbol . number_format($transaction['actual_amount'], 2);
+                
                 // dd($amount);
 
                 $mail = [
@@ -80,6 +85,9 @@ class TransactionController extends Controller
 
     public function payoutAction(Transaction $transaction, $action): RedirectResponse
     {
+        $user = User::find($transaction['user_id']);
+        $symbol = Currency::where('id', $user->currency_id)->first();
+
         if ($transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
         if (!in_array($action, ['approved', 'declined', 'delete'])) return back()->with('error', 'Invalid action');
 
@@ -88,7 +96,8 @@ class TransactionController extends Controller
         }
         else {
             if ($transaction->update(['status' => $action])) {
-                $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
+                // $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
+                $amount = $symbol->symbol . number_format($transaction['actual_amount'], 2);
                 // dd($amount);
 
                 $mail = [
@@ -353,7 +362,7 @@ class TransactionController extends Controller
                 $msg = 'Deposit successful and is pending confirmation';
                 $mail['body'] = 'You’ve requested a Bitcoin deposit of $'.number_format($request['btc_amount'], 2).', kindly make a payment of $'.number_format($request['btc_amount'], 2).' ('.$amount.'btc) to '.$user->btc_wallet;
                 $mail['type'] = 'btc';
-                $mailBody = '<p>A Bitcoin deposit request of '. $symbol .number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A Bitcoin deposit request of '. $symbol->symbol .number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();

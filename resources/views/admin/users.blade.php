@@ -281,14 +281,45 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <div class="input-group mb-3">
-                                        <label class="input-group-text" for="btc_wallet">₿</label>
+                                        <label class="input-group-text" for="btc_wallet">BTC Wallet</label>
                                         <input type="text" step="any" class="form-control @error('btc_wallet') is-invalid @enderror"
                                             name="btc_wallet" value="{{ $user->btc_wallet ?? old('btc_wallet') }}" id="btc_wallet" placeholder="BTC Wallet">
                                     </div>
                                     @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
+
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="eth_wallet">ETH Wallet</label>
+                                        <input type="text" step="any" class="form-control @error('eth_wallet') is-invalid @enderror"
+                                            name="eth_wallet" value="{{ $user->eth_wallet ?? old('eth_wallet') }}" id="eth_wallet" placeholder="ETH Wallet">
+                                    </div>
+                                    @error('eth_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="usdt_trc_20">USDT (TRC20)</label>
+                                        <input type="text" step="any" class="form-control @error('usdt_trc_20') is-invalid @enderror"
+                                            name="usdt_trc_20" value="{{ $user->usdt_trc_20 ?? old('usdt_trc_20') }}" id="usdt_trc_20" placeholder="USDT (TRC20) Wallet">
+                                    </div>
+                                    @error('usdt_trc_20') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="usdt_erc_20">USDT (ERC20)</label>
+                                        <input type="text" step="any" class="form-control @error('usdt_erc_20') is-invalid @enderror"
+                                            name="usdt_erc_20" value="{{ $user->usdt_erc_20 ?? old('usdt_erc_20') }}" id="usdt_erc_20" placeholder="USDT (ERC20) Wallet">
+                                    </div>
+                                    @error('usdt_erc_20') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
+
+                                    <div class="input-group mb-3">
+                                        <label class="input-group-text" for="usdt_eth">USDT (ETH)</label>
+                                        <input type="text" step="any" class="form-control @error('usdt_eth') is-invalid @enderror"
+                                            name="usdt_eth" value="{{ $user->usdt_eth ?? old('usdt_eth') }}" id="usdt_eth" placeholder="USDT (ETH) Wallet">
+                                    </div>
+                                    @error('usdt_eth') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
                                 </div>
-                                {{-- <p>Are you sure you want to approve this user?</p> --}}
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

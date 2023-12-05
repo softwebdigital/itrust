@@ -103,20 +103,20 @@
                         <h2 class="accordion-header" id="flush-headingTwo">
                             <button onclick="$('#msVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                BTC Wallet
+                                Wallet Address
                             </button>
                         </h2>
 
                         <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo">
                             <div class="accordion-body text-muted">
                                 <div class="row">
-                                    <div class="col-3"><h6>BTC Wallet</h6></div>
+                                    <!-- <div class="col-3"><h6>BTC Wallet</h6></div> -->
                                     <div class="col-9">
                                         <form action="{{ route('admin.settings.post') }}" method="POST">
                                         @csrf @method('POST')
                                         <div class="form-group">
                                             <div class="input-group mb-3">
-                                                {{-- <label class="input-group-text" for="btc_wallet"><strong>$</strong></label> --}}
+                                                <label class="input-group-text" for="btc_wallet"><strong>BTC Wallet</strong></label>
                                                 <input type="text" id="btc_wallet" step="any" name="btc_wallet"
                                                     value="{{ $setting['btc_wallet'] ?? '' }}"
                                                     class="form-control @error('btc_wallet') is-invalid @enderror" placeholder="Btc Wallet"
@@ -124,7 +124,48 @@
                                             </div>
                                             @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                             @enderror
+
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="eth_wallet"><strong>ETH Wallet</strong></label>
+                                                <input type="text" id="eth_wallet" step="any" name="eth_wallet"
+                                                    value="{{ $setting['eth_wallet'] ?? '' }}"
+                                                    class="form-control @error('eth_wallet') is-invalid @enderror" placeholder="ETH Wallet"
+                                                    onkeyup="calcEquiv(this)">
+                                            </div>
+                                            @error('eth_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                            @enderror
+
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="usdt_trc_20"><strong>USDT (TRC20)</strong></label>
+                                                <input type="text" id="usdt_trc_20" step="any" name="usdt_trc_20"
+                                                    value="{{ $setting['usdt_trc_20'] ?? '' }}"
+                                                    class="form-control @error('usdt_trc_20') is-invalid @enderror" placeholder="USDT (TRC20)"
+                                                    onkeyup="calcEquiv(this)">
+                                            </div>
+                                            @error('usdt_trc_20') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                            @enderror
+
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="usdt_erc_20"><strong>USDT (ERC20)</strong></label>
+                                                <input type="text" id="usdt_erc_20" step="any" name="usdt_erc_20"
+                                                    value="{{ $setting['usdt_erc_20'] ?? '' }}"
+                                                    class="form-control @error('usdt_erc_20') is-invalid @enderror" placeholder="USDT (ERC20)"
+                                                    onkeyup="calcEquiv(this)">
+                                            </div>
+                                            @error('usdt_erc_20') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                            @enderror
+
+                                            <div class="input-group mb-3">
+                                                <label class="input-group-text" for="usdt_eth"><strong>USDT (ETH)</strong></label>
+                                                <input type="text" id="usdt_eth" step="any" name="usdt_eth"
+                                                    value="{{ $setting['usdt_eth'] ?? '' }}"
+                                                    class="form-control @error('usdt_eth') is-invalid @enderror" placeholder="USDT (ETH)"
+                                                    onkeyup="calcEquiv(this)">
+                                            </div>
+                                            @error('usdt_eth') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                            @enderror
                                         </div>
+                                        <p>Note: Updating wallet address will overwrite all users wallet address</p>
                                         <div class="d-flex justify-content-end mt-3">
                                             <button onclick="$('#employmentVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
                                                     type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
