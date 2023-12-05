@@ -6,6 +6,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta property="og:image" content="{{ asset('seo.jpeg') }}">
+    <meta property="og:title" content="Access The Most Powerful Stock & Crypto Trading Bot - Itrust Investment">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 

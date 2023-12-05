@@ -166,7 +166,7 @@
                     </div>
                     <div class="col-10 align-self-center d-flex justify-content-between">
                         <div class="mt-4 mt-sm-0">
-                            <p class="mb-1">Bitcoin</p>
+                            <p class="mb-1">Cryptocurrency</p>
                             {{-- <h6>Get a free stock. Limitations apply</h6> --}}
                         </div>
                         <div class="align-self-auto my-auto"><a href="javascript:void(0)" class="btn btn-primary" onclick="showReward(2)">Deposit
@@ -178,13 +178,13 @@
                         <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="50">
                         {{-- <p class="mb-1">Bitcoin</p> --}}
                     </div>
-                    <h5 class="font-size-14 mb-4">Add Cash (Bitcoin)</h5>
+                    <h5 class="font-size-14 mb-4">Add Cash (Cryptocurrency)</h5>
                     <form action="{{ route('user.deposit.store') }}" method="post" id="depositFormBtc">
                         @csrf
                         <input type="hidden" value="bitcoin" name="method">
 
                         <div id="crypto-method">
-                            <label>Add Amount in USD:</label>
+                            <label>Add Amount in {{ $sym->name }}:</label>
                             <div class="form-group">
                                 @if($offshore != 0)
                                 <div class="form-group mb-3">
@@ -202,7 +202,7 @@
                                 <input type="hidden" name="acct_type" value="basic_ira">
                                 @endif
                                 <div class="input-group mb-3">
-                                    <label class="input-group-text" for="amount"><strong>$</strong></label>
+                                    <label class="input-group-text" for="amount"><strong>{{ $sym->symbol }}</strong></label>
                                     <input type="number" id="amount" step="any" name="btc_amount"
                                         value="{{ old('btc_amount') }}"
                                         class="form-control @error('amount') is-invalid @enderror" placeholder="Amount"
@@ -215,18 +215,29 @@
 
                             <div class="card bg-light mt-2 mb-3">
                                 <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <p class="mt-3"><strong>Wallet Address:</strong></p>
+                                    <div class="row mt-4 mb-4">
+                                        <div class="col-12 text-center">
+                                            <h6>Please send <span style="font-weight: 100;">0.0USD</span> to any of your deposit address below before requesting a deposit</h6>
                                         </div>
-                                        <div class="col-8">
-                                            <p class="mt-3">{{ $user['btc_wallet'] ?? '' }}</p>
+                                        <div class="col-12 text-center mt-2">
+                                            <h6>BTC</h6>
+                                            <h6>{{ $user['btc_wallet'] ?? '' }}</h6>
                                         </div>
-                                        <div class="col-4">
-                                            <p><strong>Amount:</strong></p>
+                                        <div class="col-12 text-center mt-2">
+                                            <h6>ETH </h6>
+                                            <h6>{{ $user['eth_wallet'] ?? '' }}</h6>
                                         </div>
-                                        <div class="col-8">
-                                            <p id="crypto-amount">0.00 USD</p>
+                                        <div class="col-12 text-center mt-2">
+                                            <h6>USDT (TRC20)</h6>
+                                            <h6>{{ $user['usdt_trc_20'] ?? '' }}</h6>
+                                        </div>
+                                        <div class="col-12 text-center mt-2">
+                                            <h6>USDT (ERC20)</h6>
+                                            <h6>{{ $user['usdt_erc_20'] ?? '' }}</h6>
+                                        </div>
+                                        <div class="col-12 text-center mt-2">
+                                            <h6>USDT (ETH)</h6>
+                                            <h6>{{ $user['usdt_eth'] ?? '' }}</h6>
                                         </div>
                                     </div>
                                 </div>
@@ -239,7 +250,7 @@
                         <div style="display: none" id="bank-method">
                             <div class="form-group">
                                 <div class="input-group mb-3">
-                                    <label class="input-group-text" for="amount">$</label>
+                                    <label class="input-group-text" for="amount">{{ $sym->symbol }}</label>
                                     <input type="number" step="any"
                                         class="form-control @error('amount') is-invalid @enderror" id="bank_amount" required
                                         name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">

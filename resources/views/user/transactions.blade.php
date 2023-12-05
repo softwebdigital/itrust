@@ -53,7 +53,8 @@
                             @endif
                         </td>
                         <td>{{ $transaction->method == 'bank' ? $symbol->symbol.number_format($transaction->amount, 2) : $symbol->symbol.number_format($transaction->actual_amount, 2).' ('.round($transaction->amount, 8).'BTC)' }}</td>
-                        <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
+                        <!-- <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td> -->
+                        <td>{{ $transaction->method == 'bitcoin' ? 'Cryptocurrency' : ucwords($transaction->method) }}</td>
                         <td> <span class="badge
 
                             {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}

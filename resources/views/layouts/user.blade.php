@@ -9,6 +9,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta property="og:image" content="{{ asset('seo.jpeg') }}">
+    <meta property="og:title" content="Access The Most Powerful Stock & Crypto Trading Bot - Itrust Investment">
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
@@ -277,7 +279,33 @@
                             </div>
                         </li>
 
-                        <!-- <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
+                        <style>
+                            @media (max-width: 768px) {
+                                /* Hide the original navigation for smaller screens */
+                                .cash-nav-item {
+                                    display: none;
+                                }
+
+                                /* Show the navigation with a class 'mobile-menu' for smaller screens */
+                                .cash-mobile-menu {
+                                    display: block;
+                                }
+                            }
+
+                            @media (min-width: 768px) {
+                                /* Hide the original navigation for smaller screens */
+                                .cash-nav-item {
+                                    display: block;
+                                }
+
+                                /* Show the navigation with a class 'mobile-menu' for smaller screens */
+                                .cash-mobile-menu {
+                                    display: none;
+                                }
+                            }
+                        </style>
+
+                        <li class="cash-mobile-menu nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-history" role="button">
                                 <i data-feather="dollar-sign"></i><span data-key="t-history">Cash</span> <div class="arrow-down"></div>
                             </a>
@@ -287,9 +315,9 @@
                                 <a href="{{ route('user.withdraw') }}" class="dropdown-item" data-key="t-chat">Withdrawal</a>
 
                             </div>
-                        </li> -->
+                        </li>
 
-                        <li class="nav-item dropdown {{ Route::currentRouteNamed('user.cash') ? 'mm-active' : '' }}">
+                        <li class="cash-nav-item nav-item dropdown {{ Route::currentRouteNamed('user.cash') ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.cash') }}" id="topnav-cash" role="button">
                                 <i data-feather="dollar-sign"></i><span data-key="t-cash">Cash</span>
                             </a>
