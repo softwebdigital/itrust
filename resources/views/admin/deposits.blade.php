@@ -47,7 +47,11 @@
                                 <select class="form-select @error('method') is-invalid @enderror" name="method" id="user">
                                     <option value="">Select Method</option>
                                     <option @if(old('method') == 'bank') selected @endif value="bank">Bank Deposit</option>
-                                    <option @if(old('method') == 'bitcoin') selected @endif value="bitcoin">Bitcoin</option>
+                                    <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
+                                    <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
+                                    <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
+                                    <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
+                                    <!-- <option value="usdt_eth" {{ old('method') == 'usdt_eth' ? 'selected' : '' }}>USDT (ETH)</option> -->
                                 </select>
                                 @error('method') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                             </div>
@@ -208,7 +212,7 @@
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Add Deposit</h5>
+                                <h5 class="modal-title" id="staticBackdropLabel">Edit Deposit</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <form class="form" method="post" enctype="multipart/form-data" action="{{ route('admin.transactions.edit', [$deposit->id, 'deposit']) }}">
@@ -238,7 +242,11 @@
                                         <select class="form-select @error('method') is-invalid @enderror" name="method" id="user">
                                             <option value="">Select Method</option>
                                             <option @if(old('method') == 'bank') selected @elseif($deposit['method'] == 'bank') selected @endif value="bank">Bank Deposit</option>
-                                            <option @if(old('method') == 'bitcoin') selected @elseif($deposit['method'] == 'bitcoin') selected @endif value="bitcoin">Bitcoin</option>
+                                            <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
+                                            <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
+                                            <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
+                                            <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
+                                            <!-- <option value="usdt_eth" {{ old('method') == 'usdt_eth' ? 'selected' : '' }}>USDT (ETH)</option> -->
                                         </select>
                                         @error('method') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                                     </div>

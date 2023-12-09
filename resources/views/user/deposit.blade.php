@@ -55,13 +55,27 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Confirm Deposit</h5>
-                    {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button> --}}
                 </div>
                 <div class="modal-body border p-3">
-                    <div id="btcnote"></div>
-                    <li>BTC Wallet: {{ $user['btc_wallet'] ?? 'Not set' }}</li>
+                    <div id="btcnotes" class="mt-3 text-center"></div>
+                    
+                    
+                    <p id="btc" class="text-center mt-6 mb-3" style="display: none;">BTC: <br>
+                       <b>{{ $user['btc_wallet'] ?? 'Not set' }}</b>
+                    </p>
+
+                    <p id="eth" class="text-center mt-6 mb-3" style="display: none;">ETH: <br>
+                       <b>{{ $user['eth_wallet'] ?? 'Not set' }}</b>
+                    </p>
+
+                    <p id="usdt-t" class="text-center mt-6 mb-3" style="display: none;">USDT (TRC20): <br>
+                       <b>{{ $user['usdt_trc_20'] ?? 'Not set' }}</b>
+                    </p>
+
+                    <p id="usdt-e" class="text-center mt-6 mb-3" style="display: none;">USDT (ERC20): <br>
+                       <b>{{ $user['usdt_erc_20'] ?? 'Not set' }}</b>
+                    </p>
+
                     <br>
                     <p>Deposits will be processed after we’ve confirmed your payment. Thank you!</p>
                 </div>
@@ -74,7 +88,29 @@
     </div>
     <div class="card-body">
 
+    <div class="col-md-8">
+            <div class="card w-100">
+                <div class="card-body">
+                    <div class="table">
+                        <table class="table table-borderless">
+                            
+                            <tr class="text-" style="border: 0 !important;">
+                                <td colspan="4"><h4>Total Deposit:</h4></td>
+                                @php
+                                    $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
+                                @endphp
+                                        
 
+                                <td class="float-end"> 
+                                    <h3 class="text-success text-bold">@foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}</h3>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="col-md-8 order-md-1">
             <div class="card-body mb-3 border">
@@ -181,10 +217,25 @@
                     <h5 class="font-size-14 mb-4">Add Cash (Cryptocurrency)</h5>
                     <form action="{{ route('user.deposit.store') }}" method="post" id="depositFormBtc">
                         @csrf
-                        <input type="hidden" value="bitcoin" name="method">
+                        <!-- <input type="hidden" value="bitcoin" name="method"> -->
+
+                        <label for="method">Cryptocurrency :</label>
+                        <select class="form-select @error('method') is-invalid @enderror" name="method"
+                            id="method">
+                            <option value="">Select Account</option>
+                            <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
+                            <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
+                            <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
+                            <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
+                            <!-- <option value="usdt_eth" {{ old('method') == 'usdt_eth' ? 'selected' : '' }}>USDT (ETH)</option> -->
+                        </select>
+
+                        @error('method')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
 
                         <div id="crypto-method">
-                            <label>Add Amount in {{ $sym->name }}:</label>
+                            <!-- <label>Add Amount in {{ $sym->name }}:</label> -->
                             <div class="form-group">
                                 @if($offshore != 0)
                                 <div class="form-group mb-3">
@@ -203,7 +254,7 @@
                                 @endif
                                 <div class="input-group mb-3">
                                     <label class="input-group-text" for="amount"><strong>{{ $sym->symbol }}</strong></label>
-                                    <input type="number" id="amount" step="any" name="btc_amount"
+                                    <input type="number" id="crypto_amount" step="any" name="btc_amount"
                                         value="{{ old('btc_amount') }}"
                                         class="form-control @error('amount') is-invalid @enderror" placeholder="Amount"
                                         onkeyup="calcEquiv(this)">
@@ -216,6 +267,17 @@
                             <div class="card bg-light mt-2 mb-3">
                                 <div class="container-fluid">
                                     <div class="row mt-4 mb-4">
+                                        <div class="row m-auto mx-5 my-5">
+                                            <div class="col-4">
+                                                <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="60">
+                                            </div>
+                                            <div class="col-4">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="60">
+                                            </div>
+                                            <div class="col-4">
+                                                <img src="https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png" alt="" width="60">
+                                            </div>
+                                        </div>
                                         <div class="col-12 text-center">
                                             <h6>Please send <span style="font-weight: 100;">0.0USD</span> to any of your deposit address below before requesting a deposit</h6>
                                         </div>
@@ -235,10 +297,10 @@
                                             <h6>USDT (ERC20)</h6>
                                             <h6>{{ $user['usdt_erc_20'] ?? '' }}</h6>
                                         </div>
-                                        <div class="col-12 text-center mt-2">
+                                        <!-- <div class="col-12 text-center mt-2">
                                             <h6>USDT (ETH)</h6>
                                             <h6>{{ $user['usdt_eth'] ?? '' }}</h6>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -294,22 +356,43 @@
 
         </div>
 
-        <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100 mt-3">
-            <thead>
+        <div class="table-responsive">
+            <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
+                <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Account</th>
-                    <th>Amount</th>
                     <th>Method</th>
+                    <th>Transaction</th>
+                    <th>Account</th>
+                    <th>Date</th>
                     <th>Status</th>
-                     <th>Action</th>
+                    <th>Action</th>
                 </tr>
-            </thead>
+                </thead>
 
-            <tbody>
-                @foreach ($transactions as $transaction)
-                    <tr>
-                        <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
+                <tbody>
+                @foreach($transactions as $transaction)
+                    <tr class="mt-6 mb-6">
+                        <td>
+                            @if($transaction->method == 'bitcoin')
+                            <div class="col">
+                                <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                            </div>
+                            @else
+                                @if($transaction->type == 'payout')
+                                    <div class="col">
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBFTh8daWyNvQZ0IJuYKeaYLsB8ecn0VlJs9sTkT_1A&s" alt="" width="30">
+                                    </div>
+                                @else
+                                    <div class="col">
+                                        <img src="{{ asset('svg/bank.png') }}" alt="" width="30">
+                                    </div>
+                                @endif
+                            @endif
+                        </td>
+                        <td>
+                            <h5>{{ $sym->symbol.number_format($transaction->actual_amount, 2) }}</h5>
+                            <p>{{ ucwords($transaction->type) }} {{ $transaction->method == 'bank' ? 'USD' : 'BTC' }}</p>
+                        </td>
                         <td>
                             @if($transaction->acct_type == 'offshore')
                             Offshore
@@ -319,17 +402,18 @@
                             -----
                             @endif
                         </td>
-                        <td>{{ $transaction->method == 'bank' ? $sym->symbol . number_format($transaction->amount, 2) : round($transaction->amount, 8) .  '(' . $sym->symbol . $transaction->actual_amount . ')' }}
-                        </td>
-                        <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
-                        <td> <span
-                                class="badge
-                                {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                                {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
-                                {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
-                            ">{{ ucwords($transaction->status) }}
-                        </td>
-                         <td>
+                        <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
+                        <td> <span class="badge px-4 py-2 rounded
+
+                            {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
+                            {{ $transaction->status == 'declined' ? 'bg-dark text-danger' : '' }}
+                                    {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
+                            {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-dark text-danger' : '' }}
+                            {{ $transaction->status == 'approved' ? 'bg-dark text-success' : '' }}
+                            {{ $transaction->status == 'cancelled' ? 'bg-dark text-danger' : '' }}
+                            {{ $transaction->status == 'progress' ? 'bg-dark text-secondary' : '' }}
+                                ">{{ ucwords($transaction->status) }}</td>
+                        <td>
                             @if($transaction->status == 'pending')
                                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-cancel-{{ $transaction->id }}">Cancel</a>
 
@@ -356,8 +440,9 @@
                          </td>
                     </tr>
                 @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
@@ -390,11 +475,24 @@
         }
 
         function startDepositbtc() {
-            var amount = document.getElementById('crypto-amount').innerText
-            $('#btcnote').html(`
+            var amount = document.getElementById('crypto_amount').value
+
+            $('#btcnotes').html(`
                 <p>Kindly make a deposit of ` + amount + ` in BTC to the
                 Address below</p>
                 `);
+
+            var method = document.getElementById('method').value  
+
+            if (method == 'btc') {
+                $('#btc').show();
+            } else if(method == 'eth') {
+                $('#eth').show();
+            } else {
+                $('#usdt-e').show();
+                $('#usdt-t').show();
+            }
+
         }
     </script>
     <script>

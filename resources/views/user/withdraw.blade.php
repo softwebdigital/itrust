@@ -340,23 +340,43 @@
 
         <!-- Modal -->
 
-        <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100 mt-3">
-            <thead>
+        <div class="table-responsive">
+            <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
+                <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Account</th>
-                    <th>Amount</th>
                     <th>Method</th>
+                    <th>Transaction</th>
+                    <th>Account</th>
+                    <th>Date</th>
                     <th>Status</th>
-                    {{-- <th>type</th> --}}
                     <th>Action</th>
                 </tr>
-            </thead>
+                </thead>
 
-            <tbody>
-                @foreach ($transactions as $transaction)
-                    <tr>
-                        <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
+                <tbody>
+                @foreach($transactions as $transaction)
+                    <tr class="mt-6 mb-6">
+                        <td>
+                            @if($transaction->method == 'bitcoin')
+                            <div class="col">
+                                <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                            </div>
+                            @else
+                                @if($transaction->type == 'payout')
+                                    <div class="col">
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBFTh8daWyNvQZ0IJuYKeaYLsB8ecn0VlJs9sTkT_1A&s" alt="" width="30">
+                                    </div>
+                                @else
+                                    <div class="col">
+                                        <img src="{{ asset('svg/bank.png') }}" alt="" width="30">
+                                    </div>
+                                @endif
+                            @endif
+                        </td>
+                        <td>
+                            <h5>{{ $sym->symbol.number_format($transaction->actual_amount, 2) }}</h5>
+                            <p>{{ ucwords($transaction->type) }} {{ $transaction->method == 'bank' ? 'USD' : 'BTC' }}</p>
+                        </td>
                         <td>
                             @if($transaction->acct_type == 'offshore')
                             Offshore
@@ -366,20 +386,18 @@
                             -----
                             @endif
                         </td>
-                        <td>{{ $transaction->method == 'bank' ? $sym->symbol . number_format($transaction->amount, 2) : round($transaction->amount, 8) . ' (' . $sym->symbol . $transaction->actual_amount . ')' }}
-                        </td>
-                        <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td>
-                        <td> <span
-                                class="badge
-                                {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                        {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
-                        {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
-                        {{ $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
-                            {{ $transaction->status == 'progress' ? 'bg-secondary' : '' }}
-                            ">{{ ucwords($transaction->status) }}
-                        </td>
-                        {{-- <td>{{ ucwords($transaction->type) }}</td> --}}
-                        @if($transaction->type == 'payout')   
+                        <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
+                        <td> <span class="badge px-4 py-2 rounded
+
+                            {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
+                            {{ $transaction->status == 'declined' ? 'bg-dark text-danger' : '' }}
+                                    {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
+                            {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-dark text-danger' : '' }}
+                            {{ $transaction->status == 'approved' ? 'bg-dark text-success' : '' }}
+                            {{ $transaction->status == 'cancelled' ? 'bg-dark text-danger' : '' }}
+                            {{ $transaction->status == 'progress' ? 'bg-dark text-secondary' : '' }}
+                                ">{{ ucwords($transaction->status) }}</td>
+                                @if($transaction->type == 'payout')   
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-dark btn-sm dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
@@ -397,73 +415,73 @@
                             </div>
                         </td>
                         @endif
-
                         <div class="modal fade" id="staticBackdrop-cancel-{{ $transaction->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="staticBackdropLabel">Confirm Cancellation</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Confirm Cancellation</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{ route('user.transaction.cancel', [$transaction->id, 'cancelled']) }}" method="post">@csrf @method('PUT')
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to Cancel this payout?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Approve</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form action="{{ route('user.transaction.cancel', [$transaction->id, 'cancelled']) }}" method="post">@csrf @method('PUT')
+                            </div>
+                        </div>
+                        <div class="modal fade" id="staticBackdrop-view-{{ $transaction->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Payout Preview</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
                                     <div class="modal-body">
-                                        <p>Are you sure you want to Cancel this payout?</p>
+
+                                        @if($transaction->method == 'bank')
+                                        <div class="form-group">
+                                            <label for="">Amount</label>
+                                            <input type="text" class="form-control-plaintext" value="${{ $transaction->amount ?? '-----' }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Bank Name</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ $transaction->bank_name ?? '-----' }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Account Name</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ $transaction->acct_name ?? '-----' }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Account Number</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ $transaction->acct_no ?? '-----' }}">
+                                        </div>
+                                        @else
+                                        <div class="form-group">
+                                            <label for="">Amount</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ $transaction->amount.'($'.$transaction->actual_amount.')' ?? '-----' }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">BTC Wallet</label>
+                                            <input type="text" class="form-control-plaintext" value="{{ $transaction->btc_wallet ?? '-----' }}">
+                                        </div>
+                                        @endif
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Approve</button>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal fade" id="staticBackdrop-view-{{ $transaction->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="staticBackdropLabel">Payout Preview</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-
-                                    @if($transaction->method == 'bank')
-                                    <div class="form-group">
-                                        <label for="">Amount</label>
-                                        <input type="text" class="form-control-plaintext" value="${{ $transaction->amount ?? '-----' }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Bank Name</label>
-                                        <input type="text" class="form-control-plaintext" value="{{ $transaction->bank_name ?? '-----' }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Account Name</label>
-                                        <input type="text" class="form-control-plaintext" value="{{ $transaction->acct_name ?? '-----' }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Account Number</label>
-                                        <input type="text" class="form-control-plaintext" value="{{ $transaction->acct_no ?? '-----' }}">
-                                    </div>
-                                    @else
-                                    <div class="form-group">
-                                        <label for="">Amount</label>
-                                        <input type="text" class="form-control-plaintext" value="{{ $transaction->amount.'($'.$transaction->actual_amount.')' ?? '-----' }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">BTC Wallet</label>
-                                        <input type="text" class="form-control-plaintext" value="{{ $transaction->btc_wallet ?? '-----' }}">
-                                    </div>
-                                    @endif
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     </tr>
                 @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 @endsection
