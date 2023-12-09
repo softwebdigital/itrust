@@ -1,16 +1,16 @@
 @extends('layouts.user')
 
 @section('head')
-    {{ __('Statement') }}
+    {{ __('Trading History') }}
 @endsection
 
 @section('title')
-    {{ __('My Statement') }}
+    {{ __('Trading History') }}
 @endsection
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Statement</li>
+    <li class="breadcrumb-item active">Trading History</li>
 @endsection
 @section('style')
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.1.0/css/buttons.dataTables.min.css">
@@ -28,14 +28,14 @@
 {{--            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
         </div>
         <div class="table-responsive">
-            <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
+            <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
                 <thead>
                 <tr>
-                    <th>Date</th>
+                    <th>Copy Bots</th>
+                    <th>Investment</th>
                     <th>Account</th>
-                    <th>Amount</th>
                     <th>ROI</th>
-                    <th>Type</th>
+                    <th>Date</th>
                     <th>Status</th>
                 </tr>
                 </thead>
@@ -43,22 +43,52 @@
                 <tbody>
                @foreach($investments as $investment)
                    <tr>
-                       <td>{{ \Carbon\Carbon::make($investment->created_at)->format('Y/m/d') }}</td>
                        <td>
-                        @if($investment->acct_type == 'offshore')
-                        Offshore
-                        @elseif($investment->acct_type == 'basic_ira')
-                        Basic IRA
-                        @else
-                        -----
+                        @if($investment->type == 'Cryptocurrencies')
+                            <div class="col">
+                                <img src="https://www.itrustinvestment.com/img/bots/1701098825IMG_1752.jpeg" alt="" width="50" class="rounded-circle">
+                            </div>
+                        @elseif($investment->type == 'stocks')
+                            <div class="col">
+                                <img src="https://www.itrustinvestment.com/img/bots/1701947098355_2021-06-22-14-19-40.png" alt="" width="50" class="rounded-circle">
+                            </div>
+                        @else 
+                            <div class="col">
+                                <img src="https://www.itrustinvestment.com/img/bots/1687558439CCAC78C9-717D-4CE9-AB03-88C2814C6A65.jpeg" alt="" width="50" class="rounded-circle">
+                            </div>
                         @endif
-                    </td>
-                    <td>{{ $symbol->symbol }}{{ number_format($investment->amount, 2) }}</td>
-                    <td>{{ $symbol->symbol }}{{ number_format($investment->ROI, 2) }}</td>
-                       <td>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</td>
+
+                       </td>
+                       <td>
+                            <h5>{{ $symbol->symbol }}{{ number_format($investment->amount, 2) }}</h5>
+                            <p>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</p>
+                       </td>
+                       <td>
+                            @if($investment->acct_type == 'offshore')
+                            Offshore
+                            @elseif($investment->acct_type == 'basic_ira')
+                            Basic IRA
+                            @else
+                            -----
+                            @endif
+                        </td>
+                        <td>
+                            @php
+                                $investmentAmount = $investment->amount;
+                                $roi = $investment->ROI;
+                                if ($investmentAmount != 0) {
+                                    $percentage = ($roi / $investmentAmount) * 100;
+                                } else {
+                                    $percentage = 0;
+                                }
+                            @endphp
+                            <h5>{{ $symbol->symbol }}{{ number_format($investment->ROI, 2) }}</h5>
+                            <p class="text-success">{{ number_format($percentage) }} %</p>
+                        </td>
+                        <td>{{ \Carbon\Carbon::make($investment->created_at)->format('Y/m/d') }}</td>
                        <td> <span class="badge p-2
-                               {{ $investment->status == 'open' ? 'bg-success' : '' }}
-                               {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
+                               {{ $investment->status == 'open' ? 'bg-dark text-success' : '' }}
+                               {{ $investment->status == 'closed' ? 'bg-dark text-danger' : '' }}
                            ">{{ ucwords($investment->status) }}</td>
                    </tr>
                @endforeach

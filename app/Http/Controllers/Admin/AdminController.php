@@ -335,7 +335,7 @@ class AdminController extends Controller
         ]);
         if ($validator->fails()) return back()->withErrors($validator);
 
-        if (!Hash::check($request['new_password'], $admin['password']))
+        if (!Hash::check($request['old_password'], $admin['password']))
             return back()->with('error', 'Old password is incorrect');
         if ($admin->update(['password' => Hash::make($request['new_password'])]))
             return back()->with('success', 'Password update successfully');

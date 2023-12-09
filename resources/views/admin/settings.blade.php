@@ -155,7 +155,7 @@
                                             @error('usdt_erc_20') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                             @enderror
 
-                                            <div class="input-group mb-3">
+                                            <!-- <div class="input-group mb-3">
                                                 <label class="input-group-text" for="usdt_eth"><strong>USDT (ETH)</strong></label>
                                                 <input type="text" id="usdt_eth" step="any" name="usdt_eth"
                                                     value="{{ $setting['usdt_eth'] ?? '' }}"
@@ -163,7 +163,7 @@
                                                     onkeyup="calcEquiv(this)">
                                             </div>
                                             @error('usdt_eth') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                            @enderror
+                                            @enderror -->
                                         </div>
                                         <p>Note: Updating wallet address will overwrite all users wallet address</p>
                                         <div class="d-flex justify-content-end mt-3">
@@ -210,6 +210,62 @@
                                                         aria-controls="flush-collapseOne">Cancel</button>&nbsp;&nbsp;&nbsp;
                                                 <button class="btn btn-success btn-block px-4 ml-2">Save</button>
                                             </div>
+                                        </div>
+                                    </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-5">Password</h5>
+                    <div class="accordion-item"></div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-headingFour">
+                            <button onclick="$('#YIVal').toggle()" class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+                                Update Password <span id="YIVal" style="position: absolute; right: 15px">{{ $yi ?? '---' }}</span>
+                            </button>
+                        </h2>
+                        <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour">
+                            <div class="accordion-body text-muted">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <form action="{{ route('admin.password.update') }}" method="POST">
+                                            @csrf @method('POST')
+                                            <div class="form-group">
+                                                <div class="input-group mb-3">
+                                                    <div class="row">
+                                                        <div class="col-12 my-4">
+                                                            <label class="input-group-text" for="old_password">Old Password</label>
+                                                            <input type="password" step="any" class="form-control @error('old_password') is-invalid @enderror"
+                                                            name="old_password" id="old_password" placeholder="Enter Old password">
+                                                        </div>
+                                                        <div class="col-12 my-4">
+                                                            <label class="input-group-text" for="new_password">New Password</label>
+                                                            <input type="password" step="any" class="form-control @error('new_password') is-invalid @enderror"
+                                                            name="new_password" id="new_password" placeholder="Enter New password">
+                                                        </div>
+                                                        <div class="col-12 my-4">
+                                                            <label class="input-group-text" for="new_password_confirmation">Confirm New Password</label>
+                                                            <input type="password" step="any" class="form-control @error('new_password_confirmation') is-invalid @enderror"
+                                                            name="new_password_confirmation" id="new_password_confirmation" placeholder="Enter New password">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('old_password') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                                @enderror
+
+                                                @error('new_password') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                                @enderror
+                                            </div>
+                                            <button type="submit">Save</button>
+                                            <!-- <div class="d-flex justify-content-end mt-3">
+                                                <button onclick="$('#employmentVal').toggle()" class="btn btn-danger btn-block px-4 mr-2"
+                                                        type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                                        aria-controls="flush-collapseOne">Cancel</button>&nbsp;&nbsp;&nbsp;
+                                                <button class="btn btn-success btn-block px-4 ml-2" type="submit" >Save</button>
+                                            </div> -->
                                         </div>
                                     </form>
                                     </div>

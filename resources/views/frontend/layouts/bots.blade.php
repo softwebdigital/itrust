@@ -1,6 +1,6 @@
 <section class="wrapper bg-white">
       @php 
-        $copyBots = App\Models\CopyBot::query()->latest()->get();
+        $copyBots = App\Models\CopyBot::inRandomOrder()->paginate(3);
       @endphp 
       <div class="container py-14 py-md-16">
         <h3 class="display-5 mb-7 pe-xxl-5">Copy Bots</h3>

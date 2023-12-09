@@ -288,8 +288,10 @@ class TransactionController extends Controller
         $setting = Settings::first();
         $offshore = Transaction::where(['user_id' => $user->id,'acct_type' => 'offshore', 'status' => 'approved'])->count();
 
+        $cash = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
 
-        return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore'));
+
+        return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore', 'cash'));
     }
 
     public function withdraw()
@@ -323,9 +325,9 @@ class TransactionController extends Controller
         $symbol = Currency::where('id', $user->currency_id)->first();
 
         $validator = Validator::make($request->all(), [
-            'method' => 'required|string',
+            'method' => 'required|string|in:btc,eth,usdt_trc20,usdt_erc20,usdt_eth',
             'amount' => 'required_if:method,bank',
-            'btc_amount' => 'required_if:method,bitcoin',
+            'btc_amount' => 'required_if:method,btc,eth,usdt_trc20,usdt_erc20,usdt_eth',
             'acct_type' => 'required'
         ]);
         $setting = Settings::first();
@@ -354,13 +356,13 @@ class TransactionController extends Controller
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
-        } elseif ($request['method'] == 'bitcoin' && $request['btc_amount'] > 0) {
+        } elseif ($request['btc_amount'] > 0) {
             if (!$user->btc_wallet)
                 return back()->with(['validation' => true, 'method' => $request['method'], 'warning' => 'Deposit is temporarily unavailable.'])->withInput();
             $amount = round((float) $request['btc_amount'] / AdminController::getBTC(), 8);
-            if ($user->transactions()->create(['method' => 'bitcoin', 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
+            if ($user->transactions()->create(['method' => $request['method'], 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
-                $mail['body'] = 'You’ve requested a Bitcoin deposit of $'.number_format($request['btc_amount'], 2).', kindly make a payment of $'.number_format($request['btc_amount'], 2).' ('.$amount.'btc) to '.$user->btc_wallet;
+                $mail['body'] = 'You’ve requested a ' . $request['method'] . ' deposit of $'.number_format($request['btc_amount'], 2).', kindly make a payment of $'.number_format($request['btc_amount'], 2).' ('.$amount.'btc) to '.$user->btc_wallet;
                 $mail['type'] = 'btc';
                 $mailBody = '<p>A Bitcoin deposit request of '. $symbol->symbol .number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }

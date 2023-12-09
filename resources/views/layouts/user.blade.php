@@ -218,9 +218,11 @@
                 </div>
 
                 <div class="dropdown d-inline-block">
-                    <button type="button" class="btn header-item right-bar-toggle me-2">
-                        <i data-feather="settings" class="icon-lg"></i>
-                    </button>
+                    <a href="/settings">
+                        <button type="button" class="btn header-item me-2">
+                            <i data-feather="settings" class="icon-lg"></i>
+                        </button>
+                    </a>
                 </div>
 
                 <div class="dropdown d-inline-block">
@@ -238,6 +240,9 @@
                         <a class="dropdown-item" href="{{ route('frontend.contact') }}"><i class="mdi mdi-chat-processing-outline font-size-16 align-middle me-1"></i> Contact Us</a>
                         <a class="dropdown-item" href="{{ route('user.profile') }}"><i class="mdi mdi-face-profile font-size-16 align-middle me-1"></i> Profile</a>
                         <a class="dropdown-item" href="{{ route('user.lock') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock screen</a>
+                        <button type="button" class="btn header-item right-bar-toggle">
+                            <i data-feather="settings" class="icon-lg"></i> Customize
+                        </button>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="javascript:void(0)" onclick="event.preventDefault(); $('#logout-form').submit()"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
                         <form action="{{ route('logout') }}" method="post" id="logout-form" class="d-none">@csrf</form>

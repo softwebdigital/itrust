@@ -25,14 +25,13 @@
 {{--            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
         </div>
         <div class="table-responsive">
-            <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
+            <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
                 <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Account Type</th>
-                    <th>Amount</th>
                     <th>Method</th>
+                    <th>Transaction</th>
+                    <th>Account</th>
+                    <th>Date</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -40,9 +39,55 @@
 
                 <tbody>
                 @foreach($transactions as $transaction)
-                    <tr>
-                        <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
-                        <td>{{ ucwords($transaction->type) }}</td>
+                    <tr class="mt-6 mb-6">
+                        <td>
+                            @if($transaction->method == 'bitcoin' || $transaction->method == 'btc')
+                            <div class="col">
+                                <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                            </div>
+                            @elseif($transaction->method == 'bank')
+                            <div class="col">
+                                <img src="{{ asset('svg/bank.png') }}" alt="" width="30">
+                            </div>
+                            @elseif($transaction->method == 'eth')
+                            <div class="col">
+                                <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
+                            </div>
+                            @else
+                            <div class="col">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBFTh8daWyNvQZ0IJuYKeaYLsB8ecn0VlJs9sTkT_1A&s" alt="" width="30">
+                            </div>
+                            @endif
+                        </td>
+                        <td>
+                            <h5>{{ $symbol->symbol.number_format($transaction->actual_amount, 2) }}</h5>
+                            <p>
+                                {{ ucwords($transaction->type) }} 
+                                @if($transaction->method == 'bank')
+                                    USD
+                                @endif
+
+                                @if($transaction->method == 'bitcoin' || $transaction->method == 'btc')
+                                    Bitcon
+                                @endif
+
+                                @if($transaction->method == 'usdt_trc20')
+                                    USDT (TRC20)
+                                @endif
+
+                                @if($transaction->method == 'usdt_erc20')
+                                    USDT (ERC20)
+                                @endif
+
+                                @if($transaction->method == 'usdt_eth')
+                                    USDT (ETH)
+                                @endif
+
+                                @if($transaction->method == 'eth')
+                                    ETH
+                                @endif
+                            </p>
+                        </td>
                         <td>
                             @if($transaction->acct_type == 'offshore')
                             Offshore
@@ -52,18 +97,16 @@
                             -----
                             @endif
                         </td>
-                        <td>{{ $transaction->method == 'bank' ? $symbol->symbol.number_format($transaction->amount, 2) : $symbol->symbol.number_format($transaction->actual_amount, 2).' ('.round($transaction->amount, 8).'BTC)' }}</td>
-                        <!-- <td>{{ $transaction->method ? ucwords($transaction->method) : '----' }}</td> -->
-                        <td>{{ $transaction->method == 'bitcoin' ? 'Cryptocurrency' : ucwords($transaction->method) }}</td>
-                        <td> <span class="badge
+                        <td>{{ \Carbon\Carbon::make($transaction->created_at)->format('Y/m/d') }}</td>
+                        <td> <span class="badge px-4 py-2 rounded
 
                             {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                            {{ $transaction->status == 'declined' ? 'bg-danger' : '' }}
+                            {{ $transaction->status == 'declined' ? 'bg-dark text-danger' : '' }}
                                     {{ $transaction->status == 'pending' ? 'bg-warning' : '' }}
-                            {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
-                            {{ $transaction->status == 'approved' ? 'bg-success' : '' }}
-                            {{ $transaction->status == 'cancelled' ? 'bg-danger' : '' }}
-                            {{ $transaction->status == 'progress' ? 'bg-secondary' : '' }}
+                            {{ $transaction->status == 'declined' || $transaction->status == 'cancelled' ? 'bg-dark text-danger' : '' }}
+                            {{ $transaction->status == 'approved' ? 'bg-dark text-success' : '' }}
+                            {{ $transaction->status == 'cancelled' ? 'bg-dark text-danger' : '' }}
+                            {{ $transaction->status == 'progress' ? 'bg-dark text-secondary' : '' }}
                                 ">{{ ucwords($transaction->status) }}</td>
                         
                         @if($transaction->type == 'payout')   
