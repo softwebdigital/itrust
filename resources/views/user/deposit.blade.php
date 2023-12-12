@@ -154,7 +154,7 @@
                                 <input type="hidden" name="acct_type" value="basic_ira">
                                 @endif
                                 <div class="input-group mb-3">
-                                    <label class="input-group-text" for="amount">$</label>
+                                    <label class="input-group-text" for="amount">{{ $sym->symbol }}</label>
                                     <input type="number" step="any"
                                         class="form-control @error('amount') is-invalid @enderror" id="bank_amount" required
                                         name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
@@ -468,17 +468,19 @@
     <script>
         function startDeposit() {
             var amount = document.getElementById('bank_amount').value
+            <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
+
             $('#banknote').html(`
-                <p>Kindly make a deposit of $` + amount + ` in USD to the
+                <p>Kindly make a deposit of ` + currencySymbol + amount + ` in USD to the
                 Bank Details below</p>
                 `);
         }
 
         function startDepositbtc() {
             var amount = document.getElementById('crypto_amount').value
-
+            <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
             $('#btcnotes').html(`
-                <p>Kindly make a deposit of ` + amount + ` in BTC to the
+                <p>Kindly make a deposit of ` + currencySymbol + amount + ` in BTC to the
                 Address below</p>
                 `);
 

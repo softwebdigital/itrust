@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/plugins.css">
     <link rel="stylesheet" href="css/theme/purple.css">
     <link rel="preload" href="css/font/thicccboi.css" as="style" onload="this.rel='stylesheet'">
+    
     @yield('styles')
 </head>
 
@@ -39,6 +40,11 @@
         crossorigin="anonymous"></script>
     <script src="js/plugins.js"></script>
     <script src="js/theme.js"></script>
+
+      <!-- Include Bootstrap JS with jQuery and Popper.js -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 {{--    <!--Start of Tawk.to Script-->--}}
 {{--    <script type="text/javascript">--}}

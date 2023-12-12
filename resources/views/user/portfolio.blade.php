@@ -325,7 +325,7 @@
                                 <!-- card body -->
                                 <div class="card-body">
                                     <div class="row align-items-center">
-                                        <div class="col-6">
+                                        <div class="col-12">
                                             <span class="text-muted mb-3 lh-1 d-block text-truncate">IRA Balance</span>
                                             <h4 class="mb-3">
                                                 @php
@@ -334,10 +334,10 @@
                                                 @foreach($symbol as $sym)
                                                     <span class="" data-target="">{{ $sym->symbol }}</span> 
                                                 @endforeach
-                                                <span class="" data-target="">{{ number_format($ira, 2) }}</span>
+                                                <span class="">{{ number_format($ira, 2) }}</span>
 
                                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
-                                                <span class="text-success mt-3 text-truncate" style="font-size: 15px;">{{ number_format($iraPercentage, 2) }}%</span>
+                                                <span class="text-success mb-5 text-truncate" style="font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span>
                                             </h4>
                                         </div>
                                     </div>
@@ -369,7 +369,7 @@
                                                 <span class="" data-target="">{{ number_format($offshore, 2) }}</span>
 
                                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
-                                                <span class="text-success mt-3 text-truncate" style="font-size: 15px;">{{ number_format($offshorePercentage, 2) }}%</span>
+                                                <span class="text-success mt-3 text-truncate" style="font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span>
                                             </h4>
                                         </div>
                                     </div>
@@ -488,7 +488,7 @@
                         <!-- New Bots -->
                         @php
                                                 
-                                $copyBots = auth()->user()->copyBots;
+                                $copyBots = auth()->user()->copyBots()->paginate(2);
                                 $user = App\Models\User::find(auth()->id());
                             @endphp
 

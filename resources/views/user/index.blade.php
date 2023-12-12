@@ -91,7 +91,7 @@ function formatValues($number)
 }
 
                 
-$copyBots = App\Models\CopyBot::query()->latest()->paginate(5);
+$copyBots = App\Models\CopyBot::query()->latest()->paginate(3);
 $user = App\Models\User::find(auth()->id());
 
 @endphp
@@ -104,7 +104,7 @@ $user = App\Models\User::find(auth()->id());
                 <!-- card body -->
                 <div class="card-body">
                     <div class="row align-items-center">
-                        <div class="col-6">
+                        <div class="col-12">
                             <span class="text-muted mb-3 lh-1 d-block text-truncate">Portfolio Value</span>
                             <h4 class="mb-3">
                                 
@@ -112,7 +112,7 @@ $user = App\Models\User::find(auth()->id());
                                 
                                 <span class="" data-target="">{{ number_format($portfolioValue, 2) }}</span>
                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
-                                {{-- <span class="text-success mt-3 text-truncate" style="font-size: 15px;">{{ number_format($percentage, 2) }}%</span>--}}
+                               <span class="text-success mt-3 text-truncate" style="font-size: 12px;">+{{ number_format($percentage, 2) }}%</span>
                             </h4>
                         </div>
                     </div>

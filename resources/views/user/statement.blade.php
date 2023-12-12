@@ -33,8 +33,8 @@
                 <tr>
                     <th>Copy Bots</th>
                     <th>Investment</th>
-                    <th>Account</th>
                     <th>ROI</th>
+                    <th>Account</th>
                     <th>Date</th>
                     <th>Status</th>
                 </tr>
@@ -63,15 +63,6 @@
                             <h5>{{ $symbol->symbol }}{{ number_format($investment->amount, 2) }}</h5>
                             <p>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</p>
                        </td>
-                       <td>
-                            @if($investment->acct_type == 'offshore')
-                            Offshore
-                            @elseif($investment->acct_type == 'basic_ira')
-                            Basic IRA
-                            @else
-                            -----
-                            @endif
-                        </td>
                         <td>
                             @php
                                 $investmentAmount = $investment->amount;
@@ -83,8 +74,18 @@
                                 }
                             @endphp
                             <h5>{{ $symbol->symbol }}{{ number_format($investment->ROI, 2) }}</h5>
-                            <p class="text-success">{{ number_format($percentage) }} %</p>
+                            <p class="text-success">+{{ number_format($percentage) }} %</p>
                         </td>
+                       <td>
+                            @if($investment->acct_type == 'offshore')
+                            Offshore
+                            @elseif($investment->acct_type == 'basic_ira')
+                            Basic IRA
+                            @else
+                            -----
+                            @endif
+                        </td>
+                        
                         <td>{{ \Carbon\Carbon::make($investment->created_at)->format('Y/m/d') }}</td>
                        <td> <span class="badge p-2
                                {{ $investment->status == 'open' ? 'bg-dark text-success' : '' }}
