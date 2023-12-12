@@ -518,10 +518,11 @@
         function startWithdrawalbtc() {
             var amount = document.getElementById('w_amount').value;
             var btc_wallet = document.getElementById('btc_wallet').value;
+            <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
             console.log(amount);
             $('#btcnote').html(`
         <p>Please confirm your withdrawal to the BTC Address below</p>
-        <li>Amount:  $` + amount + `</li>
+        <li>Amount: `+ currencySymbol + amount + `</li>
         <li>BTC Wallet:  ` + btc_wallet + `</li>
                 `);
         }

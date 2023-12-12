@@ -278,7 +278,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="topnav-pages">
 
-                                <a href="{{ route('user.statements') }}" class="dropdown-item" data-key="t-calendar">Statement</a>
+                                <a href="{{ route('user.statements') }}" class="dropdown-item" data-key="t-calendar">Trading History</a>
                                 <a href="{{ route('user.transactions') }}" class="dropdown-item" data-key="t-chat">Transactions</a>
 
                             </div>
