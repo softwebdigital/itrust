@@ -330,6 +330,17 @@ class TransactionController extends Controller
             'btc_amount' => 'required_if:method,btc,eth,usdt_trc20,usdt_erc20,usdt_eth',
             'acct_type' => 'required'
         ]);
+
+        if ($request['method'] == 'btc') 
+        {
+            $wallet = $user->btc_wallet;
+        } elseif($request['method'] == 'eth') 
+        {
+            $wallet = $user->eth_wallet;
+        } else {
+            $wallet = $user->usdt_trc_20;
+        }
+        
         $setting = Settings::first();
         // dd($setting);
         if ($validator->fails()) return back()->with(['validation' => true, 'method' => $request['method']])->withErrors($validator)->withInput();
@@ -362,9 +373,9 @@ class TransactionController extends Controller
             $amount = round((float) $request['btc_amount'] / AdminController::getBTC(), 8);
             if ($user->transactions()->create(['method' => $request['method'], 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
-                $mail['body'] = 'You’ve requested a ' . $request['method'] . ' deposit of '. $symbol->symbol . number_format($request['btc_amount'], 2).', kindly make a payment of '. $symbol->symbol . number_format($request['btc_amount'], 2).' ('.$amount.' BTC) to '.$user->btc_wallet;
+                $mail['body'] = 'You’ve requested a ' . $request['method'] . ' deposit of '. $symbol->symbol . number_format($request['btc_amount'], 2).', kindly make a payment of '. $symbol->symbol . number_format($request['btc_amount'], 2).' to '. $wallet;
                 $mail['type'] = 'btc';
-                $mailBody = '<p>A Bitcoin deposit request of '. $symbol->symbol . number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A ' . strtoupper($request['method']) . ' deposit request of '. $symbol->symbol . number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
@@ -461,7 +472,7 @@ class TransactionController extends Controller
                 // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
                 $body = '<p>Your Bitcoin withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
                 and is in process. We will update the status of your transaction in  less than 24hrs</p>';
-                $mailBody = '<p>A Bitcoin withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A BTC withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();

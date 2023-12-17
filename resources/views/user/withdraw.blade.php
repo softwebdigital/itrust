@@ -141,7 +141,7 @@
                                             <input type="hidden" name="acct_type" value="basic_ira">
                                         @endif
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="bank_amount">$</label>
+                                            <label class="input-group-text" for="bank_amount">{{ $sym->symbol }}</label>
                                             <input type="bank_amount" step="any"
                                                 class="form-control @error('bank_amount') is-invalid @enderror"
                                                 name="bank_amount" value="{{ old('bank_amount') }}" id="bank_amount"
@@ -592,8 +592,11 @@
         }
 
         function calcEquivWithdraw(id) {
-            if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) +
-                ' BTC');
+            // if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) / parseFloat('{{ \App\Http\Controllers\Admin\AdminController::getBTC() }}')).toFixed(8) +
+            //     ' BTC');
+            <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
+
+            if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((currencySymbol + parseFloat($(id).val()) ));
         }
 
         function submitFormBank() {
