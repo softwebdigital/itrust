@@ -226,13 +226,13 @@
                     @endphp
                     <div class="form-group mb-3">
                         <label for="">Copy Bot <span class="text-danger">*</span></label>
-                        <select class="form-select @error('status') is-invalid @enderror" name="status" id="user">
+                        <select class="form-select @error('bot') is-invalid @enderror" name="bot" id="user">
                             <option value="">Select Bot</option>
                             @foreach($copyBots as $bot)
                                 <option value="{{ $bot->id }}" @if(old('bot_id') == $bot->name) selected @endif>{{ ucwords($bot->name) }}</option>
                             @endforeach
                         </select>
-                        @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                        @error('bot') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>
                     <div class="form-group mb-3">
                         <label for="acct_type">Account :</label>
