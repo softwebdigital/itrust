@@ -75,8 +75,8 @@ class UserController extends Controller
 
         $portfolioValue = ($ira + $offshore);
 
+        $percentage =  $portfolioValue > 0 ? ($ira_roi + $offshore_roi) * 100 / ($portfolioValue) : 0;
 
-        $percentage =  ($ira_roi + $offshore_roi) * 100 / ($portfolioValue);
 
         
         // $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc%2Ceth&category=tokenized-stock&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
@@ -195,8 +195,8 @@ class UserController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $iraPercentage = $ira ? ($ira_roi) * 100 / ($ira) : 0;
-        $offshorePercentage = $offshore ? ($offshore_roi) * 100 / ($offshore) : 0;
+        $iraPercentage = $ira > 0 ? ($ira_roi) * 100 / ($ira) : 0;
+        $offshorePercentage = $offshore > 0 ? ($offshore_roi) * 100 / ($offshore) : 0;
 
         $days = [];
         if ($all) {
