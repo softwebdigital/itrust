@@ -170,7 +170,7 @@ $user = App\Models\User::find(auth()->id());
                                         <th></th>
                                         <th>Name</th>
                                         <th>Symbol</th>
-                                        <th>Price</th>
+                                        <th>Price (USDT)</th>
                                         <th>Market Cap</th>
                                         <th>24H Change</th>
                                         <th>High</th>

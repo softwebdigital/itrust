@@ -162,37 +162,12 @@
                                 @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                 @enderror
                             </div>
-                            {{-- <div class="card bg-light mt-2 mb-3">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <p class="mt-3"><strong>Bank Name:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="mt-3">{{ $setting['bank_name'] }}</p>
-                                    </div>
-                                    <div class="col-4">
-                                        <p><strong>Account Number:</strong></p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p>{{ $setting['acct_no'] }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
                             <div class="text-center d-grid gap-2">
                                 <button type="button" class="btn btn-success w-md" onclick="startDeposit()"
                                     data-toggle="modal" data-target="#exampleModalCenterbank">Request Deposit</button>
                             </div>
                         </div>
                     </form>
-                    <div class="mx-4">
-                        {{-- <a href="javascript:void(0)" class="float-end" onclick="showLess(1)">View less <i
-                                class="mdi mdi-arrow-up"></i></a> --}}
-                        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-                            {{-- <button class="btn btn-success d-none btn-block px-4">Share Link</button> --}}
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="card-body mb-3 border">
@@ -257,7 +232,7 @@
                                     <input type="number" id="crypto_amount" step="any" name="btc_amount"
                                         value="{{ old('btc_amount') }}"
                                         class="form-control @error('amount') is-invalid @enderror" placeholder="Amount"
-                                        onkeyup="calcEquiv(this)">
+                                        onkeyup="calcEquiv(this), changeMsg()">
                                 </div>
                                 @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                 @enderror
@@ -279,7 +254,7 @@
                                             </div>
                                         </div>
                                         <div class="col-12 text-center">
-                                            <h6>Please send <span style="font-weight: 100;">0.0USD</span> to any of your deposit address below before requesting a deposit</h6>
+                                            <h6>Please send <span id="msgBox" style="font-weight: 100;"></span> to any of your deposit address below before requesting a deposit</h6>
                                         </div>
                                         <div class="col-12 text-center mt-2">
                                             <h6>BTC</h6>
@@ -474,6 +449,13 @@
                 <p>Kindly make a deposit of ` + currencySymbol + amount + ` in USD to the
                 Bank Details below</p>
                 `);
+        }
+
+        function changeMsg() {
+            var amount = document.getElementById('crypto_amount').value
+            <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
+
+            $('#msgBox').html(`` + currencySymbol + amount + ``);
         }
 
         function startDepositbtc() {

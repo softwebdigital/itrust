@@ -83,7 +83,7 @@
 
                 <div class="modal fade" id="staticBackdrop-roi-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
+                        <div class="modal-content  bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Invest for investments</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -220,6 +220,19 @@
                             <option value="Options" {{ old('type') == 'Options' ? 'selected' : '' }}>Options</option>
                         </select>
                         @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    @php 
+                        $copyBots = \App\Models\CopyBot::all();
+                    @endphp
+                    <div class="form-group mb-3">
+                        <label for="">Copy Bot <span class="text-danger">*</span></label>
+                        <select class="form-select @error('status') is-invalid @enderror" name="status" id="user">
+                            <option value="">Select Bot</option>
+                            @foreach($copyBots as $bot)
+                                <option value="{{ $bot->id }}" @if(old('bot_id') == $bot->name) selected @endif>{{ ucwords($bot->name) }}</option>
+                            @endforeach
+                        </select>
+                        @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>
                     <div class="form-group mb-3">
                         <label for="acct_type">Account :</label>
