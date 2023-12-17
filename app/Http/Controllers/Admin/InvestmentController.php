@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\MailController;
-use App\Models\Investment;
-use App\Models\User;
-use App\Notifications\WebNotification;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Currency;
+use App\Models\Investment;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Notifications\WebNotification;
+use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Validator;
 
 class InvestmentController extends Controller
@@ -47,6 +48,7 @@ class InvestmentController extends Controller
         // dd($user_id);
 
         $user = User::find($user_id);
+        $symbol = Currency::where('id', $user->currency_id)->first();
         // dd($user);
         // $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
         // $inv = $user->roi()->sum('amount');
@@ -100,7 +102,7 @@ class InvestmentController extends Controller
 
         $inv->save();
 
-        $msg = 'You have invested $' . $request['amount'];
+        $msg = 'You have invested '. $symbol . $request['amount'];
 
         $mail = [
             'name' => $user->name,

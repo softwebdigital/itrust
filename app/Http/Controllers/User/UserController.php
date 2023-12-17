@@ -38,31 +38,6 @@ class UserController extends Controller
         $open_inv = $user->roi()->where('status', 'open')->sum('amount');
         // $closed_inv = $user->roi()->where('status', '=', 'open')->sum('amount');
         $withdrawable = ($deposits - $payouts - $open_inv) + $closed_roi;
-        // dd($withdrawable);
-
-        // $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        // $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
-        // $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        // $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
-        // $ira_roi = $user->ira_roi()->where('status', '=', 'open')->sum('ROI');
-        // $ira_amount = $user->ira_roi()->where('status', '=', 'open')->sum('amount');
-        // $offshore_amount = $user->offshore_roi()->where('status', '=', 'open')->sum('amount');
-        // $offshore_roi = $user->offshore_roi()->where('status', '=', 'open')->sum('ROI');
-        // $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi + $offshore_amount;
-        // $ira = ($ira_deposit - $ira_payout) + $ira_roi + $ira_amount;
-
-
-
-//        $ira_deposit = $user->ira_deposit()->where('status', 'approved')->sum('actual_amount');
-//        $ira_payout = $user->ira_payout()->where('status', 'approved')->sum('actual_amount');
-//        $offshore_deposit = $user->offshore_deposit()->where('status', 'approved')->sum('actual_amount');
-//        $offshore_payout = $user->offshore_payout()->where('status', 'approved')->sum('actual_amount');
-//        $ira_roi = $user->ira_roi()->where('status', 'open')->sum('ROI');
-//        $ira_amount = $user->ira_roi()->where('status', 'open')->sum('amount');
-//        $offshore_amount = $user->offshore_roi()->where('status', 'open')->sum('amount');
-//        $offshore_roi = $user->offshore_roi()->where('status', 'open')->sum('ROI');
-//        $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi;
-//        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
 
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
@@ -77,16 +52,6 @@ class UserController extends Controller
 
         $percentage =  $portfolioValue > 0 ? ($ira_roi + $offshore_roi) * 100 / ($portfolioValue) : 0;
 
-
-        
-        // $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc%2Ceth&category=tokenized-stock&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
-        
-        // $response = Http::get($url);
-        // $data = $response->json();
-
-        // $jsonData = Storage::get('crypto.json');
-        // $data = json_decode($jsonData, true); //price: 25984btc 25882btc
-
         $jsonFilePath = public_path('crypto.json');
 
         if (file_exists($jsonFilePath)) {
@@ -95,12 +60,6 @@ class UserController extends Controller
         } else {
             $data = null;
         }
-
-        // if ($data !== null) {
-        //     // Process the data from the JSON file
-        // } else {
-        //     // Handle the case where the JSON file is empty or doesn't exist
-        // }
 
         $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
         
@@ -142,15 +101,15 @@ class UserController extends Controller
         ];
 
         $symbol = \App\Models\Currency::where('id', $user->currency_id)->first();
-//         dd($assets);
-//        $new_assets = [];
+        //         dd($assets);
+        //        $new_assets = [];
         foreach ($assets as $key => $asset)
             if ($asset['value'] == 0)
                 unset($assets[$key]);
-//
-//
-//        $assets = $new_assets;
-//         dd($assets, $new_assets);
+        //
+        //
+        //        $assets = $new_assets;
+        //         dd($assets, $new_assets);
         $total_assets = $investment->count();
 
         return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data', 'symbol', 'percentage']));
@@ -196,6 +155,7 @@ class UserController extends Controller
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
         $iraPercentage = $ira > 0 ? ($ira_roi) * 100 / ($ira) : 0;
+        
         $offshorePercentage = $offshore > 0 ? ($offshore_roi) * 100 / ($offshore) : 0;
 
         $days = [];
