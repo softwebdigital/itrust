@@ -67,6 +67,29 @@
         .toggle:active:after {
             width: 130px;
         }
+        @media (max-width: 768px) {
+            /* Hide the original navigation for smaller screens */
+            .cash-nav-item {
+                display: none;
+            }
+
+            /* Show the navigation with a class 'mobile-menu' for smaller screens */
+            .cash-mobile-menu {
+                display: block;
+            }
+        }
+
+        @media (min-width: 768px) {
+            /* Hide the original navigation for smaller screens */
+            .cash-nav-item {
+                display: block;
+            }
+
+            /* Show the navigation with a class 'mobile-menu' for smaller screens */
+            .cash-mobile-menu {
+                display: none;
+            }
+        }
     </style>
 @endsection
 
@@ -107,12 +130,11 @@ $user = App\Models\User::find(auth()->id());
                         <div class="col-12">
                             <span class="text-muted mb-3 lh-1 d-block text-truncate">Portfolio Value</span>
                             <h4 class="mb-3">
-                                
-                                <span class="" data-target="">{{ $symbol->symbol }}</span>
-                                
-                                <span class="" data-target="">{{ number_format($portfolioValue, 2) }}</span>
-                                <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
-                               <span class="text-success mt-3 text-truncate" style="font-size: 12px;">+{{ number_format($percentage, 2) }}%</span>
+                                <p class="" style="width: fit-content;">
+                                    {{ $symbol->symbol }}
+                                    {{ number_format($portfolioValue, 2) }}
+                                    <span class="text-success mb-5 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($percentage, 2) }}%</span>
+                                </p>
                             </h4>
                         </div>
                     </div>
@@ -342,13 +364,92 @@ $user = App\Models\User::find(auth()->id());
                         </div>
                     </div>
             </div>
+
+            <div class="col-12 cash-nav-item">
+                <h2 class="mt-5 mb-6">Copy Bots</h2>
+                <div class="col-lg-12 col-md-12 order-md-1 mt-4">
+                    <div class="row">
+                        @foreach($copyBots as $copyBot)
+                        <div class="col-md-12">
+                            <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px;">
+                                <div class="row border-bottom pb-1">
+                                    <div class="col-2">
+                                        <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
+                                    </div>
+                                    <div class="col-10">
+                                        <h5 class="m-0 p-0">{{ $copyBot->name }}</h5>
+                                        <p class="m-0 p-0">From {{ $copyBot->creator }}</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-0">
+                                    <div class="col">
+                                        <h4 class="text-success">{{ $copyBot->yield }}</h4>
+                                        <p>30D Yield</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-0">
+                                    <div class="col-6">
+                                        <h5 class="font-bold">{{ $copyBot->rate }}</h5>
+                                        <p>Win rate</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 class="font-bold">{{ $copyBot->aum }}</h5>
+                                        <p>AUM (USDT)</p>
+                                    </div>
+                                </div>
+                                <div class="row mt-0">
+                                    <div class="col-6">
+
+                                    </div>
+                                    <div class="col-6">
+                                        {{-- @if($user->copy_bot == $copyBot->id) --}}
+                                            <a style="width: 130px; border-radius: 18px;" class="btn btn-md btn-success mx-0" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add-{{ $copyBot->id }}">Add Bot <i class="mdi mdi-plus"></i></a>
+                                        {{-- @else
+                                            <a style="width: 130px; border-radius: 20px;" class="btn btn-md btn-secondary mx-1" href="javascript:void(0)">Active</a>
+                                        @endif --}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                            <div class="modal-body">
+                                                <p>Contact a third party signal provider for your bot configuration</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                <!-- <button type="submit" class="btn btn-success">Add</button> -->
+                                            </div>
+                                            <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    @if($copyBots->count() <= 0)
+                        <div>
+                            <p class="text-muted pt-4 pb-6">No Copy Bot Available...</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
         </div>
         
         
         
     </div>
 
-    <div class="col-12">
+    <div class="col-12 cash-mobile-menu">
         <h2 class="mt-5 mb-6">Copy Bots</h2>
         <div class="col-lg-12 col-md-12 order-md-1 mt-4">
             <div class="row">

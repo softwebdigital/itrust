@@ -19,7 +19,7 @@
         {{-- <a href="{{ route('admin.inv.create') }}" type="button" c>Add Investment</a> --}}
         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add" class="btn btn-primary">Add Investment</a>
     </div>
-    <div class="table table-responsive" style="border-color: white;">
+    <div class="table" style="overflow-x: auto; border-color: white;">
         <table id="datatable" class="table table-borderless table-striped nowrap">
             <thead>
                 <tr>
@@ -61,7 +61,8 @@
                     <td> <span class="badge
                         {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
                         {{ $investment->status == 'open' ? 'bg-success' : '' }}
-                            ">{{ ucwords($investment->status) }}</td>
+                            ">{{ ucwords($investment->status) }}
+                    </td>
 
                     <td>
                         <div class="btn-group">

@@ -6,6 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use App\Models\News;
 use App\Models\User;
+use App\Models\Currency;
 use App\Models\Document;
 use App\Models\Settings;
 use App\Models\Investment;
@@ -50,7 +51,20 @@ class UserController extends Controller
 
         $portfolioValue = ($ira + $offshore);
 
-        $percentage =  $portfolioValue > 0 ? ($ira_roi + $offshore_roi) * 100 / ($portfolioValue) : 0;
+        // $percentage =  $portfolioValue > 0 ? ($ira_roi + $offshore_roi) * 100 / ($portfolioValue) : 0;
+
+        //try the %
+        $ira_roi_1 = $user->ira_roi()->latest('updated_at')->first();
+        $last_ira_roi = $ira_roi_1->ROI;
+
+        // $iraPercentage = $ira > 0 ? ($ira - $last_ira_roi)  / ($last_ira_roi) : 0;
+
+        $offshore_roi_1 = $user->offshore_roi()->latest('updated_at')->first();
+        $last_offshore_roi = $offshore_roi_1->ROI;
+
+        // $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi) : 0;
+
+        $percentage = $portfolioValue > 0 ? (($portfolioValue) - ($last_offshore_roi + $last_ira_roi)) / ($last_offshore_roi + $last_ira_roi) : 0;
 
         $jsonFilePath = public_path('crypto.json');
 
@@ -100,7 +114,7 @@ class UserController extends Controller
             'Options' => ['label' => 'Options', 'value' => round($options + $options_roi, 2), 'color' => "#076262"]
         ];
 
-        $symbol = \App\Models\Currency::where('id', $user->currency_id)->first();
+        $symbol = Currency::where('id', $user->currency_id)->first();
         //         dd($assets);
         //        $new_assets = [];
         foreach ($assets as $key => $asset)
@@ -154,9 +168,20 @@ class UserController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $iraPercentage = $ira > 0 ? ($ira_roi) * 100 / ($ira) : 0;
+        // $iraPercentage = $ira > 0 ? ($ira_roi) * 100 / ($ira) : 0;
         
-        $offshorePercentage = $offshore > 0 ? ($offshore_roi) * 100 / ($offshore) : 0;
+        // $offshorePercentage = $offshore > 0 ? ($offshore_roi) * 100 / ($offshore) : 0;
+
+        //try the %
+        $ira_roi_1 = $user->ira_roi()->latest('updated_at')->first();
+        $last_ira_roi = $ira_roi_1->ROI;
+
+        $iraPercentage = $ira > 0 ? ($ira - $last_ira_roi)  / ($last_ira_roi) : 0;
+
+        $offshore_roi_1 = $user->offshore_roi()->latest('updated_at')->first();
+        $last_offshore_roi = $offshore_roi_1->ROI;
+
+        $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi) : 0;
 
         $days = [];
         if ($all) {
@@ -404,7 +429,10 @@ class UserController extends Controller
                 $offshoreData[] = round($total + $oldTotal, 2);
             }
         }
-        return view('user.portfolio', compact('iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
+
+        $symbol = Currency::where('id', $user->currency_id)->first();
+
+        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
     }
 
     protected static function formatAmount($amount): array
