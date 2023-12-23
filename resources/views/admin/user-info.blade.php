@@ -224,8 +224,20 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
-                                                            <label>Wallet Address </label>
+                                                            <label>BTC Wallet Address </label>
                                                             <input type="text" class="form-control mb-4" name="btc_wallet" value="{{ $user->btc_wallet }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>ETH Wallet Address </label>
+                                                            <input type="text" class="form-control mb-4" name="eth_wallet" value="{{ $user->eth_wallet }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>USDT (TRC20) Wallet Address </label>
+                                                            <input type="text" class="form-control mb-4" name="usdt_trc_20" value="{{ $user->usdt_trc_20 }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>USDT (ERC20) Wallet Address </label>
+                                                            <input type="text" class="form-control mb-4" name="usdt_erc_20" value="{{ $user->usdt_erc_20 }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">

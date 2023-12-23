@@ -364,7 +364,7 @@ class AdminController extends Controller
             'eth_wallet' => $request->get('eth_wallet'),
             'usdt_trc_20' => $request->get('usdt_trc_20'),
             'usdt_erc_20' => $request->get('usdt_erc_20'),
-            'usdt_eth' => $request->get('usdt_eth'),
+            // 'usdt_eth' => $request->get('usdt_eth'),
         ]);
 
         return back()->with('success', 'Settings Successfully Updated');
