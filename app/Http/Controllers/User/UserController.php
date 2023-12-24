@@ -55,12 +55,12 @@ class UserController extends Controller
 
         //try the %
         $ira_roi_1 = $user->ira_roi()->latest('updated_at')->first();
-        $last_ira_roi = $ira_roi_1->ROI ? $ira_roi_1->ROI : 0;
+        $last_ira_roi = $ira_roi_1 ? $ira_roi_1->ROI : 0;
 
         // $iraPercentage = $ira > 0 ? ($ira - $last_ira_roi)  / ($last_ira_roi) : 0;
 
         $offshore_roi_1 = $user->offshore_roi()->latest('updated_at')->first();
-        $last_offshore_roi = $offshore_roi_1->ROI ? $offshore_roi_1->ROI : 0;
+        $last_offshore_roi = $offshore_roi_1 ? $offshore_roi_1->ROI : 0;
 
         // $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi) : 0;
 
@@ -174,12 +174,12 @@ class UserController extends Controller
 
         //try the %
         $ira_roi_1 = $user->ira_roi()->latest('updated_at')->first();
-        $last_ira_roi = $ira_roi_1->ROI ? $ira_roi_1->ROI : 0;
+        $last_ira_roi = $ira_roi_1 ? $ira_roi_1->ROI : 0;
 
         $iraPercentage = $ira > 0 ? ($ira - $last_ira_roi)  / ($last_ira_roi) : 0;
 
         $offshore_roi_1 = $user->offshore_roi()->latest('updated_at')->first();
-        $last_offshore_roi = $offshore_roi_1->ROI ? $offshore_roi_1->ROI : 0;
+        $last_offshore_roi = $offshore_roi_1 ? $offshore_roi_1->ROI : 0;
 
         $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi) : 0;
 
