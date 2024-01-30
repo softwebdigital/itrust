@@ -325,7 +325,7 @@ class TransactionController extends Controller
         $symbol = Currency::where('id', $user->currency_id)->first();
 
         $validator = Validator::make($request->all(), [
-            'method' => 'required|string|in:btc,eth,usdt_trc20,usdt_erc20,usdt_eth',
+            'method' => 'required|string|in:btc,eth,usdt_trc20,usdt_erc20,usdt_eth,bank',
             'amount' => 'required_if:method,bank',
             'btc_amount' => 'required_if:method,btc,eth,usdt_trc20,usdt_erc20,usdt_eth',
             'acct_type' => 'required'
@@ -356,7 +356,7 @@ class TransactionController extends Controller
                 return back()->with(['validation' => true, 'method' => $request['method'], 'warning' => 'Deposit is temporarily unavailable.'])->withInput();
             if ($user->transactions()->create(['method' => 'bank', 'amount' => (float) $request['amount'], 'type' => 'deposit', 'actual_amount' => (float) $request['amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
-                $mail['body'] = 'You’ve requested a Bank deposit of '. number_format($request['amount'], 2) .', kindly make a
+                $mail['body'] = 'You’ve requested a Bank deposit of '. $symbol->symbol . number_format($request['amount'], 2) .', kindly make a
                 payment of '. $symbol->symbol . number_format($request['amount'], 2) .' to:';
                 $mail['bank'] = $setting['bank_name'];
                 $mail['acct_name'] = $setting['acct_name'];
@@ -373,7 +373,7 @@ class TransactionController extends Controller
             $amount = round((float) $request['btc_amount'] / AdminController::getBTC(), 8);
             if ($user->transactions()->create(['method' => $request['method'], 'amount' => $amount, 'type' => 'deposit', 'actual_amount' => (float) $request['btc_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Deposit successful and is pending confirmation';
-                $mail['body'] = 'You’ve requested a ' . $request['method'] . ' deposit of '. $symbol->symbol . number_format($request['btc_amount'], 2).', kindly make a payment of '. $symbol->symbol . number_format($request['btc_amount'], 2).' to '. $wallet;
+                $mail['body'] = 'You’ve requested a ' . strtoupper($request['method']) . ' deposit of '. $symbol->symbol . number_format($request['btc_amount'], 2).', kindly make a payment of '. $symbol->symbol . number_format($request['btc_amount'], 2).' to '. $wallet;
                 $mail['type'] = 'btc';
                 $mailBody = '<p>A ' . strtoupper($request['method']) . ' deposit request of '. $symbol->symbol . number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
             }

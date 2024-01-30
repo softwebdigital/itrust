@@ -84,7 +84,7 @@
 
                 <div class="modal fade" id="staticBackdrop-roi-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content  bg-white">
+                        <div class="modal-content bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Invest for investments</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

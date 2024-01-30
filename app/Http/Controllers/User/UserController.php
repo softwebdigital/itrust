@@ -64,7 +64,14 @@ class UserController extends Controller
 
         // $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi) : 0;
 
-        $percentage = $portfolioValue > 0 ? (($portfolioValue) - ($last_offshore_roi + $last_ira_roi)) / ($last_offshore_roi + $last_ira_roi) : 0;
+        // $percentage = $portfolioValue > 0 ? (($portfolioValue) - ($last_offshore_roi + $last_ira_roi)) / ($last_offshore_roi + $last_ira_roi) : 0;
+        
+        if($portfolioValue > 0 && $last_offshore_roi > 0 && $last_ira_roi > 0)
+        {
+            $percentage = (($portfolioValue) - ($last_offshore_roi + $last_ira_roi)) / ($last_offshore_roi + $last_ira_roi);
+        } else {
+            $percentage = 0;
+        }
 
         $jsonFilePath = public_path('crypto.json');
 
@@ -176,7 +183,15 @@ class UserController extends Controller
         $ira_roi_1 = $user->ira_roi()->latest('updated_at')->first();
         $last_ira_roi = $ira_roi_1 ? $ira_roi_1->ROI : 0;
 
-        $iraPercentage = $ira > 0 ? ($ira - $last_ira_roi)  / ($last_ira_roi) : 0;
+        // $iraPercentage = $ira > 0 ? ($ira - $last_ira_roi)  / ($last_ira_roi) : 0;
+        
+        if($ira > 0 && $last_ira_roi > 0)
+        {
+            $iraPercentage =  ($ira - $last_ira_roi)  / ($last_ira_roi);
+        } else {
+            $iraPercentage = 0;
+        }
+
 
         $offshore_roi_1 = $user->offshore_roi()->latest('updated_at')->first();
         $last_offshore_roi = $offshore_roi_1 ? $offshore_roi_1->ROI : 0;

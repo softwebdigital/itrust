@@ -288,7 +288,7 @@
                                     @error('btc_wallet') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
 
-                                    <div class="input-group mb-3">
+                                    {{-- <div class="input-group mb-3">
                                         <label class="input-group-text" for="eth_wallet">ETH Wallet</label>
                                         <input type="text" step="any" class="form-control @error('eth_wallet') is-invalid @enderror"
                                             name="eth_wallet" value="{{ $user->eth_wallet ?? old('eth_wallet') }}" id="eth_wallet" placeholder="ETH Wallet">
@@ -318,7 +318,7 @@
                                             name="usdt_eth" value="{{ $user->usdt_eth ?? old('usdt_eth') }}" id="usdt_eth" placeholder="USDT (ETH) Wallet">
                                     </div>
                                     @error('usdt_eth') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                    @enderror
+                                    @enderror --}}
                                 </div>
                             </div>
                             <div class="modal-footer">

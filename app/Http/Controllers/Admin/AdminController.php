@@ -185,10 +185,10 @@ class AdminController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'btc_wallet' => 'required|string',
-            'eth_wallet' => 'required|string',
-            'usdt_trc_20' => 'required|string',
-            'usdt_erc_20' => 'required|string',
-            'usdt_eth' => 'required|string',
+            // 'eth_wallet' => 'required|string',
+            // 'usdt_trc_20' => 'required|string',
+            // 'usdt_erc_20' => 'required|string',
+            // 'usdt_eth' => 'required|string',
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first())->withInput();
 
@@ -196,10 +196,10 @@ class AdminController extends Controller
         // if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
         if ($user->update([
             'btc_wallet' => $request['btc_wallet'],
-            'eth_wallet' => $request['eth_wallet'],
-            'usdt_trc_20' => $request['usdt_trc_20'],
-            'usdt_erc_20' => $request['usdt_erc_20'],
-            'usdt_eth' => $request['usdt_eth'],
+            // 'eth_wallet' => $request['eth_wallet'],
+            // 'usdt_trc_20' => $request['usdt_trc_20'],
+            // 'usdt_erc_20' => $request['usdt_erc_20'],
+            // 'usdt_eth' => $request['usdt_eth'],
         ])) return back()->with('success', 'User account Wallet Successfully Updated');
         return back()->with('error', 'An error occurred, try again.');
     }

@@ -86,8 +86,8 @@
         {{-- <a href="{{ route('admin.inv.create') }}" type="button" c>Add Investment</a> --}}
         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add" class="btn btn-primary">Add Deposit</a>
     </div>
-    <div class="table-responsive" style="min-height: 500px; border-color: white">
-        <table id="datatable" class="table table-borderless table-striped table-responsive  nowrap w-100">
+    <div class="table" style="overflow-x: auto; border-color: white;">
+        <table id="datatable" class="table table-borderless table-striped nowrap">
             <thead>
             <tr>
                 <th>Date Deposited</th>
@@ -150,7 +150,7 @@
                 </tr>
                 <div class="modal fade" id="staticBackdrop-approve-{{ $deposit->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
+                        <div class="modal-content bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -170,7 +170,7 @@
 
                 <div class="modal fade" id="staticBackdrop-decline-{{ $deposit->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
+                        <div class="modal-content bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Decline</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -190,7 +190,7 @@
 
                 <div class="modal fade" id="staticBackdrop-delete-{{ $deposit->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
+                        <div class="modal-content bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Delete</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -210,7 +210,7 @@
 
                 <div class="modal fade" id="staticBackdrop-edit-{{$deposit->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
+                        <div class="modal-content bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Edit Deposit</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
