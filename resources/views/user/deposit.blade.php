@@ -18,6 +18,13 @@
     $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
 @endphp
 
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        display: none;
+    }
+</style>
+
 @section('content')
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenterbank" tabindex="-1" role="dialog"
@@ -155,7 +162,7 @@
                                 @endif
                                 <div class="input-group mb-3">
                                     <label class="input-group-text" for="amount">{{ $sym->symbol }}</label>
-                                    <input type="number" step="any"
+                                    <input type="number"
                                         class="form-control @error('amount') is-invalid @enderror" id="bank_amount" required
                                         name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
                                 </div>
