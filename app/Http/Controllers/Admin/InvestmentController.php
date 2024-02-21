@@ -102,7 +102,7 @@ class InvestmentController extends Controller
 
         $inv->save();
 
-        $msg = 'You have invested '. $symbol . $request['amount'];
+        $msg = 'You have invested '. $symbol->symbol . $request['amount'];
 
         $mail = [
             'name' => $user->name,
@@ -119,6 +119,7 @@ class InvestmentController extends Controller
     {
 
         $user = User::find($user_id);
+        $symbol = Currency::where('id', $user->currency_id)->first();
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
         $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
         $portfolioValue = $deposits +  $payouts;
@@ -142,7 +143,7 @@ class InvestmentController extends Controller
 
         $inv->save();
 
-        $msg = 'You have invested $' . $request['amount'];
+        $msg = 'You have invested ' . $symbol->symbol . $request['amount'];
 
         $mail = [
             'name' => $user->name,
@@ -164,6 +165,7 @@ class InvestmentController extends Controller
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
         $user = User::find($user_id);
+        $symbol = Currency::where('id', $user->currency_id)->first();
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
         $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
         $portfolioValue = $deposits +  $payouts;
@@ -180,7 +182,7 @@ class InvestmentController extends Controller
 
         $inv->save();
 
-        $msg = 'You have invested $' . $request['amount'];
+        $msg = 'You have invested ' . $symbol->symbol . $request['amount'];
 
         $mail = [
             'name' => $user->name,
