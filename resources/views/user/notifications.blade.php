@@ -25,16 +25,16 @@
                         <div class="flex-grow-1">
                             <h6 class="mb-1">{{ ucwords($notis->data['title']) }} <small><i class="mdi mdi-clock-outline"></i> {{ \Carbon\Carbon::make($notis->created_at)->diffForHumans() }}</small></h6>
                             <div class="mt-4">
-    @php
-        $user = \App\Models\User::find(auth()->id());
-        $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
-        $symbol = $sym->symbol;
+                                @php
+                                    $user = \App\Models\User::find(auth()->id());
+                                    $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
+                                    $symbol = $sym->symbol;
 
-        // Replace any object array with the symbol
-        $message = preg_replace('/\{[^{}]+\}/', $symbol, $notis->data['message']);
-    @endphp
-    <p class="mb-1">{!! $message !!}</p>
-</div>
+                                    // Replace any object array with the symbol
+                                    $message = preg_replace('/\{[^{}]+\}/', $symbol, $notis->data['message']);
+                                @endphp
+                                <p class="mb-1">{!! $message !!}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

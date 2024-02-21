@@ -194,7 +194,15 @@
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1">{{ ucwords($notis->data['title']) }}</h6>
                                                 <div class="font-size-13 text-muted">
-                                                    <p class="mb-0">{!! strlen($notis->data['message']) > 30 ? substr($notis->data['message'], 0, 30).'...' : $notis->data['message'] !!}
+                                                    @php
+                                                        $user = \App\Models\User::find(auth()->id());
+                                                        $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
+                                                        $symbol = $sym->symbol;
+
+                                                        // Replace any object array with the symbol
+                                                        $message = preg_replace('/\{[^{}]+\}/', $symbol, $notis->data['message']);
+                                                    @endphp
+                                                    <p class="mb-0">{!! strlen($message) > 30 ? substr($message, 0, 30).'...' : $message !!}
                                                         <br> <span><i class="mdi mdi-clock-outline"></i> {{ \Carbon\Carbon::make($notis->created_at)->diffForHumans() }}</span></p>
                                                 </div>
                                             </div>
