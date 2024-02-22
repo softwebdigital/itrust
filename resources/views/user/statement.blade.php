@@ -46,7 +46,7 @@
                        <td>
                         @if($investment->type == 'Cryptocurrencies')
                             <div class="col">
-                                <img src="https://www.itrustinvestment.com/img/bots/1701098825IMG_1752.jpeg" alt="" width="50" class="rounded-circle">
+                                <img src="https://itrustinvestment.com/img/bots/170457095116.png" alt="" width="50" class="rounded-circle">
                             </div>
                         @elseif($investment->type == 'stocks')
                             <div class="col">
