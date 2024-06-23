@@ -572,8 +572,8 @@ class UserController extends Controller
             'username' => ['required', 'string', Rule::unique('users')->where(function ($q) use ($request) {
                 return $q->where('id', '!=', auth()->id())->where('username', $request['username']);
             })],
-            'photo' => ['sometimes', 'file', 'mimes:jpg,jpeg,png', 'max:1024']
-        ], ['photo.max' => 'Photo must not be greater than 1MB']);
+            'photo' => ['sometimes', 'file', 'mimes:jpg,jpeg,png', 'max:2048']
+        ], ['photo.max' => 'Photo must not be greater than 2MB']);
         if ($validator->fails()) return back()->withInput()->withErrors($validator);
 
         if ($request->file('photo')) {

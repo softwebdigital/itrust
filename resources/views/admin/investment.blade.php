@@ -30,6 +30,7 @@
                 <th>ROI</th>
                 <th>Asset</th>
                 <th>Account</th>
+                <th>Copy Bot</th>
                 <th>Status</th>
 
                 <th></th>
@@ -58,6 +59,11 @@
                         Basic IRA
                         @endif
                     </td>
+                    @if($investment->copyBot)
+                        <td>{{ $investment->copyBot->name }}</td>
+                    @else
+                        <td>Not set</td>
+                    @endif
                     <td> <span class="badge
                         {{ $investment->status == 'closed' ? 'bg-danger' : '' }}
                         {{ $investment->status == 'open' ? 'bg-success' : '' }}

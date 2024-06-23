@@ -332,12 +332,16 @@
                                                 <p class="" style="width: fit-content;">
                                                     {{ $symbol->symbol }}
                                                     {{ number_format($ira, 2) }}
-                                                    <span class="text-success mb-5 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span>
+                                                    <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span>
                                                 </p>
 
                                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
                                                 
                                             </h4>
+                                            <div style="float: inline-end;">
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($offshore, 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($ira, 2) }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div><!-- end card body -->
@@ -351,10 +355,10 @@
                                     <div class="row align-items-center">
                                         <div class="col-12">
                                             @if ($offshore == 0)
-                                                <div class="align-self-auto my-auto float-end"><a href="javascript:void(0)"
+                                                {{-- <div class="align-self-auto my-auto float-end"><a href="javascript:void(0)"
                                                         onclick="startDeposit()" data-toggle="modal"
                                                         data-target="#exampleModalCenterdeposit">DEPOSIT NOW <i
-                                                            class="mdi mdi-arrow-down"></i></a></div>
+                                                            class="mdi mdi-arrow-down"></i></a></div> --}}
                                             @endif
                                             <span class="text-muted mb-3 lh-1 d-block text-truncate">Offshore Account
                                                 Balance</span>
@@ -362,9 +366,13 @@
                                                 <p class="" style="width: fit-content;">
                                                     {{ $symbol->symbol }}
                                                     {{ number_format($offshore, 2) }}
-                                                    <span class="text-success mb-5 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span>
+                                                    <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span>
                                                 </p>
                                             </h4>
+                                            <div style="float: inline-end;">
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($offshore, 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($ira, 2) }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div><!-- end card body -->

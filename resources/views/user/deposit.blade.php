@@ -249,14 +249,14 @@
                             <div class="card bg-light mt-2 mb-3">
                                 <div class="container-fluid">
                                     <div class="row mt-4 mb-4">
-                                        <div class="row m-auto mx-5 my-5">
-                                            <div class="col-4">
+                                        <div class="d-flex justify-content-around align-items-center my-4">
+                                            <div>
                                                 <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="60">
                                             </div>
-                                            <div class="col-4">
+                                            <div>
                                                 <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="60">
                                             </div>
-                                            <div class="col-4">
+                                            <div>
                                                 <img src="https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png" alt="" width="60">
                                             </div>
                                         </div>

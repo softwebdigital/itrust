@@ -39,7 +39,8 @@ class InvestmentController extends Controller
             'status' => 'required',
             'user' => 'required|string',
             'type' => 'required',
-            'acct_type' => 'required'
+            'acct_type' => 'required',
+            'bot' => 'required'
         ]);
 
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
@@ -97,6 +98,8 @@ class InvestmentController extends Controller
         $inv->status = $request['status'];
 
         $inv->acct_type = $request['acct_type'];
+
+        $inv->copy_bot_id = $request['bot'];
 
         $inv->created_at = Carbon::make($request['date'])->format('Y-m-d');
 

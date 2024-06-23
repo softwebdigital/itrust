@@ -410,6 +410,7 @@ class TransactionController extends Controller
             'w_amount' => 'required_if:w_method,bitcoin',
             'btc_wallet' => 'required_if:w_method,bitcoin',
             'acct_type' => 'required'
+            
         ], [], $this->attributes());
         // dd($validator);
         if ($validator->fails()) return back()->with(['validation' => true, 'w_method' => $request['w_method']])->withErrors($validator)->withInput();
@@ -467,7 +468,7 @@ class TransactionController extends Controller
                 if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
             }
             $amount = round((float) $request['w_amount'] / AdminController::getBTC(), 8);
-            if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
+            if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'info' => $request['info'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
                 $msg = 'Withdrawal successful and is pending confirmation';
                 // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
                 $body = '<p>Your Bitcoin withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
