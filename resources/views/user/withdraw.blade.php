@@ -278,11 +278,17 @@
                                         <input type="hidden" name="acct_type" value="basic_ira">
                                         @endif
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="w_amount"><strong>{{ $sym->symbol }}</strong></label>
+                                            <label class="input-group-text" for="w_amount">
+                                                <select class="form-select @error('info') is-invalid @enderror" name="info" id="w_info">
+                                                    <option value="BTC">BTC</option>
+                                                    <option value="ETH">ETH</option>
+                                                    <option value="USDT"> USDT </option>
+                                                </select>
+                                            </label>
                                             <input type="number" id="w_amount" step="any" name="w_amount"
                                                 value="{{ old('w_amount') }}"
                                                 class="form-control @error('w_amount') is-invalid @enderror"
-                                                placeholder="Amount" onkeyup="calcEquivWithdraw(this)">
+                                                placeholder="Amount in USD ($)" onkeyup="calcEquivWithdraw(this)">
                                         </div>
                                         @error('w_amount') <strong class="text-danger"
                                                 role="alert">{{ $message }}</strong>
@@ -295,7 +301,7 @@
                                             <input type="text" id="btc_wallet" step="any" name="btc_wallet"
                                                 value="{{ old('btc_wallet') }}"
                                                 class="form-control @error('btc_wallet') is-invalid @enderror"
-                                                placeholder="Btc Wallet" onkeyup="calcEquiv(this)">
+                                                placeholder="Wallet Address" onkeyup="calcEquiv(this)">
                                         </div>
                                         @error('btc_wallet') <strong class="text-danger"
                                                 role="alert">{{ $message }}</strong>
@@ -518,12 +524,13 @@
         function startWithdrawalbtc() {
             var amount = document.getElementById('w_amount').value;
             var btc_wallet = document.getElementById('btc_wallet').value;
+            var wallet = document.getElementById('w_info').value;
             <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
             console.log(amount);
             $('#btcnote').html(`
-        <p>Please confirm your withdrawal to the BTC Address below</p>
+        <p>Please confirm your withdrawal to the ` + wallet + ` Address below</p>
         <li>Amount: `+ currencySymbol + amount + `</li>
-        <li>BTC Wallet:  ` + btc_wallet + `</li>
+        <li> ` + wallet + ` Wallet:  ` + btc_wallet + `</li>
                 `);
         }
     </script>

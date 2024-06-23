@@ -44,7 +44,11 @@
                @foreach($investments as $investment)
                    <tr>
                        <td>
-                        @if($investment->type == 'Cryptocurrencies')
+                       @if($investment->copyBot)
+                            <div class="col">
+                                <img src="{{ $investment->copyBot->image }}" alt="" width="50" class="rounded-circle">
+                            </div>
+                        @elseif($investment->type == 'Cryptocurrencies')
                             <div class="col">
                                 <img src="https://itrustinvestment.com/img/bots/170457095116.png" alt="" width="50" class="rounded-circle">
                             </div>

@@ -49,7 +49,7 @@
 
     <header id="page-topbar">
         <div class="navbar-header">
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
                 <!-- LOGO -->
                 <div class="navbar-brand-box">
                     <a href="{{ route('user.index') }}" class="logo logo-dark">

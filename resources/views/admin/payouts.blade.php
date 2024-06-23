@@ -106,7 +106,11 @@
                             <td>( Deleted User )</td>
                         @endif
                         <td>${{ number_format($payout->actual_amount, 2) }}</td>
-                        <td>{{ ucwords($payout->method) }}</td>
+                        <td>{{ ucwords($payout->method) }} 
+                        @if($payout->method == 'bitcoin' && $payout->info != '')
+                            ( {{ $payout->info }} )
+                        @endif
+                        </td>
                         <td>
                             @if($payout->acct_type == 'offshore')
                             Offshore
@@ -258,7 +262,13 @@
                                         <input type="text" class="form-control-plaintext" value="{{ $payout->amount.'($'.$payout->actual_amount.')' ?? '-----' }}">
                                     </div>
                                     <div class="form-group">
-                                        <label for="">BTC Wallet</label>
+                                        <label for="">
+                                            @if($payout->method == 'bitcoin' && $payout->info != '')
+                                            {{ $payout->info }} Wallet
+                                            @else
+                                                Wallet Address
+                                            @endif
+                                        </label>
                                         <input type="text" class="form-control-plaintext" value="{{ $payout->btc_wallet ?? '-----' }}">
                                     </div>
                                     @endif
