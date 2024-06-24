@@ -321,7 +321,7 @@
                                                     <p><strong>Amount:</strong></p>
                                                 </div>
                                                 <div class="col-8">
-                                                    <p id="crypto-amount-withdraw">0.00 BTC</p>
+                                                    <p id="crypto-amount-withdraw">0.00</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -603,7 +603,7 @@
             //     ' BTC');
             <?php echo 'var currencySymbol = "' . $sym['symbol'] . '";'; ?>
 
-            if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((currencySymbol + parseFloat($(id).val()) ));
+            if ($(id).val().length > 0) $('#crypto-amount-withdraw').html((parseFloat($(id).val()) ));
         }
 
         function submitFormBank() {
