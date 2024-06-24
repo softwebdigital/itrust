@@ -436,7 +436,7 @@
                                             <div class="col-5">
                                                 <div class="card p-3 mx-auto" style="min-height: 100px;">
                                                     <img src="" alt="" style="max-width: 200px" id="passport-preview">
-    {{--                                                <img src="{{ $user->passport ? asset($user->passport) : '' }}" alt="" style="max-width: 200px" id="passport-preview">--}}
+                                                    <img src="{{ $user->passport ? asset($user->passport) : '' }}" alt="" style="max-width: 200px" id="passport-preview">
                                                 </div>
                                             </div>
                                             <div class="col-7">
@@ -515,7 +515,7 @@
                                         <div class="row">
                                             <div class="col-5">
                                                 <div class="card p-3 mx-auto" style="min-height: 100px;">
-    {{--                                                <img src="{{ $user->state_id ? asset($user->state_id) : '' }}" alt="" style="max-width: 200px" id="state_id-preview">--}}
+                                                    <img src="{{ $user->state_id ? asset($user->state_id) : '' }}" alt="" style="max-width: 200px" id="state_id-preview">
                                                     <img src="" alt="" style="max-width: 200px" id="state_id-preview">
                                                 </div>
                                             </div>

@@ -479,7 +479,7 @@ class UserController extends Controller
     public function uploadDocument(Request $request): JsonResponse
     {
         $user = User::find(Auth::id());
-        $validator = Validator::make($request->all(), ['type' => 'required', 'file' => 'required|file|mimes:jpg,png,jpeg|max:1024']);
+        $validator = Validator::make($request->all(), ['type' => 'required', 'file' => 'required|file|mimes:jpg,png,jpeg|max:2048']);
         if ($validator->fails())
             return response()->json(['msg' => $validator->getMessageBag()], 422);
         if (!in_array($request['type'], ['passport', 'drivers_license', 'state_id']))
