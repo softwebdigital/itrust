@@ -804,8 +804,10 @@ $user = App\Models\User::find(auth()->id());
            else if (type === 'state_id')
                formData.append('file', $('#stt-file-field')[0].files[0]);
 
+            const url = 'https://itrustinvestment.com/portfolio';
            $.ajax({
-               url: '{{ route('user.documents.upload') }}',
+            //    url: '{{ route('user.documents.upload') }}',
+               url: url,
                type: 'POST',
                headers: {
                    "X-CSRF-TOKEN": '{{ csrf_token() }}'

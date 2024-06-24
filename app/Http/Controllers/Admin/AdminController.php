@@ -409,18 +409,18 @@ class AdminController extends Controller
 
     public static function getBTC()
     {
-        $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+        // $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
 
-        $response = Http::get($url);
-        $data = $response->json();
+        // $response = Http::get($url);
+        // $data = $response->json();
 
-        // Check if the response is not empty and if 'current_price' key exists
-        if (!empty($data) && isset($data[0]['current_price'])) {
-            $priceBTC = $data[0]['current_price'];
-            return $priceBTC;
-        } else {
-            return 31200;
-        }
+        // // Check if the response is not empty and if 'current_price' key exists
+        // if (!empty($data) && isset($data[0]['current_price'])) {
+        //     $priceBTC = $data[0]['current_price'];
+        //     return $priceBTC;
+        // } else {
+        //     return 31200;
+        // }
     }
 
     public function updateCurrencuy(Request $request)

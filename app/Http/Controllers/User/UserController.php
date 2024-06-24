@@ -82,12 +82,13 @@ class UserController extends Controller
             $data = null;
         }
 
-        $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
+        // $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
         
-        $res = Http::get($urlStock);
-        $stocks_data = $res->json();
+        // $res = Http::get($urlStock);
+        // $stocks_data = $res->json();
 
         // $stocks_data = self::stock();
+        $stocks_data = [];
 
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
         $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
@@ -133,7 +134,13 @@ class UserController extends Controller
         //         dd($assets, $new_assets);
         $total_assets = $investment->count();
 
-        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data', 'symbol', 'percentage']));
+        $ira_cash = 0.00;
+        $ira_trading = 0.00;
+
+        $offshore_cash = 0.00;
+        $offshore_trading = 0.00;
+
+        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data', 'symbol', 'percentage', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading']));
     }
 
     public function portfolio()
@@ -196,7 +203,7 @@ class UserController extends Controller
         $offshore_roi_1 = $user->offshore_roi()->latest('updated_at')->first();
         $last_offshore_roi = $offshore_roi_1 ? $offshore_roi_1->ROI : 0;
 
-        $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi) : 0;
+        $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi ? $last_offshore_roi : 1) : 0;
 
         $days = [];
         if ($all) {
@@ -447,7 +454,25 @@ class UserController extends Controller
 
         $symbol = Currency::where('id', $user->currency_id)->first();
 
-        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash'));
+        $basicIraTotalAmount = DB::table('investments')
+            ->where('user_id', '=', $user->id)
+            ->where('acct_type', '=', 'basic_ira')
+            ->where('status', '=', 'open')
+            ->sum('amount');
+        
+        $offshoreTotalAmount = DB::table('investments')
+            ->where('user_id', '=', $user->id)
+            ->where('acct_type', '=', 'offshore')
+            ->where('status', '=', 'open')
+            ->sum('amount');
+
+        $ira_cash = $ira - $basicIraTotalAmount - $ira_roi;
+        $ira_trading = $basicIraTotalAmount + $ira_roi;
+
+        $offshore_cash = $offshore - $offshoreTotalAmount - $offshore_roi;
+        $offshore_trading = $offshoreTotalAmount + $offshore_roi;
+
+        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
 
     protected static function formatAmount($amount): array
