@@ -433,53 +433,51 @@ class TransactionController extends Controller
         // dd($portfolioValue, $request['investment']);
         // dd($ira, $offshore);
 
+        if ($user->copyBots->count() == 0) {
+            if ($request['w_method'] == 'bank' && (float) $request['bank_amount'] > 0) {
+                if($request['acct_type'] == 'offshore'){
+                    $withdrawable = $offshore;
+                    if((float) $request['bank_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
+                }else{
+                    $withdrawable = $ira;
+                    if((float) $request['bank_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
+                }
+                if ($user->transactions()->create(['method' => 'bank', 'info' => $request['info'], 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount'], 'bank_name' => $request['bank_name'], 'acct_name' => $request['acct_name'], 'acct_no' => $request['acct_no'], 'acct_type' => $request['acct_type']])) {
+                    $msg = 'Withdrawal successful and is pending confirmation';
+                    // $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
+                    $body = '<p>Your Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' has been received
+                    and is in process. We will update the status of your transaction in less than 2/3 working days</p>';
+                    $mailBody = '<p>A Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                }
+                else
+                    return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
+            } elseif ($request['w_method'] == 'bitcoin' && $request['w_amount'] > 0) {
+                // if($request['w_amount'] > $withdrawable){
+                //     return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Insufficient Funds, try again'])->withInput();
+                // }
 
-        if ($request['w_method'] == 'bank' && (float) $request['bank_amount'] > 0) {
-            // if((float) $request['bank_amount'] > $withdrawable){
-            //     // dd($portfolioValue, (float) $request['bank_amount']);
-            //     return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Insufficient Funds, try again'])->withInput();
-            // }
-            if($request['acct_type'] == 'offshore'){
-                $withdrawable = $offshore;
-                if((float) $request['bank_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
-            }else{
-                $withdrawable = $ira;
-                if((float) $request['bank_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
-            }
-            if ($user->transactions()->create(['method' => 'bank', 'info' => $request['info'], 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount'], 'bank_name' => $request['bank_name'], 'acct_name' => $request['acct_name'], 'acct_no' => $request['acct_no'], 'acct_type' => $request['acct_type']])) {
-                $msg = 'Withdrawal successful and is pending confirmation';
-                // $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
-                $body = '<p>Your Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' has been received
-                and is in process. We will update the status of your transaction in less than 2/3 working days</p>';
-                $mailBody = '<p>A Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
-            }
-            else
-                return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
-        } elseif ($request['w_method'] == 'bitcoin' && $request['w_amount'] > 0) {
-            // if($request['w_amount'] > $withdrawable){
-            //     return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Insufficient Funds, try again'])->withInput();
-            // }
-
-             if($request['acct_type'] == 'offshore'){
-                $withdrawable = $offshore;
-                if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
-            }else{
-                $withdrawable = $ira;
-                if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
-            }
-            $amount = round((float) $request['w_amount'] / AdminController::getBTC(), 8);
-            if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'info' => $request['info'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
-                $msg = 'Withdrawal successful and is pending confirmation';
-                // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
-                $body = '<p>Your Bitcoin withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
-                and is in process. We will update the status of your transaction in  less than 24hrs</p>';
-                $mailBody = '<p>A BTC withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
-            }
-            else
-                return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
-        } else
-            return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'Invalid payment method selected'])->withInput();
-
+                if($request['acct_type'] == 'offshore'){
+                    $withdrawable = $offshore;
+                    if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
+                }else{
+                    $withdrawable = $ira;
+                    if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
+                }
+                $amount = round((float) $request['w_amount'] / AdminController::getBTC(), 8);
+                if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'info' => $request['info'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
+                    $msg = 'Withdrawal successful and is pending confirmation';
+                    // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
+                    $body = '<p>Your Bitcoin withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
+                    and is in process. We will update the status of your transaction in  less than 24hrs</p>';
+                    $mailBody = '<p>A BTC withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
+                }
+                else
+                    return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
+            } else
+                return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'Invalid payment method selected'])->withInput();
+        } else {
+            return back()->with('error', 'Insufficient Funds in your Available Cash, Trading Cash cannot be withdrawn and should request for trade bot to be deactivated by third party server.');
+        }
         $mail = [
             'name' => $user->name,
             'subject' => 'Withdrawal Request',

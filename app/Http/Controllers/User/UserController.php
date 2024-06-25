@@ -454,23 +454,29 @@ class UserController extends Controller
 
         $symbol = Currency::where('id', $user->currency_id)->first();
 
-        $basicIraTotalAmount = DB::table('investments')
-            ->where('user_id', '=', $user->id)
-            ->where('acct_type', '=', 'basic_ira')
-            ->where('status', '=', 'open')
-            ->sum('amount');
+        // $basicIraTotalAmount = DB::table('investments')
+        //     ->where('user_id', '=', $user->id)
+        //     ->where('acct_type', '=', 'basic_ira')
+        //     ->where('status', '=', 'open')
+        //     ->sum('amount');
         
-        $offshoreTotalAmount = DB::table('investments')
-            ->where('user_id', '=', $user->id)
-            ->where('acct_type', '=', 'offshore')
-            ->where('status', '=', 'open')
-            ->sum('amount');
+        // $offshoreTotalAmount = DB::table('investments')
+        //     ->where('user_id', '=', $user->id)
+        //     ->where('acct_type', '=', 'offshore')
+        //     ->where('status', '=', 'open')
+        //     ->sum('amount');
 
-        $ira_cash = $ira - $basicIraTotalAmount - $ira_roi;
-        $ira_trading = $basicIraTotalAmount + $ira_roi;
+        // $ira_cash = $ira - $basicIraTotalAmount - $ira_roi;
+        // $ira_trading = $basicIraTotalAmount + $ira_roi;
 
-        $offshore_cash = $offshore - $offshoreTotalAmount - $offshore_roi;
-        $offshore_trading = $offshoreTotalAmount + $offshore_roi;
+        // $offshore_cash = $offshore - $offshoreTotalAmount - $offshore_roi;
+        // $offshore_trading = $offshoreTotalAmount + $offshore_roi;
+
+        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+
+        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
 
         return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
