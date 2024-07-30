@@ -875,11 +875,8 @@
         formData.append('type', type)
         formData.append('file', $(image)[0].files[0])
 
-        const url = 'https://itrustinvestment.com/portfolio';
-
         $.ajax({
-            // url: '{{ route('user.documents.upload') }}',
-            url: url,
+            url: '{{ route('user.documents.upload') }}',
             type: 'POST',
             headers: { "X-CSRF-TOKEN": '{{ csrf_token() }}' },
             data: formData,

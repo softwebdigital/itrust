@@ -803,9 +803,9 @@ $user = App\Models\User::find(auth()->id());
                formData.append('file', $('#drv-file-field')[0].files[0]);
            else if (type === 'state_id')
                formData.append('file', $('#stt-file-field')[0].files[0]);
-            
+
            $.ajax({
-               url: '{{ route('user.documents.upload') }}',
+              url: '{{ route('user.documents.upload') }}',
                type: 'POST',
                headers: {
                    "X-CSRF-TOKEN": '{{ csrf_token() }}'
