@@ -149,6 +149,40 @@ class AdminController extends Controller
         return back()->with('error', 'An error occurred, try again.');
     }
 
+    public function approveProofAddress(User $user, $action): RedirectResponse
+    {
+        if (!in_array($action, ['approved', 'declined'])) return back()->with('error', 'Invalid action');
+        
+        if ($action == 'approved') {
+            $data = [
+                'name' => $user->name,
+                'subject' => 'Account Successfully Verified',
+                'body' => '<p>Your Proof of Address document has been verified successfully ,</p>
+                <p>You can start investing by making a deposit to your account.</p>
+                <br>
+                <p>Deposits can be made via <b>Cryptocurrency(bitcoin)</b> or direct Bank <b>Deposit(Wire Transfer)</b></p>
+                <br>
+                <br>
+                <p>For more enquires!</p>
+                <p>Write support@itrustinvestment.com</p>
+                '
+            ];
+        } else if($action == 'declined') {
+            $data = [
+                'name' => $user->name,
+                'subject' => 'Document '.$action,
+                'body' => 'Your poof of address has been <b>'.$action.'</b>.'
+            ];
+        }
+
+        if ($user->update(['state_id_approved' => $action == 'approved' ? '1' : '2', 'id_date_approved' => now()])) {
+                Notification::send($user, new VerifiedNotification($data));
+            $user->notify(new WebNotification($data));
+            return back()->with('success', 'User document ' . $action . ' successfully');
+        }
+        return back()->with('error', 'An error occurred, try again.');
+    }
+
     public function userAccountAction(User $user, $action): RedirectResponse
     {
         if (!in_array($action, ['approved', 'declined', 'suspended'])) return back()->with('error', 'Invalid action');
