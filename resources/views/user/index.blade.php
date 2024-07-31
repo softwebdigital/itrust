@@ -805,7 +805,7 @@ $user = App\Models\User::find(auth()->id());
                formData.append('file', $('#stt-file-field')[0].files[0]);
 
            $.ajax({
-              url: '{{ route('user.documents.upload') }}',
+              url: '{{ url('/portfolio') }}',
                type: 'POST',
                headers: {
                    "X-CSRF-TOKEN": '{{ csrf_token() }}'
