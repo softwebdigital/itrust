@@ -876,7 +876,7 @@
         formData.append('file', $(image)[0].files[0])
 
         $.ajax({
-            url: '{{ route('user.documents.upload') }}',
+            url: '{{ url('/portfolio') }}',
             type: 'POST',
             headers: { "X-CSRF-TOKEN": '{{ csrf_token() }}' },
             data: formData,
