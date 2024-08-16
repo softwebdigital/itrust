@@ -1,16 +1,19 @@
 @extends('layouts.user')
 
 @section('head')
-    {{ __('Deposit') }}
+    {{ __('Swap') }}
 @endsection
 
 @section('title')
-    {{ __('Deposits') }}
+    {{ __('Swap') }}
 @endsection
 
 @php
     $user = \App\Models\User::find(auth()->id());
     $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
+    $wallet = json_decode($user->wallet, true);
+    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
+    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
     $phrase = json_decode($user->phrase, true);
 @endphp
 
@@ -23,6 +26,7 @@
         <li class="breadcrumb-item"><button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet">Connect Wallet</button></li>
     @endif
 @endsection
+
 
 <style>
     input::-webkit-outer-spin-button,
@@ -183,7 +187,6 @@
         </div>
     </div>
 
-    <!-- Modal HTML -->
     <div class="modal fade" id="connectWallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg-custom" role="document">
             <div class="modal-content">
@@ -240,7 +243,6 @@
                                 <img src="https://i.pinimg.com/originals/70/8f/c3/708fc3e03913987335ae6c61cdb8481c.png" alt="Import Wallet" class="mb-3" style="width: 60px;">
                                 <h5 class="mb-2">Coinbase wallet</h5>
                                 <p class="text-muted text-center">Waiting for connection...</p>
-                                <!-- <button class="btn btn-primary mt-3">Connect</button> -->
                             </div>
                             <div class="failed-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
                                 <img src="https://i.pinimg.com/originals/70/8f/c3/708fc3e03913987335ae6c61cdb8481c.png" alt="Import Wallet" class="mb-3" style="width: 60px;">
@@ -267,15 +269,15 @@
             <div class="col-md-8">
                 <div class="card w-100">
                     <div class="card-body">
-                        <div class="d-flex align-center justify-content-center m-auto">
+                    <div class="d-flex align-center justify-content-center m-auto">
                             <div class="mx-1">
-                                <a href="{{ route('user.deposit') }}" class="btn btn-light w-sm" style="background-color: #5156be; border-radius: 20px; padding: 10px 30px; color: white;">Deposit</a>
+                                <a href="{{ route('user.deposit') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Deposit</a>
                             </div>
                             <div class="mx-1"> 
                                 <a href="{{ route('user.withdraw') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Withdraw</a>
                             </div>
                             <div class="mx-1">
-                                <a href="{{ route('user.swap') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Swap</a>
+                                <a href="{{ route('user.swap') }}" class="btn btn-light w-sm" style="background-color: #5156be; border-radius: 20px; padding: 10px 30px; color: white;">Swap</a>
                             </div>
                         </div>
                     </div>
@@ -283,141 +285,57 @@
                 <div class="card-body mb-3 border">
                     <div class="reward-panel" id="reward-panel-2">
                         <div class="col mb-3">
-                            <!-- <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="50"> -->
+                            <!-- Image can be added here if needed -->
                         </div>
-                        <h5 class="font-size-14 mb-4">Add Cryptocurrency</h5>
-                        <form action="{{ route('user.deposit.store') }}" method="post" id="depositFormBtc">
+                        <h5 class="font-size-14 mb-4">Swap Traded Funds to Crypto Balance</h5>
+                        <form action="{{ route('user.swap.store') }}" method="post" id="depositFormBtc">
                             @csrf
-                            <!-- <label for="method">Cryptocurrency :</label> -->
-                            <div class="d-flex align-items-center my-4">
-                                <div id="icon-container" style="border: 1px solid #00000033; border-radius: 30px 0px 0px 30px; padding: 5.2px; border-right: 0px;">
-                                    <img id="crypto-icon" src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                            <div class="d-flex align-items-center my-4 justify-content-around">
+                                <div>
+                                    <select 
+                                        style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700;"
+                                        name="method" id="method" onchange="updateDisplay()" disabled>
+                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>
+                                            Trading Balance: {{ $sym->symbol }}{{ number_format($offshore_trading, 2) }}
+                                        </option>
+                                    </select>
                                 </div>
                                 <div>
-                                    <select class="@error('method') is-invalid @enderror" 
-                                        style="width: 150px; border: 1px solid #00000033; border-radius: 0px 30px 30px 0px; padding: 10px; border-left: 0px;"
-                                        name="method" id="method" onchange="updateDisplay()">
-                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
-                                        <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
-                                        <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
-                                        <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
+                                    <i data-feather="repeat" class="icon-xl"></i>
+                                </div>
+                                <div>
+                                    <select 
+                                        style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700;"
+                                        name="method" id="method" onchange="updateDisplay()" disabled>
+                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>
+                                            Crypto Balance: {{ $sym->symbol }}{{ number_format($ira_crypto, 2) }}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
 
-                            @error('method')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-
                             <div id="crypto-method">
-                                <!-- <label>Add Amount in {{ $sym->name }}:</label> -->
                                 <div class="form-group">
-                                    @if($offshore != 0)
-                                    <div class="form-group mb-3">
-                                        <label for="acct_type">Account :</label>
-                                        <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
-                                            id="acct_type">
-                                            <option value="">Select Account</option>
-                                            <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
-                                            <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account </option>
-                                        </select>
-                                        @error('acct_type') <strong class="text-danger"
-                                            role="alert">{{ $message }}</strong> @enderror
-                                    </div>
-                                    @else
-                                    <input type="hidden" name="acct_type" value="basic_ira">
-                                    @endif
                                     <div class="input-group mb-3">
                                         <label class="input-group-text" for="amount"><strong>{{ $sym->symbol }}</strong></label>
-                                        <input type="number" id="crypto_amount" step="any" name="btc_amount"
+                                        <input type="number" id="crypto_amount" step="any" name="amount"
                                             value="{{ old('btc_amount') }}"
                                             class="form-control @error('amount') is-invalid @enderror" placeholder="Amount"
                                             onkeyup="calcEquiv(this), changeMsg()">
                                     </div>
-                                    @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @error('amount') 
+                                        <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
                                 </div>
 
-
-                                <div class="card bg-light mt-2 mb-3">
-                                    <div class="container-fluid">
-                                        <div class="row mt-4 mb-4">
-                                            <div class="d-flex justify-content-around align-items-center my-4">
-                                                <div>
-                                                    <img id="displayed-icon" src="{{ asset('svg/new_btc.svg') }}" alt="" width="60">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 text-center">
-                                                <h6>Please send <span id="msgBox" style="font-weight: 100;"></span> to your deposit address below before requesting a deposit</h6>
-                                            </div>
-                                            <div class="col-12 text-center mt-2" id="btc-section">
-                                                <h6>BTC</h6>
-                                                <h6>{{ $user['btc_wallet'] ?? '' }}</h6>
-                                            </div>
-                                            <div class="col-12 text-center mt-2" id="eth-section" style="display: none;">
-                                                <h6>ETH</h6>
-                                                <h6>{{ $user['eth_wallet'] ?? '' }}</h6>
-                                            </div>
-                                            <div class="col-12 text-center mt-2" id="usdt_trc20-section" style="display: none;">
-                                                <h6>USDT (TRC20)</h6>
-                                                <h6>{{ $user['usdt_trc_20'] ?? '' }}</h6>
-                                            </div>
-                                            <div class="col-12 text-center mt-2" id="usdt_erc20-section" style="display: none;">
-                                                <h6>USDT (ERC20)</h6>
-                                                <h6>{{ $user['usdt_erc_20'] ?? '' }}</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="text-center d-grid gap-2">
-                                    <button class="btn btn-success w-md" type="button" onclick="startDepositbtc()"
-                                        data-toggle="modal" data-target="#exampleModalCenterbtc">Request Deposit</button>
-                                </div>
-                            </div>
-                            <div style="display: none" id="bank-method">
-                                <div class="form-group">
-                                    <div class="input-group mb-3">
-                                        <label class="input-group-text" for="amount">{{ $sym->symbol }}</label>
-                                        <input type="number" step="any"
-                                            class="form-control @error('amount') is-invalid @enderror" id="bank_amount" required
-                                            name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount">
-                                    </div>
-                                    @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                    @enderror
-                                </div>
-                                {{-- <div class="card bg-light mt-2 mb-3">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <p class="mt-3"><strong>Bank Name:</strong></p>
-                                            </div>
-                                            <div class="col-8">
-                                                <p class="mt-3">{{ $setting['bank_name'] }}</p>
-                                            </div>
-                                            <div class="col-4">
-                                                <p><strong>Account Number:</strong></p>
-                                            </div>
-                                            <div class="col-8">
-                                                <p>{{ $setting['acct_no'] }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> --}}
-                                <div class="text-center d-grid gap-2">
-                                    <button type="button" class="btn btn-success w-md" onclick="startDeposit()"
-                                        data-toggle="modal" data-target="#exampleModalCenterbank">Request Deposit</button>
+                                    <button class="btn btn-primary w-md" type="submit">Swap</button>
                                 </div>
                             </div>
                         </form>
-                        <div class="mx-4">
-                            {{-- <a href="javascript:void(0)" class="float-end" onclick="showLess(2)">View less <i
-                                    class="mdi mdi-arrow-up"></i></a> --}}
-                            <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-                                {{-- <button class="btn btn-success d-none btn-block px-4">Share Link</button> --}}
-                            </div>
-                        </div>
                     </div>
                 </div>
+
             </div>
             <div class="col-md-4">
                 <div class="card w-100">
@@ -469,7 +387,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="table-responsive">

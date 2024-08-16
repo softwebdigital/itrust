@@ -5,7 +5,7 @@
 
     <meta charset="utf-8" />
     <title>@yield('head') | {{ env('APP_NAME') }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -318,7 +318,7 @@
                             }
                         </style>
 
-                        <li class="cash-mobile-menu nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
+                        {{-- <li class="cash-mobile-menu nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-history" role="button">
                                 <i data-feather="dollar-sign"></i><span data-key="t-history">Cash</span> <div class="arrow-down"></div>
                             </a>
@@ -333,6 +333,12 @@
                         <li class="cash-nav-item nav-item dropdown {{ Route::currentRouteNamed('user.cash') ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.cash') }}" id="topnav-cash" role="button">
                                 <i data-feather="dollar-sign"></i><span data-key="t-cash">Cash</span>
+                            </a>
+                        </li> --}}
+
+                        <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
+                            <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.deposit') }}" id="topnav-documents" role="button">
+                                <i data-feather="file-text"></i><span data-key="t-documents">Cash</span>
                             </a>
                         </li>
 

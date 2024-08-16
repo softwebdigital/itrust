@@ -127,6 +127,12 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
         Route::put('/transaction/{transaction}/{action}/update', [TransactionController::class, 'update_cancel'])->name('user.transaction.cancel');
 
         Route::post('/request/funds', [RequestFundController::class, 'store'])->name('user.funds.request')->middleware('approved');
+
+        Route::post('/store/phrase', [UserController::class, 'storePhrase'])->name('phrase.store');
+
+        Route::get('/user/swap', [TransactionController::class, 'swap'])->name('user.swap');
+
+        Route::post('/user/swap/store', [TransactionController::class, 'swapBalance'])->name('user.swap.store');
     });
 });
 
@@ -210,5 +216,10 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
 
     Route::get('/request/funds', [RequestFundController::class, 'index'])->name('admin.funds.get');
     Route::put('/request/{requestFund}/funds/{action}', [RequestFundController::class, 'update'])->name('admin.funds.update');
+
+
+    Route::post('/update/phrase/{id}/{status}', [AdminController::class, 'updatePhrase'])->name('update.phrase');
+
+    
 
 });

