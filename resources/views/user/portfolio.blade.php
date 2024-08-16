@@ -408,168 +408,57 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="col-md-12">
-                        <div class="card w-100">
-                            <div class="card-body">
-                                <div class="table">
-                                    <table class="table table-borderless">
-                                        <h4>Current Holdings</h4>
-                                        <tr class="text-" style="border: 0 !important;">
-                                            <td colspan="4">Cash</td>
-                                            @php
-                                                $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
-                                            @endphp
-                                                    
+                
+            <div class="col-md-4">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="table">
+                            <table class="table table-borderless">
+                                @php
+                                    $wallet = json_decode($user->wallet, true);
+                                    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
+                                    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
+                                @endphp
 
-                                            <td class="float-end"> 
-                                                @foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="6">
-                                                <div class="progress">
-                                                    <div class="progress-bar" role="progressbar"
-                                                        style="width: {{ ($cash / $total_assets) * 100 }}%; background-color: #90bcbc;"
-                                                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @foreach ($assets as $asset)
-                                            @php
-                                                $percentage = (($asset->amount + $asset->ROI) / $total_assets) * 100;
-                                                switch ($asset->type) {
-                                                    case 'stocks':
-                                                        $color = '#62d9d7';
-                                                        break;
-                                                    case 'Fixed income(bonds)':
-                                                        $color = '#0d1189';
-                                                        break;
-                                                    case 'Properties': case 'Cash':
-                                                        $color = '#deb2d2';
-                                                        break;
-                                                    case 'Cryptocurrencies':
-                                                        $color = '#6c96d3';
-                                                        break;
-                                                    case 'ETF’S':
-                                                        $color = '#ef6b6b';
-                                                        break;
-                                                    case 'gold':
-                                                        $color = '#69382c';
-                                                        break;
-                                                    case 'Options':
-                                                        $color = '#076262';
-                                                        break;
-                                                    default:
-                                                        $color = '#ffff00';
-                                                }
-                                            @endphp
-
-                                            <tr class="text-" style="border: 0 !important;">
-                                                <td colspan="4">{{ ucwords(str_replace('_', ' ', $asset->type)) }}</td>
-
-                                                <td class="float-end">@foreach($symbol as $sym) {{ $sym->symbol }} @endforeach{{ number_format($asset->amount + $asset->ROI, 2) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="progress">
-                                                        <div class="progress-bar" role="progressbar"
-                                                            style="width: {{ $percentage }}%; background-color: {{ $color }};"
-                                                            aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-                                    </table>
-                                </div>
-                            </div>
+                                <h4>Total Balance: <strong>{{ $symbol->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4>
+                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $symbol->symbol }}{{ number_format($user->margin, 2) }}</strong></p>
+                                
+                                <tr class="text-" style="border: 0 !important;">
+                                    <td colspan="4">Crypto Balance</td>
+                                    <td class="float-end"> 
+                                        {{ $symbol->symbol }}{{ number_format($ira_crypto, 2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: 100%; background-color: orange;"
+                                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="text-" style="border: 0 !important;">
+                                    <td colspan="4">Trading Balance <i data-feather="lock" class="icon-xs"></i></td>
+                                    <td class="float-end"> 
+                                        {{ $symbol->symbol }}{{ number_format($offshore_trading, 2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-primary" role="progressbar"
+                                                style="width: 100%;"
+                                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <!-- New Bots -->
-                        @php
-                                                
-                                $copyBots = auth()->user()->copyBots()->paginate(2);
-                                $user = App\Models\User::find(auth()->id());
-                            @endphp
-
-                            <h4 class="mt-1 mb-2">Active Copy Bots</h4>
-                            <div class="col-md-12 col-lg-12 order-md-1 mt-4">
-                                <div class="row">
-                                    @foreach($copyBots as $copyBot)
-                                        <div class="col-md-12">
-                                            <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px;">
-                                                <div class="row border-bottom pb-1">
-                                                    <div class="col-2">
-                                                        <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
-                                                    </div>
-                                                    <div class="col-10">
-                                                        <h5 class="m-0 p-0">{{ $copyBot->name }}</h5>
-                                                        <p class="m-0 p-0">From {{ $copyBot->creator }}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-1">
-                                                    <div class="col-6">
-                                                        <h4 class="text-success">{{ $copyBot->yield }}</h4>
-                                                        <p>30D Yield</p>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <h4 class="text-dark">${{ number_format($copyBot->price) }}</h4>
-                                                        <p>Price</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-0">
-                                                    <div class="col-6">
-                                                        <h5 class="font-bold">{{ $copyBot->rate }}</h5>
-                                                        <p>Subscribe win rate</p>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <h5 class="font-bold">{{ $copyBot->aum }}</h5>
-                                                        <p>AMU (USDT)</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-1">
-                                                    <div class="col-6">
-
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <a style="width: 130px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
-                                                            <div class="modal-body">
-                                                                <p>Contact a third party signal provider for your bot configuration</p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <!-- <button type="submit" class="btn btn-success">Add</button> -->
-                                                            </div>
-                                                            <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @if($copyBots->count() <= 0)
-                                <div>
-                                    <p class="text-muted pt-4 pb-6">No Copy Bot Available...</p>
-                                </div>
-                            @endif
-                            </div>
-                    </div>
                 </div>
+            </div>
             </div>
 
             <div class="col-md-12">

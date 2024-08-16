@@ -8,15 +8,21 @@
     {{ __('Withdrawal') }}
 @endsection
 
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Transactions</li>
-@endsection
-
 @php
     $user = \App\Models\User::find(auth()->id());
     $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
+    $phrase = json_decode($user->phrase, true);
 @endphp
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Transactions</li>
+    @if($phrase && $phrase['status'] == 1)
+        <li class="breadcrumb-item"><button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button></li>
+    @else
+        <li class="breadcrumb-item"><button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet">Connect Wallet</button></li>
+    @endif
+@endsection
 
 @section('content')
     <div class="modal fade" id="exampleModalCenterbank" tabindex="-1" role="dialog"
@@ -71,278 +77,159 @@
     </div>
     <div class="card-body">
 
-        <div class="col-md-8">
-            <div class="card w-100">
-                <div class="card-body">
-                    <div class="table">
-                        <table class="table table-borderless">
-                            
-                            <tr class="text-" style="border: 0 !important;">
-                                <td colspan="4"><h4>Available Cash Balance:</h4></td>
-                                @php
-                                    $symbol = \App\Models\Currency::where('id', $user->currency_id)->get();
-                                @endphp
-                                        
 
-                                <td class="float-end"> 
-                                    <h3 class="text-success text-bold">@foreach($symbol as $sym) {{ $sym->symbol }} @endforeach {{ number_format($cash, 2) }}</h3>
-                                </td>
-                            </tr>
-
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-8 order-md-1">
-            <div class="card-body mb-3 border">
-                <div class="row align-items-center reward" id="reward-1">
-                    <div class="col">
-                        <img src="{{ asset('svg/bank.png') }}" alt="" width="50">
-                    </div>
-                    <div class="col-10 align-self-center d-flex justify-content-between">
-                        <div class="mt-4 mt-sm-0">
-                            <p class="mb-1">Bank Withdrawal</p>
-                            {{-- <h6>$250K Crypto Bonus.</h6> --}}
-                        </div>
-                        <div class="align-self-auto my-auto"><a href="javascript:void(0)" class="btn btn-primary" onclick="showReward(1)">Withdraw
-                                Now <i class="mdi mdi-arrow-down"></i></a></div>
-                    </div>
-                </div>
-                <div class="d-none reward-panel" id="reward-panel-1">
-                    <div class="row align-items-center reward" id="">
-                        <div class="col-2">
-                            <img src="{{ asset('svg/bank.png') }}" alt="" width="50">
-                        </div>
-                        <div class="col-12">
-                            <div class="mt-4 mt-sm-0">
-                                <p class="mb-1 mt-2">Bank Withdrawal</p>
-                                {{-- <h6>$250K Crypto Bonus.</h6> --}}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="d-flex align-center justify-content-center m-auto">
+                            <div class="mx-1">
+                                <a href="{{ route('user.deposit') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Deposit</a>
                             </div>
-                            {{-- <div class="align-self-auto my-auto"><a href="javascript:void(0)" onclick="showReward(1)">Withdraw Now <i class="mdi mdi-arrow-down"></i></a></div> --}}
-                            <form action="{{ route('user.withdraw.store') }}" method="post" id="withdrawFormBank">
-                                @csrf
-                                <input type="hidden" value="bank" name="w_method">
-                                <div id="bank-method-withdraw">
-                                    <div class="form-group">
-                                        @if ($offshore != 0)
-                                            <div class="form-group mb-3">
-                                                <label for="acct_type">Account :</label>
-                                                <select class="form-select @error('acct_type') is-invalid @enderror"
-                                                    name="acct_type" id="acct_type">
-                                                    <option value="">Select Account</option>
-                                                    <option value="basic_ira">Basic IRA </option>
-                                                    <option value="offshore"> Offshore Account </option>
-                                                </select>
-                                                @error('acct_type') <strong class="text-danger"
-                                                    role="alert">{{ $message }}</strong> @enderror
-                                            </div>
-                                        @else
-                                            <input type="hidden" name="acct_type" value="basic_ira">
-                                        @endif
-                                        <div class="input-group mb-3">
-                                            <label class="input-group-text" for="bank_amount">{{ $sym->symbol }}</label>
-                                            <input type="bank_amount" step="any"
-                                                class="form-control @error('bank_amount') is-invalid @enderror"
-                                                name="bank_amount" value="{{ old('bank_amount') }}" id="bank_amount"
-                                                placeholder="Amount">
-                                        </div>
-                                        @error('bank_amount') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group mb-3">
-                                            {{-- <label class="input-group-text" for="bank_name">$</label> --}}
-                                            <input type="text" step="any"
-                                                class="form-control @error('bank_name') is-invalid @enderror"
-                                                name="bank_name" value="{{ old('bank_name') }}" id="bank_name"
-                                                placeholder="Bank Name">
-                                        </div>
-                                        @error('bank_name') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group mb-3">
-                                            {{-- <label class="input-group-text" for="acct_name">$</label> --}}
-                                            <input type="text" step="any"
-                                                class="form-control @error('acct_name') is-invalid @enderror"
-                                                name="acct_name" value="{{ old('acct_name') }}" id="acct_name"
-                                                placeholder="Account Name">
-                                        </div>
-                                        @error('acct_name') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group mb-3">
-                                            {{-- <label class="input-group-text" for="acct_no">$</label> --}}
-                                            <input type="number" step="any"
-                                                class="form-control @error('acct_no') is-invalid @enderror" name="acct_no"
-                                                value="{{ old('acct_no') }}" id="acct_no" placeholder="Account Number">
-                                        </div>
-                                        @error('acct_no') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group mb-3">
-                                            {{-- <label class="input-group-text" for="acct_no">$</label> --}}
-                                            {{-- <input type="number" step="any"
-                                                name="acct_no" id="acct_no" placeholder="Account Number"> --}}
-                                            <textarea name="info"
-                                                class="form-control @error('acct_no') is-invalid @enderror" id="info"
-                                                cols="30" rows="4"
-                                                placeholder="Additional Info">{{ old('info') }}</textarea>
-                                        </div>
-                                        @error('acct_no') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
-                                    {{-- <div class="card bg-light mt-2 mb-3">
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <p class="mt-3"><strong>Bank Name:</strong></p>
-                                                </div>
-                                                <div class="col-8">
-                                                    <p class="mt-3">Test Bank</p>
-                                                </div>
-                                                <div class="col-4">
-                                                    <p><strong>Account Number:</strong></p>
-                                                </div>
-                                                <div class="col-8">
-                                                    <p>3367252168</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-                                    <div class="text-center d-grid gap-2">
-                                        <button type="button" class="btn btn-success w-md" onclick="startWithdrawal()"
-                                            data-toggle="modal" data-target="#exampleModalCenterbank">Request
-                                            Withdraw</button>
-                                    </div>
+                            <div class="mx-1"> 
+                                <a href="{{ route('user.withdraw') }}" class="btn btn-light w-sm" style="background-color: #5156be; border-radius: 20px; padding: 10px 30px; color: white;">Withdraw</a>
+                            </div>
+                            <div class="mx-1">
+                                <a href="{{ route('user.swap') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Swap</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body mb-3 border">
+                    <div class="reward-panel" id="reward-panel-2">
+                        <div class="col mb-3">
+                            <!-- <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="50"> -->
+                        </div>
+                        <h5 class="font-size-14 mb-4">Add Cryptocurrency</h5>
+                        
+                        <form action="{{ route('user.withdraw.store') }}" method="post" id="withdrawFormBtc">
+                            @csrf
+                            <input type="hidden" value="bitcoin" name="w_method">
+                            <div class="d-flex align-items-center my-4">
+                                <div id="icon-container" style="border: 1px solid #00000033; border-radius: 30px 0px 0px 30px; padding: 5.2px; border-right: 0px;">
+                                    <img id="crypto-icon" src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="card-body mb-3 border">
-                <div class="row align-items-center reward" id="reward-2">
-                    <div class="col">
-                        <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="50">
-                    </div>
-                    <div class="col-10 align-self-center d-flex justify-content-between">
-                        <div class="mt-4 mt-sm-0">
-                            <p class="mb-1">Cryptocurrency</p>
-                            {{-- <h6>Get a free stock. Limitations apply</h6> --}}
-                        </div>
-                        <div class="align-self-auto my-auto"><a href="javascript:void(0)" class="btn btn-primary" onclick="showReward(2)">Withdraw
-                                Now <i class="mdi mdi-arrow-down"></i></a></div>
-                    </div>
-                </div>
-                <div class="d-none reward-panel" id="reward-panel-2">
-                    <div class="row align-items-center reward">
-                        <div class="col-2">
-                            <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="50">
-                        </div>
-                        <div class="col-12">
-                            <div class="mt-4 mt-sm-0">
-                                <p class="mb-1 mt-2">Cryptocurrency</p>
-                                {{-- <h6>Get a free stock. Limitations apply</h6> --}}
+                                <div>
+                                    <select class="@error('method') is-invalid @enderror" 
+                                        style="width: 150px; border: 1px solid #00000033; border-radius: 0px 30px 30px 0px; padding: 10px; border-left: 0px;"
+                                        name="info" id="w_info" onchange="updateDisplay()">
+                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
+                                        <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
+                                        <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
+                                        <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
+                                    </select>
+                                </div>
                             </div>
-                            {{-- <div class="align-self-auto my-auto"><a href="javascript:void(0)" onclick="showReward(2)">Withdraw Now <i class="mdi mdi-arrow-down"></i></a></div> --}}
-                            <form action="{{ route('user.withdraw.store') }}" method="post" id="withdrawFormBtc">
-                                @csrf
-                                <input type="hidden" value="bitcoin" name="w_method">
-                                <div id="crypto-method-withdraw">
-                                    {{-- <p class="mb-1">Cryptocurrency</p> --}}
-                                    <label>Add Amount in {{ $sym->name }}:</label>
-                                    <div class="form-group">
-                                        @if($offshore != 0)
-                                        <div class="form-group mb-3">
-                                            <label for="acct_type">Account :</label>
-                                            <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
-                                                id="acct_type">
-                                                <option value="">Select Account</option>
-                                                <option value="basic_ira">Basic IRA </option>
-                                                <option value="offshore"> Offshore Account </option>
-                                            </select>
-                                            @error('acct_type') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong> @enderror
-                                        </div>
-                                        @else
+
+                            @error('method')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+
+                            <div id="crypto-method">
+                                <div class="form-group">
+                                    @if($offshore != 0)
+                                    <div class="form-group mb-3">
+                                        <label for="acct_type">Account :</label>
+                                        <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
+                                            id="acct_type">
+                                            <option value="">Select Account</option>
+                                            <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
+                                            <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account </option>
+                                        </select>
+                                        @error('acct_type') 
+                                            <strong class="text-danger" role="alert">
+                                                {{ $message }}
+                                            </strong> 
+                                        @enderror
+                                    </div>
+                                    @else
                                         <input type="hidden" name="acct_type" value="basic_ira">
-                                        @endif
+                                    @endif
                                         <div class="input-group mb-3">
-                                            <label class="input-group-text" for="w_amount">
-                                                <select class="form-select @error('info') is-invalid @enderror" name="info" id="w_info">
-                                                    <option value="BTC">BTC</option>
-                                                    <option value="ETH">ETH</option>
-                                                    <option value="USDT"> USDT </option>
-                                                </select>
-                                            </label>
+                                            <label class="input-group-text" for="amount"><strong>{{ $sym->symbol }}</strong></label>
                                             <input type="number" id="w_amount" step="any" name="w_amount"
                                                 value="{{ old('w_amount') }}"
-                                                class="form-control @error('w_amount') is-invalid @enderror"
-                                                placeholder="Amount in USD ($)" onkeyup="calcEquivWithdraw(this)">
+                                                class="form-control @error('w_amount') is-invalid @enderror" placeholder="Amount"
+                                                onkeyup="calcEquivWithdraw(this)">
                                         </div>
-                                        @error('w_amount') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
-
+                                    @error('w_amount') 
+                                        <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                    @enderror
                                     <div class="form-group">
                                         <div class="input-group mb-3">
-                                            {{-- <label class="input-group-text" for="btc_wallet"><strong>{{ $sym->symbol }}</strong></label> --}}
                                             <input type="text" id="btc_wallet" step="any" name="btc_wallet"
                                                 value="{{ old('btc_wallet') }}"
                                                 class="form-control @error('btc_wallet') is-invalid @enderror"
                                                 placeholder="Wallet Address" onkeyup="calcEquiv(this)">
                                         </div>
-                                        @error('btc_wallet') <strong class="text-danger"
-                                                role="alert">{{ $message }}</strong>
+                                        @error('btc_wallet') 
+                                            <strong class="text-danger" role="alert">
+                                                {{ $message }}
+                                            </strong>
                                         @enderror
                                     </div>
-
-                                    <div class="card bg-light mt-2 mb-3">
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    {{-- <p class="mt-3"><strong>Wallet Address:</strong></p> --}}
-                                                </div>
-                                                <div class="col-8">
-                                                    {{-- <p class="mt-3">{{ Auth()->user()->btc_wallet ?? '67hds67e6787wedgie38e87dcy' }}</p> --}}
-                                                </div>
-                                                <div class="col-4">
-                                                    <p><strong>Amount:</strong></p>
-                                                </div>
-                                                <div class="col-8">
-                                                    <p id="crypto-amount-withdraw">0.00</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="text-center d-grid gap-2">
-                                        <button type="button" class="btn btn-success btn-block"
-                                            onclick="startWithdrawalbtc()" data-toggle="modal"
-                                            data-target="#exampleModalCenterbtc">Request Withdraw
-                                        </button>
-                                    </div>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
 
+                                <div class="text-center d-grid gap-2">
+                                    <button class="btn btn-success w-md" type="button" onclick="startWithdrawalbtc()"
+                                        data-toggle="modal" data-target="#exampleModalCenterbtc">Request Withdraw</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="table">
+                            <table class="table table-borderless">
+                                @php
+                                    $wallet = json_decode($user->wallet, true);
+                                    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
+                                    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
+                                @endphp
 
+                                <h4>Total Balance: <strong>{{ $sym->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4>
+                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $sym->symbol }}{{ number_format($user->margin, 2) }}</strong></p>
+                                
+                                <tr class="text-" style="border: 0 !important;">
+                                    <td colspan="4">Crypto Balance</td>
+                                    <td class="float-end"> 
+                                        {{ $sym->symbol }}{{ number_format($ira_crypto, 2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: 100%; background-color: orange;"
+                                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="text-" style="border: 0 !important;">
+                                    <td colspan="4">Trading Balance <i data-feather="lock" class="icon-xs"></i></td>
+                                    <td class="float-end"> 
+                                        {{ $sym->symbol }}{{ number_format($offshore_trading, 2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="progress">
+                                            <div class="progress-bar bg-primary" role="progressbar"
+                                                style="width: 100%;"
+                                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
 
         <!-- Modal -->
 
@@ -494,6 +381,43 @@
 
 @section('script')
     <script>
+        $(document).ready(function() {
+            $('#w_info').on('change', function() {
+                var method = $(this).val();
+                var icon = $('#crypto-icon');
+                var displayedIcon = $('#displayed-icon');
+
+                var btcSection = $('#btc-section');
+                var ethSection = $('#eth-section');
+                var usdtTrc20Section = $('#usdt_trc20-section');
+                var usdtErc20Section = $('#usdt_erc20-section');
+
+                // Reset all sections
+                btcSection.hide();
+                ethSection.hide();
+                usdtTrc20Section.hide();
+                usdtErc20Section.hide();
+
+                // Update the icon and show the relevant section
+                if (method === 'btc') {
+                    icon.attr('src', "{{ asset('svg/new_btc.svg') }}");
+                    displayedIcon.attr('src', "{{ asset('svg/new_btc.svg') }}");
+                    btcSection.show();
+                } else if (method === 'eth') {
+                    icon.attr('src', "https://cdn-icons-png.flaticon.com/512/6001/6001368.png");
+                    displayedIcon.attr('src', "https://cdn-icons-png.flaticon.com/512/6001/6001368.png");
+                    ethSection.show();
+                } else if (method === 'usdt_trc20' || method === 'usdt_erc20') {
+                    icon.attr('src', "https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png");
+                    displayedIcon.attr('src', "https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png");
+                    if (method === 'usdt_trc20') {
+                        usdtTrc20Section.show();
+                    } else {
+                        usdtErc20Section.show();
+                    }
+                }
+            });
+        });
         function showReward(i) {
             $('.reward').removeClass('d-none')
             $('.reward-panel').addClass('d-none')

