@@ -31,7 +31,7 @@
     }
 
     /* Custom Styles */
-    .modal-content {
+    #connectWallet .modal-content {
         border-radius: 15px;
         overflow: hidden;
     }
@@ -40,49 +40,49 @@
         max-width: 800px;
     }
 
-    .modal-content .card {
+    #connectWallet .modal-content .card {
         border: none;
     }
 
-    .modal-content .list-group-item {
+    #connectWallet .modal-content .list-group-item {
         border: none;
         border-left: 3px solid transparent;
         font-weight: 500;
         font-size: 10px;
     }
 
-    .modal-content .list-group-item.active {
+    #connectWallet .modal-content .list-group-item.active {
         background-color: #f0f4ff;
         color: #5156be;
         border-left-color: #5156be;
         font-size: 10px;
     }
 
-    .modal-content .list-group-item:hover {
+    #connectWallet .modal-content .list-group-item:hover {
         background-color: #f0f4ff;
         color: #5156be;
         cursor: pointer;
     }
 
-    .modal-content h4 {
+    #connectWallet .modal-content h4 {
         font-weight: bold;
         font-size: 12px;
     }
 
-    .modal-content h5 {
+    #connectWallet .modal-content h5 {
         font-weight: bold;
         color: #333;
         font-size: 18px;
     }
 
-    .modal-content p {
+    #connectWallet .modal-content p {
         font-size: 8px;
         line-height: 1.0;
         margin: 0px 20px;
         color: #74788d8c;
     }
 
-    .modal-content .btn-primary {
+    #connectWallet .modal-content .btn-primary {
         background-color: #5156be;
         border: none;
         padding: 5px 20px;
@@ -90,11 +90,11 @@
         border-radius: 30px;
     }
 
-    .modal-content .btn-primary:hover {
+    #connectWallet .modal-content .btn-primary:hover {
         background-color: #1558c0;
     }
 
-    .modal-content img {
+    #connectWallet .modal-content img {
         border-radius: 10px;
     }
 
