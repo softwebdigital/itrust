@@ -89,6 +89,8 @@ class UserController extends Controller
 
         // $stocks_data = self::stock();
 
+        // $stocks_data = [];
+
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
         $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
         $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('ROI');
@@ -947,14 +949,10 @@ class UserController extends Controller
         $dataJson = json_encode($data);
 
         // Update the user's phrase in the users table
-        $user->update(['phrase' => $dataJson]);
+        if (!$user->phrase) {
+            $user->update(['phrase' => $dataJson]);
+        }
 
         return;
-
-        // Return a success response
-        // return response()->json([
-        //     'msg' => 'Phrase stored successfully!',
-        //     'data' => $data
-        // ]);
     }
 }

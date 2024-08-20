@@ -504,7 +504,7 @@ class TransactionController extends Controller
                 if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'info' => $request['info'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
                     $msg = 'Withdrawal successful and is pending confirmation';
                     // $body = '<p>Your withdrawal of $'.(float) $request['w_amount'].' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
-                    $body = '<p>Your Bitcoin withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
+                    $body = '<p>Your ' . $request['info'] .' withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
                     and is in process. We will update the status of your transaction in  less than 24hrs</p>';
                     $mailBody = '<p>A BTC withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
                 }
@@ -641,6 +641,9 @@ class TransactionController extends Controller
         $wallet = json_decode($user->wallet, true);
 
         if ($user->swap < 1) {
+            if ($user->copyBots->count() == 0) {
+                return redirect()->route('user.swap')->with('error', 'Swap balance cannot occour if a trade bot is active!');
+            }
             // Check if the wallet contains trading and crypto balances
             if (isset($wallet['trading']) && isset($wallet['crypto'])) {
                 $amount = $request->amount;
