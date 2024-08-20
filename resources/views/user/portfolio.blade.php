@@ -458,6 +458,90 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-12">
+                    <!-- New Bots -->
+                    @php
+                                            
+                            $copyBots = auth()->user()->copyBots()->paginate(2);
+                            $user = App\Models\User::find(auth()->id());
+                        @endphp
+
+                        <h4 class="mt-1 mb-2">Active Copy Bots</h4>
+                        <div class="col-md-12 col-lg-12 order-md-1 mt-4">
+                            <div class="row">
+                                @foreach($copyBots as $copyBot)
+                                    <div class="col-md-12">
+                                        <div class="card-body mb-3" style="box-shadow: 0px 5px 15px rgba(0,0,0,0.1); border-radius: 20px;">
+                                            <div class="row border-bottom pb-1">
+                                                <div class="col-2">
+                                                    <img style="border-radius: 999px; width: 50px; height: 50px;" class="bg-dark" src="{{ $copyBot->image }}" alt="" width="75">
+                                                </div>
+                                                <div class="col-10">
+                                                    <h5 class="m-0 p-0">{{ $copyBot->name }}</h5>
+                                                    <p class="m-0 p-0">From {{ $copyBot->creator }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col-6">
+                                                    <h4 class="text-success">{{ $copyBot->yield }}</h4>
+                                                    <p>30D Yield</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h4 class="text-dark">${{ number_format($copyBot->price) }}</h4>
+                                                    <p>Price</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-0">
+                                                <div class="col-6">
+                                                    <h5 class="font-bold">{{ $copyBot->rate }}</h5>
+                                                    <p>Subscribe win rate</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h5 class="font-bold">{{ $copyBot->aum }}</h5>
+                                                    <p>AMU (USDT)</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col-6">
+
+                                                </div>
+                                                <div class="col-6">
+                                                    <a style="width: 130px; border-radius: 20px;" class="btn btn-md btn-success mx-1" href="javascript:void(0)">Active</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal fade" id="staticBackdrop-add-{{ $copyBot->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Add Bot</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form action="{{ route('user.bot.assign', $copyBot->id) }}" method="post">@csrf @method('PUT')
+                                                        <div class="modal-body">
+                                                            <p>Contact a third party signal provider for your bot configuration</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                            <!-- <button type="submit" class="btn btn-success">Add</button> -->
+                                                        </div>
+                                                        <input type="hidden" name="copy_bot" value="{{ $copyBot->id }}">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @if($copyBots->count() <= 0)
+                            <div>
+                                <p class="text-muted pt-4 pb-6">No Copy Bot Available...</p>
+                            </div>
+                        @endif
+                        </div>
+                </div>
             </div>
             </div>
 

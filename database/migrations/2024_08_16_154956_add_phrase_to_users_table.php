@@ -14,8 +14,8 @@ class AddPhraseToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->longText('phrase');
-            $table->longText('wallet');
+            $table->longText('phrase')->nullable();
+            $table->longText('wallet')->nullable();
             $table->decimal('swap', 15, 2)->default(0);
             $table->decimal('margin', 15, 2)->default(5000);
         });

