@@ -641,7 +641,7 @@ class TransactionController extends Controller
         $wallet = json_decode($user->wallet, true);
 
         if ($user->swap < 1) {
-            if ($user->copyBots->count() == 0) {
+            if ($user->copyBots->count() >= 1) {
                 return redirect()->route('user.swap')->with('error', 'Swap balance cannot occour if a trade bot is active!');
             }
             // Check if the wallet contains trading and crypto balances
