@@ -275,23 +275,23 @@
 
 
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <div class="d-flex align-center justify-content-center m-auto">
-                            <div class="mx-1">
-                                <a href="{{ route('user.deposit') }}" class="btn btn-light w-sm" style="background-color: #5156be; border-radius: 20px; padding: 10px 30px; color: white;">Deposit</a>
-                            </div>
-                            <div class="mx-1"> 
-                                <a href="{{ route('user.withdraw') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Withdraw</a>
-                            </div>
-                            <div class="mx-1">
-                                <a href="{{ route('user.swap') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Swap</a>
-                            </div>
-                        </div>
+        <div class="card w-100">
+            <div class="card-body">
+                <div class="d-flex align-center justify-content-center m-auto">
+                    <div class="mx-1">
+                        <a href="{{ route('user.deposit') }}" class="btn btn-light w-sm" style="background-color: #5156be; border-radius: 20px; padding: 10px 30px; color: white;">Deposit</a>
+                    </div>
+                    <div class="mx-1"> 
+                        <a href="{{ route('user.withdraw') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Withdraw</a>
+                    </div>
+                    <div class="mx-1">
+                        <a href="{{ route('user.swap') }}" class="btn btn-light w-sm text-primary" style="background-color: transparent; border-radius: 20px; border: 1px solid #5156be; padding: 10px 30px;">Swap</a>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 order-2 order-md-1">
                 <div class="card-body mb-3 border">
                     <div class="reward-panel" id="reward-panel-2">
                         <div class="col mb-3">
@@ -413,7 +413,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 order-1 order-md-2">
                 <div class="card w-100">
                     <div class="card-body">
                         <div class="table">
@@ -463,7 +463,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="table-responsive">
