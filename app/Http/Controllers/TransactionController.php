@@ -305,9 +305,19 @@ class TransactionController extends Controller
         $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
         $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
 
-        if ($user->wallet == null) {
-            $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        $wallet = json_decode($user->wallet, true);
+
+        if ($wallet == null || $wallet['crypto'] == 0 && $wallet['trading'] == 0) {
+            // Handle the case where the wallet is null or doesn't contain the crypto key
+            $wallet = [
+                'crypto' => ($ira_cash + $offshore_cash),
+                'trading' => ($ira_trading + $offshore_trading),
+            ];
+            $user->updateWallet($wallet['crypto'], $wallet['trading']);
+        } else {
+            // dd($wallet);
         }
+        
 
         return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
