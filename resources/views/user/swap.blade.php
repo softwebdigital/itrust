@@ -297,10 +297,10 @@
                         <h5 class="font-size-14 mb-4">Swap Traded Funds to Crypto Balance</h5>
                         <form action="{{ route('user.swap.store') }}" method="post" id="depositFormBtc">
                             @csrf
-                            <div class="d-flex align-items-center my-4 justify-content-around flex-column flex-md-row">
+                            <div class="d-flex align-items-center my-4 mx-auto justify-content-around flex-column flex-md-row">
                                 <div class="mb-3 mb-md-0 text-center w-100 w-md-auto">
                                     <select 
-                                        class="w-75 w-md-auto"
+                                        class="form-control w-75 w-md-auto"
                                         style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700;"
                                         name="method" id="method" onchange="updateDisplay()" disabled>
                                         <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>
@@ -308,12 +308,12 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="mb-3 mb-md-0 text-center">
+                                <div class="mb-3 mb-md-0 text-center w-50">
                                     <i data-feather="repeat" class="icon-xl"></i>
                                 </div>
                                 <div class="text-center w-100 w-md-auto">
                                     <select 
-                                        class="w-75 w-md-auto"
+                                        class="form-control w-75 w-md-auto"
                                         style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700;"
                                         name="method" id="method" onchange="updateDisplay()" disabled>
                                         <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>

@@ -419,8 +419,9 @@
                                     $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
                                     $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
                                 @endphp
-
-                                <h4>Total Balance: <strong>{{ $symbol->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4>
+                            
+                                {{-- <h4>Total Balance: <strong>{{ $symbol->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4> --}}
+                                <h4>Total Balance: <strong>{{ $symbol->symbol }}{{ number_format($totalValue, 2) }}</strong></h4> 
                                 <p class="text-muted">Safe Deposit Margin: <strong>{{ $symbol->symbol }}{{ number_format($user->margin, 2) }}</strong></p>
                                 
                                 <tr class="text-" style="border: 0 !important;">

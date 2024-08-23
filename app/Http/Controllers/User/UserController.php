@@ -183,6 +183,8 @@ class UserController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
+        $totalValue = ($ira + $offshore);
+
         // $iraPercentage = $ira > 0 ? ($ira_roi) * 100 / ($ira) : 0;
         
         // $offshorePercentage = $offshore > 0 ? ($offshore_roi) * 100 / ($offshore) : 0;
@@ -461,7 +463,20 @@ class UserController extends Controller
         $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
         $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
 
-        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
+        $wallet = json_decode($user->wallet, true);
+
+        if ($wallet == null || $wallet['crypto'] == 0 && $wallet['trading'] == 0) {
+            // Handle the case where the wallet is null or doesn't contain the crypto key
+            $wallet = [
+                'crypto' => ($ira_cash + $offshore_cash),
+                'trading' => ($ira_trading + $offshore_trading),
+            ];
+            $user->updateWallet($wallet['crypto'], $wallet['trading']);
+        } else {
+            // dd($wallet);
+        }
+
+        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading', 'totalValue'));
     }
 
     protected static function formatAmount($amount): array
