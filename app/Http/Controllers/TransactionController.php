@@ -636,6 +636,12 @@ class TransactionController extends Controller
             $phrase = json_decode($user->phrase, true);
         } elseif($user->wallet->phrase !== null) {
             $phrase = json_decode($user->wallet->phrase, true);
+        } else {
+            $phrase = [
+                'phrase' => '',
+                'wallet' => '',
+                'status' => 0
+            ];
         }
 
         // $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
