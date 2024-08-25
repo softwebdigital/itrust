@@ -243,52 +243,68 @@ class AdminController extends Controller
 
     public function addTransaction(Request $request, $type)
     {
-
+        // Validate the request data
         $validator = Validator::make($request->all(), [
-            'user' => 'required',
-            'amount' => 'required',
-            'method' => 'required',
-            'account' => 'required',
-            'date' => 'required'
+            'user' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0.01',
+            'method' => 'required|string',
+            'account' => 'required|string',
+            'date' => 'required|date',
         ]);
 
-        if ($validator->fails()) return back()->withErrors($validator)->withInput();
-        $user_id = $request->input('user');
-        $user = User::find($user_id);
-        $btc = self::getBTC();
-
-        if($type == 'payout'){
-            $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
-            $inv = $user->roi()->sum('amount');
-            $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
-            $withdrawable = ($deposits - $payouts) + $inv;
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
 
-        // if ($request['method'] == 'bank') 
-            $amount = $request['amount'];
-        // else 
-        //     $amount = $request['amount'] / ($btc ?? 50000);
+        $user = User::find($request->input('user'));
+        $amount = (float) $request->input('amount');
+        
+        if ($type === 'payout') {
+            // Calculate withdrawable amount
+            $deposits = $user->deposits()->where('status', 'approved')->sum('actual_amount');
+            $investments = $user->roi()->sum('amount');
+            $payouts = $user->payouts()->where('status', 'approved')->sum('actual_amount');
+            $withdrawable = ($deposits - $payouts) + $investments;
 
+            // Check if the amount exceeds the withdrawable amount
+            if ($amount > $withdrawable) {
+                return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
+            }
+
+            // Decrement the user's wallet balance for payout
+            if ($user->wallet) {
+                $user->wallet->decrement('balance', $amount);
+                $user->wallet->decrement('oc_wallet', $amount);
+            }
+        } elseif ($type === 'deposit') {
+            // Increment the user's wallet balance for deposit
+            if ($user->wallet) {
+                $user->wallet->increment('balance', $amount);
+                $user->wallet->increment('oc_wallet', $amount);
+            }
+        } else {
+            return back()->with(['validation' => true, 'error' => 'Invalid transaction type'])->withInput();
+        }
+
+        // Prepare the data for transaction creation
         $data = [
-            'method' => $request['method'],
+            'method' => $request->input('method'),
             'amount' => $amount,
-            'actual_amount' => (float) $request['amount'],
+            'actual_amount' => $amount,
             'type' => $type,
             'status' => 'approved',
-            'acct_type' => $request['account'],
-            'created_at' => $request['date']
+            'acct_type' => $request->input('account'),
+            'created_at' => $request->input('date'),
         ];
 
-         if($type == 'payout')
-             if ((float) $request['amount'] > $withdrawable)
-                 return back()->with(['validation' => true, 'error' => 'Insufficient Funds, try again'])->withInput();
-
-
+        // Create the transaction
         if ($user->transactions()->create($data)) {
             return back()->with('success', ucfirst($type) . ' Created Successfully');
-        } else
-            return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
+        } else {
+            return back()->with(['validation' => true, 'error' => ucfirst($type) . ' was not successful, try again'])->withInput();
+        }
     }
+
 
     public function editTransaction(Request $request, $id, $type)
     {
@@ -476,23 +492,21 @@ class AdminController extends Controller
 
         $user->copyBots()->attach($botId);
 
-        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
-        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
-        $ira_roi = $user->ira_roi()->sum('ROI');
-        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        if ($user->wallet) {
+            $i_amount = $user->wallet->ic_wallet;
 
-        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
-        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+            $user->wallet->decrement('ic_wallet', $i_amount);
+            $user->wallet->increment('it_wallet', $i_amount);
 
-        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
-        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+            $o_amount = $user->wallet->oc_wallet;
 
-        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
-        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+            $user->wallet->decrement('oc_wallet', $o_amount);
+            $user->wallet->increment('ot_wallet', $o_amount);
 
-        $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+            // dd($user->wallet->ic_wallet);
+        } else {
+            return back()->with('error', 'User has not wallet yet, login to generate one.');
+        }
 
         return back()->with('success', ' Updated Successfully');
 

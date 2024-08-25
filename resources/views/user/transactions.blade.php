@@ -41,50 +41,46 @@
                 @foreach($transactions as $transaction)
                     <tr class="mt-6 mb-6">
                         <td>
-                            @if($transaction->method == 'bitcoin' || $transaction->method == 'btc' || $transaction->info == 'btc')
                             <div class="col">
-                                <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                                @if($transaction->type == 'payout')
+                                    @if($transaction->info == 'btc')
+                                        <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                                    @elseif($transaction->info == 'eth')
+                                        <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
+                                    @else
+                                        <img src="https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png" alt="" width="30">
+                                    @endif
+                                @else
+                                    @if($transaction->method == 'btc' || $transaction->method == 'bitcoin')
+                                        <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                                    @elseif($transaction->method == 'eth')
+                                        <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
+                                    @else
+                                        <img src="https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png" alt="" width="30">
+                                    @endif
+                                @endif
                             </div>
-                            @elseif($transaction->method == 'bank')
-                            <div class="col">
-                                <img src="{{ asset('svg/bank.png') }}" alt="" width="30">
-                            </div>
-                            @elseif($transaction->method == 'eth' || $transaction->info == 'eth')
-                            <div class="col">
-                                <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
-                            </div>
-                            @else
-                            <div class="col">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBFTh8daWyNvQZ0IJuYKeaYLsB8ecn0VlJs9sTkT_1A&s" alt="" width="30">
-                            </div>
-                            @endif
                         </td>
                         <td>
                             <h5>{{ $symbol->symbol.number_format($transaction->actual_amount, 2) }}</h5>
                             <p>
                                 {{ ucwords($transaction->type) }} 
-                                @if($transaction->method == 'bank')
-                                    USD
-                                @endif
-
-                                @if($transaction->method == 'bitcoin' || $transaction->method == 'btc')
-                                    Bitcon
-                                @endif
-
-                                @if($transaction->method == 'usdt_trc20')
-                                    USDT (TRC20)
-                                @endif
-
-                                @if($transaction->method == 'usdt_erc20')
-                                    USDT (ERC20)
-                                @endif
-
-                                @if($transaction->method == 'usdt_eth')
-                                    USDT (ETH)
-                                @endif
-
-                                @if($transaction->method == 'eth')
-                                    ETH
+                                @if($transaction->type == 'payout')
+                                    @if($transaction->info == 'btc')
+                                        BTC
+                                    @elseif($transaction->info == 'eth')
+                                        ETH
+                                    @else
+                                        USDT
+                                    @endif
+                                @else
+                                    @if($transaction->method == 'btc' || $transaction->method == 'bitcoin')
+                                        BTC
+                                    @elseif($transaction->method == 'eth')
+                                        ETH
+                                    @else
+                                        USDT
+                                    @endif
                                 @endif
                             </p>
                         </td>

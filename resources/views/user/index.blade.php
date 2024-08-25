@@ -132,7 +132,11 @@ $user = App\Models\User::find(auth()->id());
                             <h4 class="mb-3">
                                 <p class="" style="width: fit-content;">
                                     {{ $symbol->symbol }}
-                                    {{ number_format($portfolioValue, 2) }}
+                                    @if($user->wallet)
+                                        {{ number_format($user->wallet->balance, 2) }}
+                                    @else
+                                        {{ number_format($portfolioValue, 2) }} 
+                                    @endif
                                     <span class="text-success mb-5 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($percentage, 2) }}%</span>
                                 </p>
                             </h4>
