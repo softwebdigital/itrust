@@ -482,25 +482,17 @@
                 @foreach($transactions as $transaction)
                     <tr class="mt-6 mb-6">
                         <td>
-                            @if($transaction->method == 'bitcoin')
-                            <div class="col">
+                            @if($transaction->method == 'btc')
                                 <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
-                            </div>
+                            @elseif($transaction->method == 'eth')
+                                <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
                             @else
-                                @if($transaction->type == 'payout')
-                                    <div class="col">
-                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBFTh8daWyNvQZ0IJuYKeaYLsB8ecn0VlJs9sTkT_1A&s" alt="" width="30">
-                                    </div>
-                                @else
-                                    <div class="col">
-                                        <img src="{{ asset('svg/bank.png') }}" alt="" width="30">
-                                    </div>
-                                @endif
+                                <img src="https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png" alt="" width="30">
                             @endif
                         </td>
                         <td>
                             <h5>{{ $sym->symbol.number_format($transaction->actual_amount, 2) }}</h5>
-                            <p>{{ ucwords($transaction->type) }} {{ $transaction->method == 'bank' ? 'USD' : 'BTC' }}</p>
+                            <p>{{ ucwords($transaction->type) }} {{ strtoupper($transaction->method) }}</p>
                         </td>
                         <td>
                             @if($transaction->acct_type == 'offshore')

@@ -41,7 +41,7 @@
                 @foreach($transactions as $transaction)
                     <tr class="mt-6 mb-6">
                         <td>
-                            @if($transaction->method == 'bitcoin' || $transaction->method == 'btc')
+                            @if($transaction->method == 'bitcoin' || $transaction->method == 'btc' || $transaction->info == 'btc')
                             <div class="col">
                                 <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
                             </div>
@@ -49,7 +49,7 @@
                             <div class="col">
                                 <img src="{{ asset('svg/bank.png') }}" alt="" width="30">
                             </div>
-                            @elseif($transaction->method == 'eth')
+                            @elseif($transaction->method == 'eth' || $transaction->info == 'eth')
                             <div class="col">
                                 <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
                             </div>
