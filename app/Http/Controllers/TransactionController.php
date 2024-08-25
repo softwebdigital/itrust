@@ -64,7 +64,15 @@ class TransactionController extends Controller
                 ];
                 if ($action == 'declined') {
                     $mail['body'] = $transaction['method'] == 'bank' ? 'Your Bank' : 'Your ' . strtoupper($transaction['method']) . ' deposit of ' . $amount . ' has been declined. Kindly contact support@itrustinvestment.com for further inquiries !';
+                } elseif($action == 'approved') {
+                    if($user->wallet) {
+                        $user->wallet->increment('balance', $transaction['actual_amount']);
+                        $user->wallet->increment('ic_wallet', $transaction['actual_amount']);
+                    } else {
+                        return back()->with('error', 'User has no wallet, try login to generate one.');
+                    }
                 }
+
                 MailController::sendActionDepositNotification($transaction->user()->first(), $mail);
             } else return back()->with('error', 'An error occurred, try again.');
         }
@@ -80,47 +88,72 @@ class TransactionController extends Controller
         return view('admin.payouts', compact('admin', 'payouts', 'users'));
     }
 
-    public function payoutAction(Transaction $transaction, $action): RedirectResponse
+    public function payoutAction(Transaction $transaction, $action): RedirectResponse // Admin Withdraw
     {
-        $user = User::find($transaction['user_id']);
-        $symbol = Currency::where('id', $user->currency_id)->first();
+        $user = User::find($transaction->user_id);
+        $symbol = Currency::find($user->currency_id);
 
-        if ($transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
-        if (!in_array($action, ['approved', 'declined', 'delete'])) return back()->with('error', 'Invalid action');
+        if ($transaction->type !== 'payout') {
+            return back()->with('warning', 'Please check that you are taking action on the right payout.');
+        }
 
-        if ($action == 'delete') {
+        if (!in_array($action, ['approved', 'declined', 'delete'])) {
+            return back()->with('error', 'Invalid action');
+        }
+
+        if ($action === 'delete') {
             $transaction->delete();
+            return back()->with('success', 'Payout deleted successfully');
         }
-        else {
-            if ($transaction->update(['status' => $action])) {
-                // $amount = $transaction['method'] == 'bank' ? '$' . number_format($transaction['amount'], 2) : round($transaction['amount'], 8) . 'BTC';
-                $amount = $symbol->symbol . number_format($transaction['actual_amount'], 2);
-                // dd($amount);
 
-                $mail = [
-                    'subject' => 'Withdrawal ' . ucfirst($action),
-                    'name' => $transaction->user()->first()->name,
-                    'body' => $transaction['method'] == 'bank' ? 'Your Bank' : 'Your ' . strtoupper($transaction['info']) . ' withdrawal of ' . $amount . ' has been received
-                and processed. ' . $amount . ' has been sent to your' . ($transaction['method'] == 'bank' ? ' Bank details below:' : strtoupper($transaction['info']) . ' below:'),
-                ];
-                if ($transaction['method'] == 'bitcoin') {
-                    $mail['btc_wallet'] = $transaction['btc_wallet'];
-                    $mail['type'] = 'btc';
-                } else {
-                    $mail['bank'] = $transaction['bank_name'];
-                    $mail['acct_name'] = $transaction['acct_name'];
-                    $mail['number'] = $transaction['acct_no'];
-                    $mail['type'] = 'bank';
-                }
-                $mail['action'] = $action;
-                if ($action == 'declined') {
-                    $mail['body'] = $transaction['method'] == 'bank' ? 'Your Bank' : 'Your ' . strtoupper($transaction['info']) . ' withdrawal of ' . $amount . ' has been declined. Kindly contact support@itrustinvestment.com for further inquiries !';
-                }
-                MailController::SendActionWithdrawalNotification($transaction->user()->first(), $mail);
-            } else return back()->with('error', 'An error occurred, try again.');
+        if (!$user->wallet) {
+            return back()->with('error', 'User has no wallet, try logging in to generate one.');
         }
-        return back()->with('success', 'Payout '.($action != 'delete' ? $action : 'deleted').' successfully');
+
+        if ($transaction->actual_amount > $user->wallet->ic_wallet) {
+            return back()->with('error', 'Insufficient Funds.');
+        }
+
+        if ($action === 'approved') {
+            $user->wallet->decrement('balance', $transaction->actual_amount);
+            $user->wallet->decrement('ic_wallet', $transaction->actual_amount);
+        }
+
+        $transaction->update(['status' => $action]);
+
+        $amount = $symbol->symbol . number_format($transaction->actual_amount, 2);
+        $mail = [
+            'subject' => 'Withdrawal ' . ucfirst($action),
+            'name' => $user->name,
+            'body' => $this->getWithdrawalBody($transaction, $amount, $action),
+            'action' => $action,
+        ];
+
+        if ($transaction->method === 'bitcoin') {
+            $mail['btc_wallet'] = $transaction->btc_wallet;
+            $mail['type'] = 'btc';
+        } else {
+            $mail['bank'] = $transaction->bank_name;
+            $mail['acct_name'] = $transaction->acct_name;
+            $mail['number'] = $transaction->acct_no;
+            $mail['type'] = 'bank';
+        }
+
+        MailController::SendActionWithdrawalNotification($user, $mail);
+
+        return back()->with('success', 'Payout ' . $action . ' successfully');
     }
+
+    private function getWithdrawalBody($transaction, $amount, $action)
+    {
+        if ($action === 'declined') {
+            return 'Your ' . strtoupper($transaction->info) . ' withdrawal of ' . $amount . ' has been declined. Kindly contact support@itrustinvestment.com for further inquiries!';
+        }
+
+        $method = $transaction->method === 'bank' ? 'Your Bank' : 'Your ' . strtoupper($transaction->info);
+        return $method . ' withdrawal of ' . $amount . ' has been received and processed. ' . $amount . ' has been sent to your ' . ($transaction->method === 'bank' ? 'Bank details below:' : strtoupper($transaction->info) . ' below:');
+    }
+
 
 
     public function generalAction(Transaction $transaction, $action): RedirectResponse
@@ -296,27 +329,24 @@ class TransactionController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
-        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+        $totalValue = ($ira + $offshore);
 
-        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
-        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+        $walletData = [
+            'balance' => $totalValue,
+            'ic_wallet' => $user->calculateBalances()['ira_cash'],
+            'it_wallet' => $user->calculateBalances()['ira_trading'],
+            'oc_wallet' => $user->calculateBalances()['offshore_cash'],
+            'ot_wallet' => $user->calculateBalances()['offshore_trading'],
+            // 'swap' => $user->swap,
+            // 'margin' => $user->maigin,
+            // 'phrase' => $user->phrase,
+        ];
 
-        $wallet = json_decode($user->wallet, true);
-
-        if ($wallet == null || $wallet['crypto'] == 0 && $wallet['trading'] == 0) {
-            // Handle the case where the wallet is null or doesn't contain the crypto key
-            $wallet = [
-                'crypto' => ($ira_cash + $offshore_cash),
-                'trading' => ($ira_trading + $offshore_trading),
-            ];
-            $user->updateWallet($wallet['crypto'], $wallet['trading']);
-        } else {
-            // dd($wallet);
+        if(!$user->wallet) {
+            $user->createOrUpdateWallet($walletData);
         }
-        
 
-        return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
+        return view('user.deposit', compact('user', 'transactions', 'setting', 'offshore', 'cash'));
     }
 
     public function withdraw()
@@ -349,17 +379,17 @@ class TransactionController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
-        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+        // $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        // $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
 
-        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
-        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+        // $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        // $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
 
-        if ($user->wallet == null) {
-            $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
-        }
+        // if ($user->wallet == null) {
+        //     $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        // }
 
-        return view('user.withdraw', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'assets', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
+        return view('user.withdraw', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'assets'));
     }
 
     public function userDepositStore(Request $request): RedirectResponse
@@ -439,107 +469,120 @@ class TransactionController extends Controller
         return redirect()->route('user.transactions')->with($msg);
     }
 
-    public function userWithdrawStore(Request $request): RedirectResponse
+    public function userWithdrawStore(Request $request): RedirectResponse //User Withdraw
     {
+        $user = auth()->user();
+        $symbol = Currency::find($user->currency_id);
 
-        $user = User::find(auth()->id());
-        $symbol = Currency::where('id', $user->currency_id)->first();
-
+        // Validation rules
         $validator = Validator::make($request->all(), [
             'w_method' => 'required|string',
             'bank_amount' => 'required_if:w_method,bank',
             'bank_name' => 'required_if:w_method,bank',
             'acct_name' => 'required_if:w_method,bank',
             'acct_no' => 'required_if:w_method,bank',
-            'w_amount' => 'required_if:w_method,bitcoin',
+            'w_amount' => 'required_if:w_method,bitcoin|numeric|min:0.01',
             'btc_wallet' => 'required_if:w_method,bitcoin',
-            'acct_type' => 'required'
-            
+            'acct_type' => 'required|string'
         ], [], $this->attributes());
-        // dd($validator);
-        if ($validator->fails()) return back()->with(['validation' => true, 'w_method' => $request['w_method']])->withErrors($validator)->withInput();
 
-        if ($user->offshore_payout()->where('status', '=', 'pending')->first() ||
-            $user->ira_payout()->where('status', '=', 'pending')->first()
-        )
-            return back()->with('error', 'You have a pending withdrawal request.');
-
-        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
-        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
-        $offshore_payout = $user->offshore_payout()->where('status', '=', 'approved')->sum('actual_amount');
-        $ira_roi = $user->ira_roi()->where('status', '=', 'closed')->sum('ROI');
-        $ira_amount = $user->ira_roi()->where('status', '=', 'open')->sum('amount');
-        $offshore_amount = $user->offshore_roi()->where('status', '=', 'open')->sum('amount');
-        $offshore_roi = $user->offshore_roi()->where('status', '=', 'closed')->sum('ROI');
-        $offshore = $offshore_deposit - $offshore_payout - $offshore_amount + $offshore_roi;
-        $ira = $ira_deposit - $ira_payout - $ira_amount + $ira_roi;
-        // dd($portfolioValue, $request['investment']);
-        // dd($ira, $offshore);
-
-        if ($user->copyBots->count() == 0) {
-            if ($request['w_method'] == 'bank' && (float) $request['bank_amount'] > 0) {
-                if($request['acct_type'] == 'offshore'){
-                    $withdrawable = $offshore;
-                    if((float) $request['bank_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
-                }else{
-                    $withdrawable = $ira;
-                    if((float) $request['bank_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
-                }
-                if ($user->transactions()->create(['method' => 'bank', 'info' => $request['info'], 'amount' => (float) $request['bank_amount'], 'type' => 'payout', 'actual_amount' => (float) $request['bank_amount'], 'bank_name' => $request['bank_name'], 'acct_name' => $request['acct_name'], 'acct_no' => $request['acct_no'], 'acct_type' => $request['acct_type']])) {
-                    $msg = 'Withdrawal successful and is pending confirmation';
-                    // $body = '<p>Your withdrawal of $'.number_format($request['bank_amount'], 2).' was successful. Your withdrawal would be confirmed in a couple of minutes. </p>';
-                    $body = '<p>Your Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' has been received
-                    and is in process. We will update the status of your transaction in less than 2/3 working days</p>';
-                    $mailBody = '<p>A Bank withdrawal request of '. $symbol .number_format($request['bank_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
-                }
-                else
-                    return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
-            } elseif ($request['w_method'] == 'bitcoin' && $request['w_amount'] > 0) {
-                // if($request['w_amount'] > $withdrawable){
-                //     return back()->with(['validation' => true, 'w_method' => $request['w_method'], 'error' => 'Insufficient Funds, try again'])->withInput();
-                // }
-
-                if($request['acct_type'] == 'offshore'){
-                    $withdrawable = $offshore;
-                    if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
-                }else{
-                    $withdrawable = $ira;
-                    if((float) $request['w_amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
-                }
-                $amount = round((float) $request['w_amount'] / AdminController::getBTC(), 8);
-                if ($user->transactions()->create(['method' => 'bitcoin','btc_wallet' => $request['btc_wallet'], 'info' => $request['info'], 'amount' => $amount, 'type' => 'payout', 'actual_amount' => (float) $request['w_amount'], 'acct_type' => $request['acct_type']])) {
-                    $msg = 'Withdrawal successful and is pending confirmation';
-                    $body = '<p>Your ' . strtoupper($request['info']) .' withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' has been received
-                    and is in process. We will update the status of your transaction in  less than 24hrs</p>';
-                    $mailBody = '<p>A ' . strtoupper($request['info']) . ' withdrawal request of '. $symbol->symbol .(float) $request['w_amount'].' by <b>'.$user->username.'</b> has been received.</p>';
-                }
-                else
-                    return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'withdrawal was not successful, try again'])->withInput();
-            } else
-                return back()->with(['validation' => true, 'method' => $request['w_method'], 'error' => 'Invalid payment method selected'])->withInput();
-        } else {
-            return back()->with('error', 'Insufficient Funds in your Available Cash, Trading Cash cannot be withdrawn and should request for trade bot to be deactivated by third party server.');
+        if ($validator->fails()) {
+            return back()->with([
+                'validation' => true,
+                'w_method' => $request->w_method,
+            ])->withErrors($validator)->withInput();
         }
+
+        // Check for pending withdrawal requests
+        if ($user->offshore_payout()->where('status', 'pending')->exists() ||
+            $user->ira_payout()->where('status', 'pending')->exists()) {
+            return back()->with('error', 'You have a pending withdrawal request.');
+        }
+
+        // Calculate balances
+        $iraBalance = $this->calculateBalance($user, 'ira');
+        $offshoreBalance = $this->calculateBalance($user, 'offshore');
+
+        if ($user->copyBots()->exists()) {
+            return back()->with('error', 'Insufficient funds. Trading cash cannot be withdrawn. Please deactivate trade bots before requesting a withdrawal.');
+        }
+
+        if ($request->w_method === 'bitcoin') {
+            $amount = round($request->w_amount, 2);
+
+            if ($user->wallet && $amount <= $user->wallet->ic_wallet) {
+                // $user->wallet->decrement('balance', $amount);
+                // $user->wallet->decrement('ic_wallet', $amount);
+
+                $transaction = $user->transactions()->create([
+                    'method' => 'bitcoin',
+                    'btc_wallet' => $request->btc_wallet,
+                    'info' => $request->info,
+                    'amount' => $amount,
+                    'type' => 'payout',
+                    'actual_amount' => $amount,
+                    'acct_type' => $request->acct_type,
+                ]);
+
+                if ($transaction) {
+                    $msg = 'Withdrawal successful and is pending confirmation';
+                    $this->sendWithdrawalNotifications($user, $request, $symbol, $amount);
+                } else {
+                    return back()->with([
+                        'validation' => true,
+                        'method' => $request->w_method,
+                        'error' => 'Withdrawal was not successful, please try again.',
+                    ])->withInput();
+                }
+            } else {
+                return back()->with('error', 'Insufficient funds in your Available Cash.');
+            }
+        } else {
+            return back()->with([
+                'validation' => true,
+                'method' => $request->w_method,
+                'error' => 'Invalid payment method selected.',
+            ])->withInput();
+        }
+
+        return redirect()->route('user.transactions')->with($msg);
+    }
+
+    private function calculateBalance(User $user, string $type): float
+    {
+        $deposit = $user->{"{$type}_deposit"}()->where('status', 'approved')->sum('actual_amount');
+        $payout = $user->{"{$type}_payout"}()->where('status', 'approved')->sum('actual_amount');
+        $openAmount = $user->{"{$type}_roi"}()->where('status', 'open')->sum('amount');
+        $closedROI = $user->{"{$type}_roi"}()->where('status', 'closed')->sum('ROI');
+
+        return $deposit - $payout - $openAmount + $closedROI;
+    }
+
+    private function sendWithdrawalNotifications(User $user, Request $request, Currency $symbol, float $amount): void
+    {
+        $body = "<p>Your " . strtoupper($request->info) . " withdrawal request of " . $symbol->symbol . $amount . " has been received and is in process. We will update the status of your transaction in less than 24 hours.</p>";
+        $mailBody = "<p>A " . strtoupper($request->info) . " withdrawal request of " . $symbol->symbol . $amount . " by <b>{$user->username}</b> has been received.</p>";
+
         $mail = [
             'name' => $user->name,
             'subject' => 'Withdrawal Request',
             'body' => $body,
-            'btc_wallet' => $request['btc_wallet']
+            'btc_wallet' => $request->btc_wallet,
         ];
 
         $adminMail = [
             'subject' => 'Withdrawal Request',
             'body' => $mailBody,
-            'btc_wallet' => $request['btc_wallet']
+            'btc_wallet' => $request->btc_wallet,
         ];
-        
+
         MailController::sendRequestWithdrawalNotification($user, $mail);
-        $admin = new User;
-        $admin['email'] = env('TRANX_EMAIL');
+
+        $admin = new User();
+        $admin->email = env('TRANX_EMAIL');
         MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
-        return redirect()->route('user.transactions')->with($msg);
     }
+
 
     public function attributes()
     {
@@ -588,18 +631,25 @@ class TransactionController extends Controller
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
 
-        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
-        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
 
-        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
-        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
-
-        if ($user->wallet == null) {
-            $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        if($user->phrase !== null) {
+            $phrase = json_decode($user->phrase, true);
+        } elseif($user->wallet->phrase !== null) {
+            $phrase = json_decode($user->wallet->phrase, true);
         }
 
+        // $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
+        // $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
 
-        return view('user.swap', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
+        // $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
+        // $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+
+        // if ($user->wallet == null) {
+        //     $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
+        // }
+
+
+        return view('user.swap', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'phrase'));
     }
 
     public function storePhrase(Request $request)
@@ -635,48 +685,47 @@ class TransactionController extends Controller
 
     public function swapBalance(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
             'amount' => 'required|numeric|min:0.1', // Amount must be a positive number
+            'from_wallet' => 'required|string|in:it_wallet,ot_wallet', // Wallet to swap from
+            'to_wallet' => 'required|string|in:ic_wallet,oc_wallet', // Wallet to swap to
         ]);
 
         // Get the currently authenticated user
         $user = Auth::user();
 
-        // Decode the wallet object from the user's table
-        $wallet = json_decode($user->wallet, true);
+        $wallet = $user->wallet;
 
+        // Ensure swap balance is 0 before performing the swap
         if ($user->swap < 1) {
+            // Check if user has active trade bots
             if ($user->copyBots->count() >= 1) {
-                return redirect()->route('user.swap')->with('error', 'Swap balance cannot occour if a trade bot is active!');
+                return redirect()->route('user.swap')->with('error', 'Swap balance cannot occur if a trade bot is active!');
             }
-            // Check if the wallet contains trading and crypto balances
-            if (isset($wallet['trading']) && isset($wallet['crypto'])) {
-                $amount = $request->amount;
 
-                // Check if the trading balance is sufficient
-                if ($wallet['trading'] >= $amount) {
-                    // Deduct the amount from trading and add it to crypto
-                    $wallet['trading'] -= $amount;
-                    $wallet['crypto'] += $amount;
+            // Validate that the amount is not greater than the balance in the source wallet
+            $fromWallet = $request->input('from_wallet');
+            $amount = $request->input('amount');
 
-                    // Update the wallet in the database
-                    $user->update(['wallet' => json_encode($wallet)]);
-
-                    // Redirect back to the swap page with a success message
-                    return redirect()->route('user.swap')->with('success', 'Balance swapped successfully!');
-                } else {
-                    // Redirect back with an error message if the trading balance is not sufficient
-                    return redirect()->route('user.swap')->with('error', 'Insufficient trading balance!');
-                }
-            } else {
-                // Redirect back with an error message if the wallet structure is incorrect
-                return redirect()->route('user.swap')->with('error', 'Invalid wallet data!');
+            if ($wallet->$fromWallet < $amount) {
+                return redirect()->route('user.swap')->with('error', 'Insufficient funds in the source wallet!');
             }
+
+            // Perform the swap: decrement the source wallet and increment the destination wallet
+            $toWallet = $request->input('to_wallet');
+            $wallet->decrement($fromWallet, $amount);
+            $wallet->increment($toWallet, $amount);
+
+            // Save the updated wallet
+            // $user->wallet = $wallet;
+            // $user->save();
+
+            return redirect()->route('user.swap')->with('success', 'Balance successfully swapped!');
         } else {
             return redirect()->route('user.swap')->with('error', 'Swap Balance must be 0.00 before you can make a swap, Balance: $' . $user->swap);
         }
     }
+
 
 
 

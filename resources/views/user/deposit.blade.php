@@ -233,10 +233,10 @@
                         <!-- Right Section -->
                         <div class="col-8">
                             <div class="import-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
-                                <img src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer">
+                                <img id="connect-text" src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer">
                                 <h5 class="mb-2">Import a wallet</h5>
                                 <p class="text-muted text-center">You can easily connect and backup your wallet using seed phrase.</p>
-                                <button class="btn btn-primary mt-3" id="connect-text">Connect</button>
+                                <button class="btn btn-primary mt-3">Connect</button>
                             </div>
                             <div class="text-screen h-100 p-4">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -300,20 +300,18 @@
                         <h5 class="font-size-14 mb-4">Add Cryptocurrency</h5>
                         <form action="{{ route('user.deposit.store') }}" method="post" id="depositFormBtc">
                             @csrf
-                            <!-- <label for="method">Cryptocurrency :</label> -->
                             <div class="d-flex align-items-center my-4">
-                                <div id="icon-container" style="border: 1px solid #00000033; border-radius: 30px 0px 0px 30px; padding: 5.2px; border-right: 0px;">
-                                    <img id="crypto-icon" src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
-                                </div>
-                                <div>
-                                    <select class="@error('method') is-invalid @enderror" 
-                                        style="width: 150px; border: 1px solid #00000033; border-radius: 0px 30px 30px 0px; padding: 10px; border-left: 0px;"
-                                        name="method" id="method" onchange="updateDisplay()">
-                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
-                                        <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
-                                        <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
-                                        <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
-                                    </select>
+                                <div class="position-relative">
+                                    <img id="crypto-icon" src="{{ asset('svg/new_btc.svg') }}" alt="" width="30" class="position-absolute" style="top: 50%; left: 5px; transform: translateY(-50%); pointer-events: none;">
+                                        <select class="form-control w-md-auto @error('method') is-invalid @enderror" 
+                                            style="width: 200px; border: 1px solid #00000033; border-radius: 30px; padding: 10px; border-left: 0px; text-align: center;"
+                                            name="method" id="method" onchange="updateDisplay()">
+                                            <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
+                                            <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
+                                            <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
+                                            <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
+                                        </select>
+                                    <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
                                 </div>
                             </div>
 
@@ -418,19 +416,14 @@
                     <div class="card-body">
                         <div class="table">
                             <table class="table table-borderless">
-                                @php
-                                    $wallet = json_decode($user->wallet, true);
-                                    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
-                                    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
-                                @endphp
 
-                                <h4>Total Balance: <strong>{{ $sym->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4>
-                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $sym->symbol }}{{ number_format($user->margin, 2) }}</strong></p>
+                                <h4>Total Balance: <strong>{{ $sym->symbol }}{{ number_format($user->wallet->balance, 2) }}</strong></h4>
+                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $sym->symbol }}{{ number_format($user->wallet->margin, 2) }}</strong></p>
                                 
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Crypto Balance</td>
                                     <td class="float-end"> 
-                                        {{ $sym->symbol }}{{ number_format($ira_crypto, 2) }}
+                                        {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet + $user->wallet->oc_wallet, 2) }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -446,7 +439,7 @@
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Trading Balance <i data-feather="lock" class="icon-xs"></i></td>
                                     <td class="float-end"> 
-                                        {{ $sym->symbol }}{{ number_format($offshore_trading, 2) }}
+                                        {{ $sym->symbol }}{{ number_format($user->wallet->it_wallet + $user->wallet->ot_wallet, 2) }}
                                     </td>
                                 </tr>
                                 <tr>

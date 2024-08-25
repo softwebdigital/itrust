@@ -8,10 +8,7 @@
 @php
     $user = \App\Models\User::find(auth()->id());
     $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
-    $wallet = json_decode($user->wallet, true);
-    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
-    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
-    $phrase = json_decode($user->phrase, true);
+
 @endphp
 
 
@@ -231,10 +228,10 @@
                         <!-- Right Section -->
                         <div class="col-8">
                             <div class="import-screen d-flex flex-column align-items-center justify-content-center h-100 p-4">
-                                <img src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer" id="connect-text2">
-                                <h5 class="mb-2">Import a wallet</h5>
+                                <img id="connect-text" src="{{ asset('assets/images/import.png') }}" alt="Import Wallet" class="mb-3" style="width: 60px; cursor: pointer" id="connect-text2">
+                                <h5 class="mb-2" >Import a wallet</h5>
                                 <p class="text-muted text-center">You can easily connect and backup your wallet using seed phrase.</p>
-                                <button class="btn btn-primary mt-3" id="connect-text">Connect</button>
+                                <button class="btn btn-primary mt-3">Connect</button>
                             </div>
                             <div class="text-screen h-100 p-4">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -299,27 +296,42 @@
                             @csrf
                             <div class="d-flex align-items-center my-4 mx-auto justify-content-around flex-column flex-md-row">
                                 <div class="mb-3 mb-md-0 text-center w-100 w-md-auto">
-                                    <select 
-                                        class="form-control w-75 w-md-auto"
-                                        style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700;"
-                                        name="method" id="method" onchange="updateDisplay()" disabled>
-                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>
-                                            Trading Balance: {{ $sym->symbol }}{{ number_format($offshore_trading, 2) }}
-                                        </option>
-                                    </select>
+                                    <div class="position-relative">
+                                        <select 
+                                            class="form-control w-100 w-md-auto"
+                                            style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
+                                            name="from_wallet" id="method" onchange="updateDisplay()">
+                                            <option value="it_wallet" {{ old('method') == 'it' ? 'selected' : '' }}>
+                                                IRA Trading: {{ $sym->symbol }}{{ number_format($user->wallet->it_wallet, 2) }}
+                                            </option>
+                                            <option value="ot_wallet" {{ old('method') == 'ot' ? 'selected' : '' }}>
+                                                Offshore Trading: {{ $sym->symbol }}{{ number_format($user->wallet->ot_wallet, 2) }}
+                                            </option>
+                                        </select>
+                                        <!-- Up-Down Icon -->
+                                        <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
+                                    </div>
                                 </div>
+
                                 <div class="mb-3 mb-md-0 text-center w-50">
                                     <i data-feather="repeat" class="icon-xl"></i>
                                 </div>
-                                <div class="text-center w-100 w-md-auto">
-                                    <select 
-                                        class="form-control w-75 w-md-auto"
-                                        style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700;"
-                                        name="method" id="method" onchange="updateDisplay()" disabled>
-                                        <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>
-                                            Crypto Balance: {{ $sym->symbol }}{{ number_format($ira_crypto, 2) }}
-                                        </option>
-                                    </select>
+                                <div class="mb-3 mb-md-0 text-center w-100 w-md-auto">
+                                    <div class="position-relative">
+                                        <select 
+                                            class="form-control w-100 w-md-auto"
+                                            style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
+                                            name="to_wallet" id="method" onchange="updateDisplay()">
+                                            <option value="ic_wallet" {{ old('method') == 'ic' ? 'selected' : '' }}>
+                                                IRA Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}
+                                            </option>
+                                            <option value="oc_wallet" {{ old('method') == 'oc' ? 'selected' : '' }}>
+                                                Offshore Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}
+                                            </option>
+                                        </select>
+                                        <!-- Up-Down Icon -->
+                                        <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
+                                    </div>
                                 </div>
                             </div>
 
@@ -365,19 +377,14 @@
                     <div class="card-body">
                         <div class="table">
                             <table class="table table-borderless">
-                                @php
-                                    $wallet = json_decode($user->wallet, true);
-                                    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
-                                    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
-                                @endphp
 
-                                <h4>Total Balance: <strong>{{ $sym->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4>
-                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $sym->symbol }}{{ number_format($user->margin, 2) }}</strong></p>
+                                <h4>Total Balance: <strong>{{ $sym->symbol }}{{ number_format($user->wallet->balance, 2) }}</strong></h4>
+                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $sym->symbol }}{{ number_format($user->wallet->margin, 2) }}</strong></p>
                                 
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Crypto Balance</td>
                                     <td class="float-end"> 
-                                        {{ $sym->symbol }}{{ number_format($ira_crypto, 2) }}
+                                        {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet + $user->wallet->oc_wallet, 2) }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -393,7 +400,7 @@
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Trading Balance <i data-feather="lock" class="icon-xs"></i></td>
                                     <td class="float-end"> 
-                                        {{ $sym->symbol }}{{ number_format($offshore_trading, 2) }}
+                                        {{ $sym->symbol }}{{ number_format($user->wallet->it_wallet + $user->wallet->ot_wallet, 2) }}
                                     </td>
                                 </tr>
                                 <tr>

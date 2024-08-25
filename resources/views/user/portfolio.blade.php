@@ -331,7 +331,7 @@
                                                 
                                                 <p class="" style="width: fit-content;">
                                                     {{ $symbol->symbol }}
-                                                    {{ number_format($ira, 2) }}
+                                                    {{ number_format($user->wallet->ic_wallet + $user->wallet->it_wallet, 2) }}
                                                     <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span>
                                                 </p>
 
@@ -339,8 +339,8 @@
                                                 
                                             </h4>
                                             <div style="float: inline-end;">
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($ira_cash, 2) }}</span> <br>
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($ira_trading, 2) }}</span>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->it_wallet, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -365,13 +365,13 @@
                                             <h4 class="mb-3">
                                                 <p class="" style="width: fit-content;">
                                                     {{ $symbol->symbol }}
-                                                    {{ number_format($offshore, 2) }}
+                                                    {{ number_format($user->wallet->oc_wallet + $user->wallet->ot_wallet, 2) }}
                                                     <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span>
                                                 </p>
                                             </h4>
                                             <div style="float: inline-end;">
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($offshore_cash, 2) }}</span> <br>
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($offshore_trading, 2) }}</span>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->ot_wallet, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -414,20 +414,13 @@
                     <div class="card-body">
                         <div class="table">
                             <table class="table table-borderless">
-                                @php
-                                    $wallet = json_decode($user->wallet, true);
-                                    $ira_crypto = $wallet ? $wallet['crypto'] : $ira_cash + $offshore_cash;
-                                    $offshore_trading = $wallet ? $wallet['trading'] : $ira_trading + $offshore_trading;
-                                @endphp
-                            
-                                {{-- <h4>Total Balance: <strong>{{ $symbol->symbol }}{{ number_format($ira_crypto + $offshore_trading, 2) }}</strong></h4> --}}
-                                <h4>Total Balance: <strong>{{ $symbol->symbol }}{{ number_format($totalValue, 2) }}</strong></h4> 
-                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $symbol->symbol }}{{ number_format($user->margin, 2) }}</strong></p>
+                                <h4>Total Balance: <strong>{{ $symbol->symbol }} {{ number_format($user->wallet->balance, 2) }}</strong></h4> 
+                                <p class="text-muted">Safe Deposit Margin: <strong>{{ $symbol->symbol }} {{ number_format($user->wallet->margin, 2) }}</strong></p>
                                 
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Crypto Balance</td>
                                     <td class="float-end"> 
-                                        {{ $symbol->symbol }}{{ number_format($ira_crypto, 2) }}
+                                        {{ $symbol->symbol }}{{ number_format($user->wallet->ic_wallet + $user->wallet->oc_wallet, 2) }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -443,7 +436,7 @@
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Trading Balance <i data-feather="lock" class="icon-xs"></i></td>
                                     <td class="float-end"> 
-                                        {{ $symbol->symbol }}{{ number_format($offshore_trading, 2) }}
+                                        {{ $symbol->symbol }}{{ number_format($user->wallet->it_wallet + $user->wallet->ot_wallet, 2) }}
                                     </td>
                                 </tr>
                                 <tr>

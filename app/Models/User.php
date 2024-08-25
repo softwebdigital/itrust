@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -156,15 +157,71 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(CopyBot::class);
     }
 
-    public function updateWallet($crypto, $trading)
+    // public function updateWallet($crypto, $trading)
+    // {
+    //     $data = [
+    //         'crypto' => $crypto,
+    //         'trading' => $trading,
+    //     ];
+
+    //     $dataJson = json_encode($data);
+
+    //     $this->update(['wallet' => $dataJson]);
+    // }
+
+    public function calculateBalances()
     {
-        $data = [
-            'crypto' => $crypto,
-            'trading' => $trading,
+        // Sum deposits, payouts, and ROI for IRA and Offshore accounts
+        $ira_deposit = $this->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $this->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $offshore_deposit = $this->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $this->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $this->ira_roi()->sum('ROI');
+        $offshore_roi = $this->offshore_roi()->sum('ROI');
+
+        // Calculate IRA and Offshore balances
+        $offshore = ($offshore_deposit - $offshore_payout) + $offshore_roi;
+        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
+
+        // Determine cash and trading balances based on copy bots
+        $hasCopyBots = $this->copyBots->count() >= 1;
+
+        $ira_cash = $hasCopyBots ? 0 : $ira;
+        $ira_trading = $hasCopyBots ? $ira : 0;
+        $offshore_cash = $hasCopyBots ? 0 : $offshore;
+        $offshore_trading = $hasCopyBots ? $offshore : 0;
+
+        // Return the calculated balances
+        return [
+            'ira_cash' => $ira_cash,
+            'ira_trading' => $ira_trading,
+            'offshore_cash' => $offshore_cash,
+            'offshore_trading' => $offshore_trading,
         ];
+    }
 
-        $dataJson = json_encode($data);
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
 
-        $this->update(['wallet' => $dataJson]);
+    public function createOrUpdateWallet(array $data): string
+    {
+        $wallet = $this->wallet()->updateOrCreate(
+            ['user_id' => $this->id],
+            $data
+        );
+
+        return $wallet;
+    }
+
+    public function updateWallet(array $data): string
+    {
+        return $this->wallet()->update($data);
+    }
+
+    public function getWallet()
+    {
+        return $this->wallet;
     }
 }

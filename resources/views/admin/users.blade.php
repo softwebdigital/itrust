@@ -171,7 +171,7 @@
 
             <div class="modal fade" id="staticBackdrop-diactivateBot-{{ $user->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    @if($copyBots->count() > 0)
+                    @if($user->copyBots->count() > 0)
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="staticBackdropLabel">Diactivate Bots</h5>
@@ -203,7 +203,7 @@
                         <div class="modal-header">
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <p class="pt-5 pb-5 text-center">All bots has been assigned</p>
+                        <p class="pt-5 pb-5 text-center">No bots has been assigned</p>
                     </div>
                     @endif
                 </div>
