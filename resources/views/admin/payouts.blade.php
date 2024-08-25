@@ -47,7 +47,10 @@
                         <select class="form-select @error('method') is-invalid @enderror" name="method" id="user">
                             <option value="">Select Method</option>
                             <option @if(old('method') == 'bank') selected @endif value="bank">Bank Deposit</option>
-                            <option @if(old('method') == 'bitcoin') selected @endif value="bitcoin">Bitcoin</option>
+                            <option value="btc" {{ old('method') == 'btc' ? 'selected' : '' }}>BTC</option>
+                            <option value="eth" {{ old('method') == 'eth' ? 'selected' : '' }}>ETH</option>
+                            <option value="usdt_trc20" {{ old('method') == 'usdt_trc20' ? 'selected' : '' }}>USDT (TRC20)</option>
+                            <option value="usdt_erc20" {{ old('method') == 'usdt_erc20' ? 'selected' : '' }}>USDT (ERC20)</option>
                         </select>
                         @error('method') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>

@@ -289,6 +289,7 @@ class AdminController extends Controller
         // Prepare the data for transaction creation
         $data = [
             'method' => $request->input('method'),
+            'info' => $request->input('method'),
             'amount' => $amount,
             'actual_amount' => $amount,
             'type' => $type,
