@@ -430,7 +430,13 @@
                         <td>
                             @if($transaction->method == 'bitcoin')
                             <div class="col">
-                                <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                                @if($transaction->info == 'btc')
+                                    <img src="{{ asset('svg/new_btc.svg') }}" alt="" width="30">
+                                @elseif($transaction->info == 'eth')
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6001/6001368.png" alt="" width="30">
+                                @else
+                                    <img src="https://seeklogo.com/images/T/tether-usdt-logo-FA55C7F397-seeklogo.com.png" alt="" width="30">
+                                @endif
                             </div>
                             @else
                                 @if($transaction->type == 'payout')
@@ -446,7 +452,7 @@
                         </td>
                         <td>
                             <h5>{{ $sym->symbol.number_format($transaction->actual_amount, 2) }}</h5>
-                            <p>{{ ucwords($transaction->type) }} {{ $transaction->method == 'bank' ? 'USD' : 'BTC' }}</p>
+                             <p>{{ ucwords($transaction->type) }} {{ strtoupper($transaction->info) }}</p>
                         </td>
                         <td>
                             @if($transaction->acct_type == 'offshore')
