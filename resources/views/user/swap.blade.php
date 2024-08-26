@@ -420,7 +420,7 @@
         </div>
 
 
-        <div class="table-responsive">
+        {{-- <div class="table-responsive">
             <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
                 <thead>
                 <tr>
@@ -506,7 +506,7 @@
                 @endforeach
                 </tbody>
             </table>
-        </div>
+        </div> --}}
 
     </div>
 
