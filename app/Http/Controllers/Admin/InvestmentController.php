@@ -32,7 +32,6 @@ class InvestmentController extends Controller
 
     public function newInvestUser(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'amount' => 'required|string',
             'ROI' => 'required|string',
@@ -46,16 +45,9 @@ class InvestmentController extends Controller
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
 
         $user_id = $request['user'];
-        // dd($user_id);
 
         $user = User::find($user_id);
         $symbol = Currency::where('id', $user->currency_id)->first();
-        // dd($user);
-        // $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
-        // $inv = $user->roi()->sum('amount');
-        // $payouts = $user->payouts()->where('status', '=', 'approved')->sum('actual_amount');
-
-        // $withdrawable = ($deposits - $payouts) - $inv;
 
         $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_payout = $user->ira_payout()->where('status', '=', 'approved')->sum('actual_amount');
@@ -67,43 +59,41 @@ class InvestmentController extends Controller
         $offshore_roi = $user->offshore_roi()->sum('ROI');
         $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
         $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
-        // dd($portfolioValue, $request['investment']);
-        // dd($ira, $offshore );
 
         if ($request['acct_type'] == 'offshore') {
-            $withdrawable = $offshore;
+            // $withdrawable = $offshore;
+            $withdrawable = $user->wallet->oc_wallet;
             if ((float) $request['amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
         } else {
-            $withdrawable = $ira;
+            // $withdrawable = $ira;
+            $withdrawable = $user->wallet->ic_wallet;
             if ((float) $request['amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
         }
-
-
-
 
         $amount = 0;
 
         $inv = new Investment();
-
         $amount = $inv->amount;
-
         $inv->user_id = $user_id;
-
         $inv->type = $request['type'];
-
         $inv->amount = (float) $request['amount'] + $amount;
-
         $inv->ROI = (float) $request['ROI'];
-
         $inv->status = $request['status'];
-
         $inv->acct_type = $request['acct_type'];
-
         $inv->copy_bot_id = $request['bot'];
-
         $inv->created_at = Carbon::make($request['date'])->format('Y-m-d');
 
         $inv->save();
+
+        $roi = ($request['amount'] * $request['ROI']) / 100;
+
+        if ($request['acct_type'] == 'offshore') {
+            $user->wallet->increment('balance', $roi);
+            $user->wallet->increment('ot_wallet', $roi);
+        } else {
+            $user->wallet->increment('balance', $roi);
+            $user->wallet->increment('it_wallet', $roi);
+        }
 
         $msg = 'You have invested '. $symbol->symbol . $request['amount'];
 
@@ -120,7 +110,6 @@ class InvestmentController extends Controller
 
     public function investUser(Request $request, $user_id)
     {
-
         $user = User::find($user_id);
         $symbol = Currency::where('id', $user->currency_id)->first();
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
@@ -161,7 +150,6 @@ class InvestmentController extends Controller
 
     public function addTransaction(Request $request, $user_id)
     {
-
         $validator = Validator::make($request->all(), [
             'amount' => 'required|string',
             'type' => 'required',
@@ -196,7 +184,6 @@ class InvestmentController extends Controller
         MailController::sendInvestmentNotification($user, $mail);
         return redirect()->route('admin.users')->with($msg);
     }
-
 
     public function addRoi(Request $request, $investment_id)
     {
@@ -244,8 +231,6 @@ class InvestmentController extends Controller
 
         return back()->with('error', 'An error occurred, try again.');
     }
-
-
 
     public function updateStatus($investment_id, $type)
     {

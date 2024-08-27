@@ -300,19 +300,17 @@
                                         <select 
                                             class="form-control w-100 w-md-auto"
                                             style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
-                                            name="from_wallet" id="method" onchange="updateDisplay()">
-                                            <option value="it_wallet" {{ old('method') == 'it' ? 'selected' : '' }}>
+                                            name="from_wallet" id="from_wallet" onchange="updateToWallet()">
+                                            <option value="it_wallet" {{ old('from_wallet') == 'it_wallet' ? 'selected' : '' }}>
                                                 IRA Trading: {{ $sym->symbol }}{{ number_format($user->wallet->it_wallet, 2) }}
                                             </option>
-                                            <option value="ot_wallet" {{ old('method') == 'ot' ? 'selected' : '' }}>
+                                            <option value="ot_wallet" {{ old('from_wallet') == 'ot_wallet' ? 'selected' : '' }}>
                                                 Offshore Trading: {{ $sym->symbol }}{{ number_format($user->wallet->ot_wallet, 2) }}
                                             </option>
                                         </select>
-                                        <!-- Up-Down Icon -->
                                         <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
                                     </div>
                                 </div>
-
                                 <div class="mb-3 mb-md-0 text-center w-50">
                                     <i data-feather="repeat" class="icon-xl"></i>
                                 </div>
@@ -321,16 +319,14 @@
                                         <select 
                                             class="form-control w-100 w-md-auto"
                                             style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
-                                            name="to_wallet" id="method" onchange="updateDisplay()">
-                                            <option value="ic_wallet" {{ old('method') == 'ic' ? 'selected' : '' }}>
+                                            name="to_wallet" id="to_wallet">
+                                            <option value="ic_wallet" {{ old('to_wallet') == 'ic_wallet' ? 'selected' : '' }}>
                                                 IRA Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}
                                             </option>
-                                            <option value="oc_wallet" {{ old('method') == 'oc' ? 'selected' : '' }}>
+                                            <option value="oc_wallet" {{ old('to_wallet') == 'oc_wallet' ? 'selected' : '' }}>
                                                 Offshore Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}
                                             </option>
                                         </select>
-                                        <!-- Up-Down Icon -->
-                                        <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
                                     </div>
                                 </div>
                             </div>
@@ -515,6 +511,16 @@
 
 @section('script')
     <script>
+        function updateToWallet() {
+            var fromWallet = document.getElementById("from_wallet").value;
+            var toWallet = document.getElementById("to_wallet");
+
+            if (fromWallet === "it_wallet") {
+                toWallet.value = "ic_wallet";
+            } else if (fromWallet === "ot_wallet") {
+                toWallet.value = "oc_wallet";
+            }
+        }
         $(document).ready(function() {
             $(".text-screen").addClass("d-none");
             $(".loading-screen").addClass("d-none");
