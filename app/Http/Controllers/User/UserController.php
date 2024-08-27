@@ -90,7 +90,7 @@ class UserController extends Controller
 
         // $stocks_data = self::stock();
 
-        // $stocks_data = [];
+        $stocks_data = [];
 
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
         $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');

