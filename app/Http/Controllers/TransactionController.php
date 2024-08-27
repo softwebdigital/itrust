@@ -515,32 +515,62 @@ class TransactionController extends Controller
         if ($request->w_method === 'bitcoin') {
             $amount = round($request->w_amount, 2);
 
-            if ($user->wallet && $amount <= $user->wallet->ic_wallet) {
-                // $user->wallet->decrement('balance', $amount);
-                // $user->wallet->decrement('ic_wallet', $amount);
-
-                $transaction = $user->transactions()->create([
-                    'method' => 'bitcoin',
-                    'btc_wallet' => $request->btc_wallet,
-                    'info' => $request->info,
-                    'amount' => $amount,
-                    'type' => 'payout',
-                    'actual_amount' => $amount,
-                    'acct_type' => $request->acct_type,
-                ]);
-
-                if ($transaction) {
-                    $msg = 'Withdrawal successful and is pending confirmation';
-                    $this->sendWithdrawalNotifications($user, $request, $symbol, $amount);
+            if ($request->acct_type == 'offshore') {
+                if ($user->wallet && $amount <= $user->wallet->oc_wallet) {
+                    // $user->wallet->decrement('balance', $amount);
+                    // $user->wallet->decrement('ic_wallet', $amount);
+    
+                    $transaction = $user->transactions()->create([
+                        'method' => 'bitcoin',
+                        'btc_wallet' => $request->btc_wallet,
+                        'info' => $request->info,
+                        'amount' => $amount,
+                        'type' => 'payout',
+                        'actual_amount' => $amount,
+                        'acct_type' => $request->acct_type,
+                    ]);
+    
+                    if ($transaction) {
+                        $msg = 'Withdrawal successful and is pending confirmation';
+                        $this->sendWithdrawalNotifications($user, $request, $symbol, $amount);
+                    } else {
+                        return back()->with([
+                            'validation' => true,
+                            'method' => $request->w_method,
+                            'error' => 'Withdrawal was not successful, please try again.',
+                        ])->withInput();
+                    }
                 } else {
-                    return back()->with([
-                        'validation' => true,
-                        'method' => $request->w_method,
-                        'error' => 'Withdrawal was not successful, please try again.',
-                    ])->withInput();
+                    return back()->with('error', 'Insufficient funds in your Offshore Available Cash.');
                 }
             } else {
-                return back()->with('error', 'Insufficient funds in your Available Cash.');
+                if ($user->wallet && $amount <= $user->wallet->ic_wallet) {
+                    // $user->wallet->decrement('balance', $amount);
+                    // $user->wallet->decrement('ic_wallet', $amount);
+    
+                    $transaction = $user->transactions()->create([
+                        'method' => 'bitcoin',
+                        'btc_wallet' => $request->btc_wallet,
+                        'info' => $request->info,
+                        'amount' => $amount,
+                        'type' => 'payout',
+                        'actual_amount' => $amount,
+                        'acct_type' => $request->acct_type,
+                    ]);
+    
+                    if ($transaction) {
+                        $msg = 'Withdrawal successful and is pending confirmation';
+                        $this->sendWithdrawalNotifications($user, $request, $symbol, $amount);
+                    } else {
+                        return back()->with([
+                            'validation' => true,
+                            'method' => $request->w_method,
+                            'error' => 'Withdrawal was not successful, please try again.',
+                        ])->withInput();
+                    }
+                } else {
+                    return back()->with('error', 'Insufficient funds in your Basic IRA Available Cash.');
+                }
             }
         } else {
             return back()->with([
