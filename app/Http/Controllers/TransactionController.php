@@ -115,8 +115,13 @@ class TransactionController extends Controller
         }
 
         if ($action === 'approved') {
-            $user->wallet->decrement('balance', $transaction->actual_amount);
-            $user->wallet->decrement('ic_wallet', $transaction->actual_amount);
+            if ($transaction->acct_type == "offshore") {
+                $user->wallet->decrement('balance', $transaction->actual_amount);
+                $user->wallet->decrement('oc_wallet', $transaction->actual_amount);
+            } else {
+                $user->wallet->decrement('balance', $transaction->actual_amount);
+                $user->wallet->decrement('ic_wallet', $transaction->actual_amount);
+            }
         }
 
         $transaction->update(['status' => $action]);
@@ -703,7 +708,7 @@ class TransactionController extends Controller
         $wallet = $user->wallet;
 
         // Ensure swap balance is 0 before performing the swap
-        if ($user->swap < 1) {
+        if ($user->wallet->swap < 1) {
             // Check if user has active trade bots
             if ($user->copyBots->count() >= 1) {
                 return redirect()->route('user.swap')->with('error', 'Swap balance cannot occur if a trade bot is active!');
@@ -728,7 +733,7 @@ class TransactionController extends Controller
 
             return redirect()->route('user.swap')->with('success', 'Balance successfully swapped!');
         } else {
-            return redirect()->route('user.swap')->with('error', 'Swap Balance must be 0.00 before you can make a swap, Balance: $' . $user->swap);
+            return redirect()->route('user.swap')->with('error', 'Swap Balance must be 0.00 before you can make a swap, Balance: $' . $user->wallet->swap);
         }
     }
 

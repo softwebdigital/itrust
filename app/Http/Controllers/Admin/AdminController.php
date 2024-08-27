@@ -107,7 +107,15 @@ class AdminController extends Controller
             'swap' => 'required',
             'margin' => 'required',
         ]);
-        $user->update(request()->except('token'));
+        $user->update(request()->except('token', 'swap', 'margin'));
+
+        if ($user->wallet) {
+            $user->wallet->update([
+                'swap' => request('swap'),
+                'margin' => request('margin'),
+            ]);
+        }
+        
         return back()->with('success', 'User updated successfully');
     }
 
@@ -466,6 +474,8 @@ class AdminController extends Controller
 
         $response = Http::get($url);
         $data = $response->json();
+
+        // $stocks_data = [];
 
         // Check if the response is not empty and if 'current_price' key exists
         if (!empty($data) && isset($data[0]['current_price'])) {
