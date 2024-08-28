@@ -70,13 +70,13 @@
                                 $investmentAmount = $investment->amount;
                                 $roi = $investment->ROI;
                                 if ($investmentAmount != 0) {
-                                    $percentage = ($roi * $investmentAmount) / 100;
+                                    $percentage = ($roi / $investmentAmount) * 100;
                                 } else {
                                     $percentage = 0;
                                 }
                             @endphp
-                            <h5>{{ $symbol->symbol }}{{ number_format($percentage) }}</h5>
-                            <p class="text-success">+{{ number_format($investment->ROI, 2) }}%</p>
+                            <h5>{{ $symbol->symbol }}{{ number_format($investment->ROI, 2) }}</h5>
+                            <p class="text-success">+{{ number_format($percentage) }} %</p>
                         </td>
                        <td>
                             @if($investment->acct_type == 'offshore')
