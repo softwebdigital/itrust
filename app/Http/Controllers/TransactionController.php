@@ -159,8 +159,6 @@ class TransactionController extends Controller
         return $method . ' withdrawal of ' . $amount . ' has been received and processed. ' . $amount . ' has been sent to your ' . ($transaction->method === 'bank' ? 'Bank details below:' : strtoupper($transaction->info) . ' below:');
     }
 
-
-
     public function generalAction(Transaction $transaction, $action): RedirectResponse
     {
         // if (!$transaction || $transaction['type'] != 'payout') return back()->with('warning', 'Please check that you are taking action on the right payout.');
@@ -360,7 +358,6 @@ class TransactionController extends Controller
         $transactions = $user->payouts()->latest()->get();
         $setting = Settings::first();
         $offshore = Transaction::where(['user_id' => $user->id,'acct_type' => 'offshore', 'status' => 'approved'])->count();
-
 
         $deposits = $user->deposits()->where('status', '=', 'approved')->sum('actual_amount');
         $payouts = $user->payouts()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
@@ -618,7 +615,6 @@ class TransactionController extends Controller
         MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
     }
 
-
     public function attributes()
     {
         return [
@@ -715,7 +711,7 @@ class TransactionController extends Controller
         $dataJson = json_encode($data);
 
         // Update the user's phrase in the users table
-        $user->update(['wallet' => $dataJson]);
+        $user->create(['wallet' => $dataJson]);
 
         // Return a success response
         return response()->json([

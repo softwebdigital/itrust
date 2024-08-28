@@ -24,8 +24,6 @@
 @section('content')
     <div class="card-body">
         <div class="d-flex justify-content-end mb-4">
-            <a class="btn btn-primary m-2" href="{{ URL::to('/statements/pdf') }}">Generate Account statement</a>
-{{--            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
         </div>
         <div class="table-responsive">
             <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
@@ -72,13 +70,13 @@
                                 $investmentAmount = $investment->amount;
                                 $roi = $investment->ROI;
                                 if ($investmentAmount != 0) {
-                                    $percentage = ($roi / $investmentAmount) * 100;
+                                    $percentage = ($roi * $investmentAmount) / 100;
                                 } else {
                                     $percentage = 0;
                                 }
                             @endphp
-                            <h5>{{ $symbol->symbol }}{{ number_format($investment->ROI, 2) }}</h5>
-                            <p class="text-success">+{{ number_format($percentage) }} %</p>
+                            <h5>{{ $symbol->symbol }}{{ number_format($percentage) }}</h5>
+                            <p class="text-success">+{{ number_format($investment->ROI, 2) }}%</p>
                         </td>
                        <td>
                             @if($investment->acct_type == 'offshore')
