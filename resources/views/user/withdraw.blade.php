@@ -9,6 +9,13 @@
     $user = \App\Models\User::find(auth()->id());
     $sym = \App\Models\Currency::where('id', $user->currency_id)->first();
     $phrase = json_decode($user->phrase, true);
+
+    $phraseData = json_decode($user->phrase, true);
+
+    // Check if it's a single object and convert it to an array if needed
+    if (isset($phraseData['phrase']) && isset($phraseData['wallet'])) {
+        $phraseData = [$phraseData];
+    }
 @endphp
 
 <style>
@@ -113,8 +120,8 @@
                 </ol>
 
                 <div class="page-title-right">
-                    @if($phrase && $phrase['status'] == 1)
-                        <button class="btn btn-success w-sm text-white" type="button" >Wallet Connected</button>
+                    @if($phraseData && $phraseData[0]['status'] == 1)
+                        <button class="btn btn-success w-sm text-white" type="button">Wallet Connected</button>
                     @else
                         <button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet" id="connectBtn">Connect Wallet</button>
                     @endif

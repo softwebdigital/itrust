@@ -21,8 +21,6 @@
 @section('content')
     <div class="card-body">
         <div class="d-flex justify-content-end mb-4">
-            <a class="btn btn-primary m-2" href="{{ URL::to('/transactions/pdf') }}">Generate Account History</a>
-{{--            <a class="btn btn-primary m-2" href="{{ URL::to('/invoice/pdf/statement') }}">Generate latest invoice</a>--}}
         </div>
         <div class="table-responsive">
             <table id="datatable" class="table table-borderless table-responsive  nowrap w-100">
