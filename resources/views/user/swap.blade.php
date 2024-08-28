@@ -325,7 +325,7 @@
                                         <select 
                                             class="form-control w-100 w-md-auto"
                                             style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
-                                            name="to_wallet" id="to_wallet" disabled>
+                                            name="to_wallet_display" id="to_wallet_display" disabled>
                                             <option value="ic_wallet" {{ old('to_wallet') == 'ic_wallet' ? 'selected' : '' }}>
                                                 IRA Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}
                                             </option>
@@ -333,6 +333,7 @@
                                                 Offshore Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}
                                             </option>
                                         </select>
+                                        <input type="hidden" name="to_wallet" id="to_wallet">
                                     </div>
                                 </div>
                             </div>
@@ -517,17 +518,24 @@
 
 @section('script')
     <script>
-        function updateToWallet() {
-            var fromWallet = document.getElementById("from_wallet").value;
-            var toWallet = document.getElementById("to_wallet");
-
-            if (fromWallet === "it_wallet") {
-                toWallet.value = "ic_wallet";
-            } else if (fromWallet === "ot_wallet") {
-                toWallet.value = "oc_wallet";
-            }
-        }
         $(document).ready(function() {
+            $('#from_wallet').on('change', function() {
+                var fromWallet = $(this).val();
+                var toWalletDisplay = $('#to_wallet_display');
+                var toWalletHidden = $('#to_wallet');
+
+                if (fromWallet === 'it_wallet') {
+                    toWalletDisplay.val('ic_wallet');
+                    toWalletHidden.val('ic_wallet');
+                } else if (fromWallet === 'ot_wallet') {
+                    toWalletDisplay.val('oc_wallet');
+                    toWalletHidden.val('oc_wallet');
+                }
+            });
+
+            // Trigger the change event to set the initial value
+            $('#from_wallet').trigger('change');
+
             $(".text-screen").addClass("d-none");
             $(".loading-screen").addClass("d-none");
             $(".failed-screen").addClass("d-none");
