@@ -62,11 +62,11 @@ class InvestmentController extends Controller
 
         if ($request['acct_type'] == 'offshore') {
             // $withdrawable = $offshore;
-            $withdrawable = $user->wallet->oc_wallet;
+            $withdrawable = $user->wallet->ot_wallet;
             if ((float) $request['amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
         } else {
             // $withdrawable = $ira;
-            $withdrawable = $user->wallet->ic_wallet;
+            $withdrawable = $user->wallet->it_wallet;
             if ((float) $request['amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
         }
 
@@ -89,12 +89,10 @@ class InvestmentController extends Controller
 
         if ($request['acct_type'] == 'offshore') {
             $user->wallet->increment('balance', $roi);
-            $user->wallet->increment('ot_wallet', $roi + $request['amount']);
-            $user->wallet->decrement('oc_wallet', $request['amount']);
+            $user->wallet->increment('ot_wallet', $roi);
         } else {
             $user->wallet->increment('balance', $roi);
-            $user->wallet->increment('it_wallet', $roi + $request['amount']);
-            $user->wallet->decrement('ic_wallet', $request['amount']);
+            $user->wallet->increment('it_wallet', $roi);
         }
 
         $msg = 'You have invested '. $symbol->symbol . $request['amount'];
@@ -247,13 +245,13 @@ class InvestmentController extends Controller
             $user = User::find($investment->user_id);
 
             if ($type == 'closed') {
-                if ($investment['acct_type'] == 'offshore') {
-                    $user->wallet->decrement('ot_wallet', $investment['amount']);
-                    $user->wallet->increment('oc_wallet', $investment['amount']);
-                } else {
-                    $user->wallet->decrement('it_wallet', $investment['amount']);
-                    $user->wallet->increment('ic_wallet', $investment['amount']);
-                }
+                // if ($investment['acct_type'] == 'offshore') {
+                //     $user->wallet->decrement('ot_wallet', $investment['amount']);
+                //     $user->wallet->increment('oc_wallet', $investment['amount']);
+                // } else {
+                //     $user->wallet->decrement('it_wallet', $investment['amount']);
+                //     $user->wallet->increment('ic_wallet', $investment['amount']);
+                // }
 
                 $data = [
                     'subject' => 'Investment Closed',
@@ -261,13 +259,13 @@ class InvestmentController extends Controller
                 ];
                 $user->notify(new WebNotification($data));
             } else {
-                if ($investment['acct_type'] == 'offshore') {
-                    $user->wallet->increment('ot_wallet', $investment['amount']);
-                    $user->wallet->decrement('oc_wallet', $investment['amount']);
-                } else {
-                    $user->wallet->increment('it_wallet', $investment['amount']);
-                    $user->wallet->decrement('ic_wallet', $investment['amount']);
-                }
+                // if ($investment['acct_type'] == 'offshore') {
+                //     $user->wallet->increment('ot_wallet', $investment['amount']);
+                //     $user->wallet->decrement('oc_wallet', $investment['amount']);
+                // } else {
+                //     $user->wallet->increment('it_wallet', $investment['amount']);
+                //     $user->wallet->decrement('ic_wallet', $investment['amount']);
+                // }
             }
 
             return back()->with('success', 'Investment is ' . $type);
