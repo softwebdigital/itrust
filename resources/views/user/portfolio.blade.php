@@ -340,8 +340,8 @@
                                                 
                                             </h4>
                                             <div style="float: inline-end;">
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}</span> <br>
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->it_wallet, 2) }}</span>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($ira_cash, 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($ira_trading, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>

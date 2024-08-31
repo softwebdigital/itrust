@@ -85,7 +85,7 @@ class InvestmentController extends Controller
 
         $inv->save();
 
-        $roi = ($request['amount'] * $request['ROI']) / 100;
+        $roi = $request['ROI'];
 
         if ($request['acct_type'] == 'offshore') {
             $user->wallet->increment('balance', $roi);
