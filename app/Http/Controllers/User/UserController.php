@@ -279,11 +279,14 @@ class UserController extends Controller
 
         $symbol = Currency::where('id', $user->currency_id)->first();
 
-        $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
-        $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+        $activeIRA = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+        $activeOffshore = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('roi');
 
-        $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
-        $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+        $ira_cash =  $ira - $activeIRA;
+        $ira_trading = $activeIRA;
+
+        $offshore_cash = $offshore - $activeOffshore;
+        $offshore_trading = $activeOffshore;
 
         $walletData = [
             'balance' => $totalValue,
@@ -296,6 +299,27 @@ class UserController extends Controller
         if(!$user->wallet) {
             $user->createOrUpdateWallet($walletData);
         }
+
+        //!!!!REMOVE WHEN DONE
+
+        $ira = end($iraData);
+        $offshore = end($offshoreData);
+
+        $wallet_ira = $user->wallet->ic_wallet + $user->wallet->it_wallet;
+        $wallet_offshore = $user->wallet->oc_wallet + $user->wallet->ot_wallet;
+
+        if($ira !== $wallet_ira || $offshore !== $wallet_offshore) {
+            $walletData = [
+                'balance' => $totalValue,
+                'ic_wallet' => $user->calculateBalances()['ira_cash'],
+                'it_wallet' => $user->calculateBalances()['ira_trading'],
+                'oc_wallet' => $user->calculateBalances()['offshore_cash'],
+                'ot_wallet' => $user->calculateBalances()['offshore_trading'],
+            ];
+            $user->createOrUpdateWallet($walletData);
+        }
+
+        //!!!!REMOVE WHEN DONE
 
         return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
