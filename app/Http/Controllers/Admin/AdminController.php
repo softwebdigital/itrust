@@ -24,6 +24,7 @@ use App\Http\Controllers\MailController;
 use function Symfony\Component\String\u;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\VerifiedNotification;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Notification;
 
 class AdminController extends Controller
@@ -470,10 +471,13 @@ class AdminController extends Controller
 
     public static function getBTC()
     {
-        $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
-
-        $response = Http::get($url);
-        $data = $response->json();
+        try {
+            $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+            $response = Http::get($url);
+            $data = $response->json();
+        } catch (RequestException $e) {
+            $data = [];
+        }
 
         // $stocks_data = [];
 

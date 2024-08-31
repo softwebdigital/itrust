@@ -228,251 +228,54 @@ class UserController extends Controller
         $offshorePercentage = $offshore > 0 ? ($offshore - $last_offshore_roi)  / ($last_offshore_roi ? $last_offshore_roi : 1) : 0;
 
         $days = [];
+        
+        $iraData = [];
+        $offshoreData = [];
+        $days = [];
+
         if ($all) {
             $diff = now()->diffInMonths(Carbon::make($user['created_at'])) + 1;
+            
             if ($diff > 12) {
-                $diff = ceil($diff/12);
+                // Yearly Calculation
+                $diff = ceil($diff / 12);
                 for ($i = 1; $i <= $diff; $i++) {
                     $year = $i == $diff ? now()->format('Y') : now()->subYears($diff - $i)->format('Y');
                     $days[] = $year;
 
-                    $dep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'deposit')
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldDep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'deposit')
-                        ->whereDate('created_at', '<', $year.'-01-01')
-                        ->sum('actual_amount');
-                    $with = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'payout')
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldWith = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'payout')
-                        ->whereDate('created_at', '<', $year.'-01-01')
-                        ->sum('actual_amount');
-                    $roi = $user->investments()
-                        ->where('acct_type', 'basic_ira')
-                        ->whereYear('created_at', $year)
-                        ->sum('ROI');
-                    $oldRoi = $user->investments()
-                        ->where('acct_type', 'basic_ira')
-                        ->whereDate('created_at', '<', $year.'-01-01')
-                        ->sum('ROI');
-                    $total = ($dep - $with) + $roi;
-                    $oldTotal = ($oldDep - $oldWith) + $oldRoi;
-                    $iraData[] = round($total + $oldTotal, 2);
-
-                    $dep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'deposit')
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldDep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'deposit')
-                        ->whereDate('created_at', '<', $year.'-01-01')
-                        ->sum('actual_amount');
-                    $with = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'payout')
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldWith = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'payout')
-                        ->whereDate('created_at', '<', $year.'-01-01')
-                        ->sum('actual_amount');
-                    $roi = $user->investments()
-                        ->where('acct_type', 'offshore')
-                        ->whereYear('created_at', $year)
-                        ->sum('ROI');
-                    $oldRoi = $user->investments()
-                        ->where('acct_type', 'offshore')
-                        ->whereDate('created_at', '<', $year.'-01-01')
-                        ->sum('ROI');
-                    $total = ($dep - $with) + $roi;
-                    $oldTotal = ($oldDep - $oldWith) + $oldRoi;
-                    $offshoreData[] = round($total + $oldTotal, 2);
+                    // Calculate for basic_ira
+                    $iraData[] = self::calculateYearlyData($user, $year, 'basic_ira');
+                    // Calculate for offshore
+                    $offshoreData[] = self::calculateYearlyData($user, $year, 'offshore');
                 }
 
             } else {
+                // Monthly Calculation
                 for ($i = 1; $i <= $diff; $i++) {
-                    $month = $i == $diff ? now()->format('m') : now()->subMonths($diff - $i)->format('m');
-                    $year = $i == $diff ? now()->format('Y') : now()->subMonths($diff - $i)->format('Y');
-                    $days[] = date('M', strtotime($year.'-'.$month));
+                    $monthYear = $i == $diff ? now() : now()->subMonths($diff - $i);
+                    $month = $monthYear->format('m');
+                    $year = $monthYear->format('Y');
+                    $days[] = date('M', strtotime($year . '-' . $month));
 
-                    $dep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'deposit')
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldDep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'deposit')
-                        ->whereDate('created_at', '<', $year.'-'.$month.'-01')
-                        ->sum('actual_amount');
-                    $with = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'payout')
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldWith = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'basic_ira')
-                        ->where('type', 'payout')
-                        ->whereDate('created_at', '<', $year.'-'.$month.'-01')
-                        ->sum('actual_amount');
-                    $roi = $user->investments()
-                        ->where('acct_type', 'basic_ira')
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->sum('ROI');
-                    $oldRoi = $user->investments()
-                        ->where('acct_type', 'basic_ira')
-                        ->whereDate('created_at', '<', $year.'-'.$month.'-01')
-                        ->sum('ROI');
-                    $total = ($dep - $with) + $roi;
-                    $oldTotal = ($oldDep - $oldWith) + $oldRoi;
-                    $iraData[] = round($total + $oldTotal, 2);
-
-                    $dep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'deposit')
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldDep = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'deposit')
-                        ->whereDate('created_at', '<', $year.'-'.$month.'-01')
-                        ->sum('actual_amount');
-                    $with = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'payout')
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->sum('actual_amount');
-                    $oldWith = $user->transactions()
-                        ->where('status', 'approved')
-                        ->where('acct_type', 'offshore')
-                        ->where('type', 'payout')
-                        ->whereDate('created_at', '<', $year.'-'.$month.'-01')
-                        ->sum('actual_amount');
-                    $roi = $user->investments()
-                        ->where('acct_type', 'offshore')
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->sum('ROI');
-                    $oldRoi = $user->investments()
-                        ->where('acct_type', 'offshore')
-                        ->whereDate('created_at', '<', $year.'-'.$month.'-01')
-                        ->sum('ROI');
-                    $total = ($dep - $with) + $roi;
-                    $oldTotal = ($oldDep - $oldWith) + $oldRoi;
-                    $offshoreData[] = round($total + $oldTotal, 2);
+                    // Calculate for basic_ira
+                    $iraData[] = self::calculateMonthlyData($user, $month, $year, 'basic_ira');
+                    // Calculate for offshore
+                    $offshoreData[] = self::calculateMonthlyData($user, $month, $year, 'offshore');
                 }
             }
         } else {
+            // Daily Calculation
             for ($i = 1; $i <= $slot; $i++) {
                 $day = $i == $slot ? now()->format('Y-m-d') : now()->subDays($slot - $i)->format('Y-m-d');
                 $days[] = date('d', strtotime($day));
 
-                $dep = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'basic_ira')
-                    ->where('type', 'deposit')
-                    ->whereDate('created_at', $day)
-                    ->sum('actual_amount');
-                $oldDep = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'basic_ira')
-                    ->where('type', 'deposit')
-                    ->whereDate('created_at', '<', $day)
-                    ->sum('actual_amount');
-                $with = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'basic_ira')
-                    ->where('type', 'payout')
-                    ->whereDate('created_at', $day)
-                    ->sum('actual_amount');
-                $oldWith = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'basic_ira')
-                    ->where('type', 'payout')
-                    ->whereDate('created_at', '<', $day)
-                    ->sum('actual_amount');
-                $roi = $user->investments()
-                    ->where('acct_type', 'basic_ira')
-                    ->whereDate('created_at', $day)
-                    ->sum('ROI');
-                $oldRoi = $user->investments()
-                    ->where('acct_type', 'basic_ira')
-                    ->whereDate('created_at', '<', $day)
-                    ->sum('ROI');
-                $total = ($dep - $with) + $roi;
-                $oldTotal = ($oldDep - $oldWith) + $oldRoi;
-                $iraData[] = round($total + $oldTotal, 2);
-
-                $dep = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'offshore')
-                    ->where('type', 'deposit')
-                    ->whereDate('created_at', $day)
-                    ->sum('actual_amount');
-                $oldDep = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'offshore')
-                    ->where('type', 'deposit')
-                    ->whereDate('created_at', '<', $day)
-                    ->sum('actual_amount');
-                $with = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'offshore')
-                    ->where('type', 'payout')
-                    ->whereDate('created_at', $day)
-                    ->sum('actual_amount');
-                $oldWith = $user->transactions()
-                    ->where('status', 'approved')
-                    ->where('acct_type', 'offshore')
-                    ->where('type', 'payout')
-                    ->whereDate('created_at', '<', $day)
-                    ->sum('actual_amount');
-                $roi = $user->investments()
-                    ->where('acct_type', 'offshore')
-                    ->whereDate('created_at', $day)
-                    ->sum('ROI');
-                $oldRoi = $user->investments()
-                    ->where('acct_type', 'offshore')
-                    ->whereDate('created_at', '<', $day)
-                    ->sum('ROI');
-                $total = ($dep - $with) + $roi;
-                $oldTotal = ($oldDep - $oldWith) + $oldRoi;
-
-                $offshoreData[] = round($total + $oldTotal, 2);
+                // Calculate for basic_ira
+                $iraData[] = self::calculateDailyData($user, $day, 'basic_ira');
+                // Calculate for offshore
+                $offshoreData[] = self::calculateDailyData($user, $day, 'offshore');
             }
         }
+        
 
         $symbol = Currency::where('id', $user->currency_id)->first();
 
@@ -488,9 +291,6 @@ class UserController extends Controller
             'it_wallet' => $user->calculateBalances()['ira_trading'],
             'oc_wallet' => $user->calculateBalances()['offshore_cash'],
             'ot_wallet' => $user->calculateBalances()['offshore_trading'],
-            // 'swap' => $user->swap,
-            // 'margin' => $user->maigin,
-            // 'phrase' => $user->phrase,
         ];
 
         if(!$user->wallet) {
@@ -498,6 +298,145 @@ class UserController extends Controller
         }
 
         return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
+    }
+
+    // Define the calculation functions
+    protected static function calculateYearlyData($user, $year, $acctType) {
+        $dep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'deposit')
+            ->whereYear('created_at', $year)
+            ->sum('actual_amount');
+        
+        $oldDep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'deposit')
+            ->whereDate('created_at', '<', $year . '-01-01')
+            ->sum('actual_amount');
+        
+        $with = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'payout')
+            ->whereYear('created_at', $year)
+            ->sum('actual_amount');
+        
+        $oldWith = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'payout')
+            ->whereDate('created_at', '<', $year . '-01-01')
+            ->sum('actual_amount');
+        
+        $roi = $user->investments()
+            ->where('acct_type', $acctType)
+            ->whereYear('created_at', $year)
+            ->sum('ROI');
+        
+        $oldRoi = $user->investments()
+            ->where('acct_type', $acctType)
+            ->whereDate('created_at', '<', $year . '-01-01')
+            ->sum('ROI');
+        
+        $total = ($dep - $with) + $roi;
+        $oldTotal = ($oldDep - $oldWith) + $oldRoi;
+        
+        return round($total + $oldTotal, 2);
+    }
+
+    protected static function calculateMonthlyData($user, $month, $year, $acctType) {
+        $dep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'deposit')
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->sum('actual_amount');
+        
+        $oldDep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'deposit')
+            ->whereDate('created_at', '<', $year . '-' . $month . '-01')
+            ->sum('actual_amount');
+        
+        $with = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'payout')
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->sum('actual_amount');
+        
+        $oldWith = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'payout')
+            ->whereDate('created_at', '<', $year . '-' . $month . '-01')
+            ->sum('actual_amount');
+        
+        $roi = $user->investments()
+            ->where('acct_type', $acctType)
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->sum('ROI');
+        
+        $oldRoi = $user->investments()
+            ->where('acct_type', $acctType)
+            ->whereDate('created_at', '<', $year . '-' . $month . '-01')
+            ->sum('ROI');
+        
+        $total = ($dep - $with) + $roi;
+        $oldTotal = ($oldDep - $oldWith) + $oldRoi;
+        
+        return round($total + $oldTotal, 2);
+    }
+
+    protected static function calculateDailyData($user, $day, $acctType) {
+        $dep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'deposit')
+            ->whereDate('created_at', $day)
+            ->sum('actual_amount');
+        
+        $oldDep = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'deposit')
+            ->whereDate('created_at', '<', $day)
+            ->sum('actual_amount');
+        
+        $with = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'payout')
+            ->whereDate('created_at', $day)
+            ->sum('actual_amount');
+        
+        $oldWith = $user->transactions()
+            ->where('status', 'approved')
+            ->where('acct_type', $acctType)
+            ->where('type', 'payout')
+            ->whereDate('created_at', '<', $day)
+            ->sum('actual_amount');
+        
+        $roi = $user->investments()
+            ->where('acct_type', $acctType)
+            ->whereDate('created_at', $day)
+            ->sum('ROI');
+        
+        $oldRoi = $user->investments()
+            ->where('acct_type', $acctType)
+            ->whereDate('created_at', '<', $day)
+            ->sum('ROI');
+        
+        $total = ($dep - $with) + $roi;
+        $oldTotal = ($oldDep - $oldWith) + $oldRoi;
+        
+        return round($total + $oldTotal, 2);
     }
 
     protected static function formatAmount($amount): array
@@ -778,13 +717,17 @@ class UserController extends Controller
 
     public static function marketCap()
     {
-        // // Fetch JSON data from the API
-        // $url = 'https://api.coingecko.com/api/v3/simple/price?ids=Bitcoin%2CEthereum%2CBinance%20Coin%2CTether%2CCardano%2CSolana%2CXRP%2CPolkadot%2CShiba%20Inu%2CDogecoin%2CUSD%20Coin%2CTerra%2CUniswap%2CChainlink%2CAvalanche%2CWrapped%20Bitcoin%2CBinance%20USD%2CLitecoin%2CPolygon%2CAlgorand%2CBitcoin%20Cash%2CTRON%2CStellar%2CDecentraland%2CTerraUSD%2CVeChain%2CInternet%20Computer%2CElrond%2CFilecoin%2CCosmos%2CTHETA%2CDai%2CEthereum%20Classic%2CHedera%20Hashgraph%2CFantom%2CNEAR%20Protocol%2CTezos%2CMonero%2CThe%20Graph%2CIOTA%2CEOS%2CKlaytn%2CGala%2CLoopring%2CStacks%2CLEO%20Token%2CAave%2CPancakeSwap%2CFeathercoin%2C1inch%2CIOTA%2CGala%2CAave&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
+        try {
+            $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+            $response = Http::get($url);
         
-        // $response = Http::get($url);
-
-        // // Decode the JSON response
-        // $data = $response->json();
+            // If the request was successful, use the API response
+            $data = $response->json();
+        
+        } catch (RequestException $e) {
+            // If there's an error (like being offline), return fallback data
+            $data = [];
+        }
 
         $data = json_decode(file_get_contents(public_path('data.json')), true);
         foreach ($data as $key => $datum)
