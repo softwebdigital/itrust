@@ -675,18 +675,17 @@ class TransactionController extends Controller
             ];
         }
 
-        // $ira_cash =  $user->copyBots->count() >= 1 ? 0 : $ira;
-        // $ira_trading = $user->copyBots->count() >= 1 ? $ira : 0;
+        $activeIRA = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+        $activeOffshore = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('roi');
 
-        // $offshore_cash = $user->copyBots->count() >= 1 ? 0 : $offshore;
-        // $offshore_trading = $user->copyBots->count() >= 1 ? $offshore : 0;
+        $ira_cash =  $ira - $activeIRA;
+        $ira_trading = $activeIRA;
 
-        // if ($user->wallet == null) {
-        //     $user->updateWallet(($ira_cash + $offshore_cash), ($ira_trading + $offshore_trading));
-        // }
+        $offshore_cash = $offshore - $activeOffshore;
+        $offshore_trading = $activeOffshore;
 
 
-        return view('user.swap', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'phrase'));
+        return view('user.swap', compact('user', 'transactions', 'setting', 'offshore', 'cash', 'phrase', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
 
     public function storePhrase(Request $request)
