@@ -315,7 +315,7 @@
     @php
       if ($total_assets == 0) $total_assets = 1;
     @endphp
-    {!! json_encode($iraData) !!} --- {!! json_encode($offshoreData) !!} --- {!! json_encode($days) !!}
+    
     <div class="row">
         <div class="col-md-12">
             <div class="row">
