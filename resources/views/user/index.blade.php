@@ -373,6 +373,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                         </div>
 
                         <div class="mt-3">
+                            <label for="acct_type">Cash Trading Balance:</label>
                             <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type" id="acct_type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                 <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA  - {{ $sym->symbol }}{{ $user->wallet->ic_wallet }} </option>
                                 <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account  - {{ $sym->symbol }}{{ $user->wallet->oc_wallet }} </option>
@@ -395,12 +396,29 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                         </div>
                         <div class="mt-3">
                             <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
-                                <option value="Tesla">Trade Interval: 24hrs </option>
+                                <option value="5min">Trade Interval: 5min </option>
+                                <option value="10min">Trade Interval: 10min </option>
+                                <option value="30min">Trade Interval: 30min </option>
+                                <option value="1hrs">Trade Interval: 1hrs </option>
+                                <option value="2hrs">Trade Interval: 2hrs </option>
+                                <option value="3hrs">Trade Interval: 3hrs </option>
+                                <option value="6hrs">Trade Interval: 6hrs </option>
+                                <option value="12hrs">Trade Interval: 12hrs </option>
+                                <option value="24hrs">Trade Interval: 24hrs </option>
                             </select>
                         </div>
                         <div class="mt-3">
                             <select class="form-select @error('leverage') is-invalid @enderror" name="leverage" id="leverage" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                 <option value="1.0">Leverage: 1.0X </option>
+                                <option value="2.0">Leverage: 2.0X </option>
+                                <option value="3.0">Leverage: 3.0X </option>
+                                <option value="4.0">Leverage: 4.0X </option>
+                                <option value="5.0">Leverage: 5.0X </option>
+                                <option value="6.0">Leverage: 6.0X </option>
+                                <option value="7.0">Leverage: 7.0X </option>
+                                <option value="8.0">Leverage: 8.0X </option>
+                                <option value="9.0">Leverage: 9.0X </option>
+                                <option value="10.0">Leverage: 10.0X </option>
                             </select>
                         </div>
                         <div class="mt-3">
