@@ -471,15 +471,15 @@ class AdminController extends Controller
 
     public static function getBTC()
     {
-        try {
-            $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
-            $response = Http::get($url);
-            $data = $response->json();
-        } catch (RequestException $e) {
-            $data = [];
-        }
+        // try {
+        //     $url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=btc&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1hr&locale=en';
+        //     $response = Http::get($url);
+        //     $data = $response->json();
+        // } catch (RequestException $e) {
+        //     $data = [];
+        // }
 
-        // $stocks_data = [];
+        $data = [];
 
         // Check if the response is not empty and if 'current_price' key exists
         if (!empty($data) && isset($data[0]['current_price'])) {
@@ -572,4 +572,25 @@ class AdminController extends Controller
     }
 
 
+    public function updateTrade(Request $request)
+    {
+        $user = Auth::user();
+
+        // Validate action input
+        $request->validate([
+            'action' => 'required|in:activate,deactivate',
+        ]);
+
+        // Update the user's trade status based on the action
+        if ($request->input('action') === 'activate') {
+            $user->trade = true;
+        } elseif ($request->input('action') === 'deactivate') {
+            $user->trade = false;
+        }
+
+        $user->save();
+
+        // Redirect or return a response
+        return redirect()->back()->with('success', 'Trade status updated successfully!');
+    }
 }

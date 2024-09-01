@@ -22,6 +22,28 @@
 
 @section('style')
     <style>
+        /* Style for the selected state of the labels */
+        input[type="radio"]:checked + label.btn-success {
+            background-color: #28a745; /* Success color for selected Buy */
+            color: white;
+        }
+
+        input[type="radio"]:checked + label.btn-transparent {
+            background-color: #dc3545; /* Danger color for selected Sell */
+            color: white;
+        }
+
+        /* Style for non-selected labels */
+        label.btn-success {
+            background-color: #f0f0f0; /* Default color for unselected Buy */
+            color: #28a745;
+        }
+
+        label.btn-transparent {
+            background-color: #f0f0f0; /* Default color for unselected Sell */
+            color: #dc3545;
+        }
+
         @media only screen and (max-width: 720px) {
             #trad { display: none !important; }
             #trad-mobile { display: block !important; }
@@ -116,6 +138,7 @@ function formatValues($number)
                 
 $copyBots = App\Models\CopyBot::query()->latest()->paginate(3);
 $user = App\Models\User::find(auth()->id());
+$sym = App\Models\Currency::where('id', $user->currency_id)->first();
 
 @endphp
 
@@ -273,7 +296,6 @@ $user = App\Models\User::find(auth()->id());
                                             <td>${{ formatValues($market['marketCap']) ?? '' }}</td>
                                             <td>
                                                 <div class="d-flex">
-
                                                     <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-success mx-1">Buy</a>
                                                     <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-danger mx-1">Sell</a>
                                                 </div>
@@ -313,61 +335,156 @@ $user = App\Models\User::find(auth()->id());
                 </div> --}}
             </div>
 
+            @if($user->trade)
             <div class="col-md-12">
-                    <div class="col-md-12 order-md-1 mt-4">
-                        <div class="card-body mb-3 border">
-                            <div class="row align-items-center reward" id="reward-1">
-                                <h5>Copy Bot</h5>
-                                <div class="col-10 align-self-center d-flex justify-content-between">
-                                    <div class="col align-self-center d-flex justify-content-between">
-                                        <img src="{{ asset('img/dummy/bot.png') }}" alt="" width="75">
-                                    </div>
-
-                                    <input type="checkbox" id="bot" checked />
-                                    <label class="toggle" for="bot">Toggle</label>
-
-                                    <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
+                <div class="py-4">
+                    <form action="{{ route('store.trade') }}" method="post">
+                        @csrf
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5>Trade</h5>
+                            </div>
+                            <div>
+                                <div class="position-relative"> 
+                                        <select class="form-control w-md-auto @error('assets') is-invalid @enderror" 
+                                            style="width: 150px; border: 1px solid #f0f0f0; border-radius: 30px; padding: 10px;"
+                                            name="assets" id="assets">
+                                            <option value="stocks" {{ old('assets') == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                                            <option value="crypto" {{ old('assets') == 'crypto' ? 'selected' : '' }}>Crypto</option>
+                                        </select>
+                                    <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="mt-3">
+                            <div class="d-flex" style="padding: 4px 4px 0px 4px; border: 1px solid #f0f0f0; border-radius: 20px;">
+                                <!-- Buy Radio Button -->
+                                <input type="radio" id="buy" name="trade_action" value="buy" style="display: none;" checked>
+                                <label for="buy" class="btn trade-action-label btn-success" style="width: 50%; padding: 10px 30px; border-radius: 15px; cursor: pointer;">
+                                    Buy
+                                </label>
 
-                    <div class="col-md-12 order-md-1 mt-4">
-                        <div class="card-body mb-3 border">
-                            <div class="row align-items-center reward" id="reward-1">
-                                <h5>Buying</h5>
-                                <div class="col-10 align-self-center d-flex justify-content-between">
-                                    <div class="col align-self-center d-flex justify-content-between">
-                                        <img src="img/dummy/buy.png" alt="" width="75">
-                                    </div>
-
-                                    <input type="checkbox" id="buy" checked />
-                                    <label class="toggle" for="buy">Buying</label>
-
-                                    <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
-                                </div>
+                                <!-- Sell Radio Button -->
+                                <input type="radio" id="sell" name="trade_action" value="sell" style="display: none;">
+                                <label for="sell" class="btn trade-action-label btn-transparent" style="width: 50%; padding: 10px 30px; border-radius: 15px; cursor: pointer;">
+                                    Sell
+                                </label>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-12 order-md-1 mt-4">
-                        <div class="card-body mb-3 border">
-                            <div class="row align-items-center reward" id="reward-1">
-                                <h5>Selling</h5>
-                                <div class="col-10 align-self-center d-flex justify-content-between">
-                                    <div class="col align-self-center d-flex justify-content-between">
-                                        <img src="img/dummy/sell.png" alt="" width="75">
-                                    </div>
-
-                                    <input type="checkbox" id="sell" />
-                                    <label class="toggle" for="sell">Selling</label>
-
-                                    <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
-                                </div>
+                        <div class="mt-3">
+                            <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type" id="acct_type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                                <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA  - {{ $sym->symbol }}{{ $user->wallet->ic_wallet }} </option>
+                                <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account  - {{ $sym->symbol }}{{ $user->wallet->oc_wallet }} </option>
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <select class="form-select @error('type') is-invalid @enderror" name="type" id="type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                                <option value="">Select Asset </option>
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <label for="amount">Enter Amount</label>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="amount"><strong>{{ $sym->symbol }}</strong></label>
+                                <input type="number" id="amount" step="any" name="amount"
+                                    value="{{ old('amount') }}"
+                                    class="form-control @error('amount') is-invalid @enderror" placeholder="Amount"
+                                    onkeyup="calcEquivWithdraw(this)" required >
                             </div>
                         </div>
-                    </div>
+                        <div class="mt-3">
+                            <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                                <option value="Tesla">Trade Interval: 24hrs </option>
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <select class="form-select @error('leverage') is-invalid @enderror" name="leverage" id="leverage" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                                <option value="1.0">Leverage: 1.0X </option>
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <label for="entry">Entry Point</label>
+                            <input class="form-control" type="number" name="entry" id="entry" placeholder="Enter entry point...">
+                        </div>
+                        <div class="mt-3">
+                            <label for="stop">Stop Loss</label>
+                            <input class="form-control" type="number" name="stop" id="stop" placeholder="Enter stop loss...">
+                        </div>
+                        <div class="mt-3">
+                            <label for="takeprofit">Take Profit</label>
+                            <input class="form-control" type="number" name="takeprofit" id="takeprofit" placeholder="Enter take profit...">
+                        </div>
+                        <div class="mt-3">
+                            <div class="position-relative buy-submit" style="display: block;">
+                                <button class="btn btn-success" type="submit" style="width: 100%; padding: 10px 30px; border-radius: 10px;">Buy</button>
+                                <i class="fas fa-chevron-right position-absolute text-white" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
+                            </div>
+                            <div class="position-relative sell-submit" style="display: none;">
+                                <button class="btn btn-danger" type="submit" style="width: 100%; padding: 10px 30px; border-radius: 10px;">Sell</button>
+                                <i class="fas fa-chevron-right position-absolute text-white" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
+            @else
+            <div class="col-md-12">
+                <div class="col-md-12 order-md-1 mt-4">
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward" id="reward-1">
+                            <h5>Copy Bot</h5>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="col align-self-center d-flex justify-content-between">
+                                    <img src="{{ asset('img/dummy/bot.png') }}" alt="" width="75">
+                                </div>
+
+                                <input type="checkbox" id="bot" checked />
+                                <label class="toggle" for="bot">Toggle</label>
+
+                                <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 order-md-1 mt-4">
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward" id="reward-1">
+                            <h5>Buying</h5>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="col align-self-center d-flex justify-content-between">
+                                    <img src="img/dummy/buy.png" alt="" width="75">
+                                </div>
+
+                                <input type="checkbox" id="buy" checked />
+                                <label class="toggle" for="buy">Buying</label>
+
+                                <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 order-md-1 mt-4">
+                    <div class="card-body mb-3 border">
+                        <div class="row align-items-center reward" id="reward-1">
+                            <h5>Selling</h5>
+                            <div class="col-10 align-self-center d-flex justify-content-between">
+                                <div class="col align-self-center d-flex justify-content-between">
+                                    <img src="img/dummy/sell.png" alt="" width="75">
+                                </div>
+
+                                <input type="checkbox" id="sell" />
+                                <label class="toggle" for="sell">Selling</label>
+
+                                <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <div class="col-12 cash-nav-item">
                 <h2 class="mt-5 mb-6">Copy Bots</h2>
@@ -1027,4 +1144,94 @@ $user = App\Models\User::find(auth()->id());
             }
         }
     </script>
+    <script>
+document.querySelectorAll('input[name="trade_action"]').forEach((elem) => {
+    elem.addEventListener('change', function(event) {
+        // Remove active class from all labels
+        document.querySelectorAll('.trade-action-label').forEach((label) => {
+            label.classList.remove('btn-success', 'btn-danger');
+            label.classList.add('btn-transparent');
+        });
+
+        // Add active class to the selected label
+        const selectedValue = event.target.value;
+        const selectedLabel = document.querySelector(`label[for="${event.target.id}"]`);
+
+        if (selectedValue === 'buy') {
+            selectedLabel.classList.add('btn-success');
+            selectedLabel.classList.remove('btn-transparent');
+        } else if (selectedValue === 'sell') {
+            selectedLabel.classList.add('btn-danger');
+            selectedLabel.classList.remove('btn-transparent');
+        }
+    });
+});
+
+document.querySelectorAll('input[name="trade_action"]').forEach((elem) => {
+    elem.addEventListener('change', function(event) {
+        // Get the selected value
+        const selectedValue = event.target.value;
+
+        // Hide both submit buttons
+        document.querySelector('.buy-submit').style.display = 'none';
+        document.querySelector('.sell-submit').style.display = 'none';
+
+        // Show the submit button based on selected value
+        if (selectedValue === 'buy') {
+            document.querySelector('.buy-submit').style.display = 'block';
+        } else if (selectedValue === 'sell') {
+            document.querySelector('.sell-submit').style.display = 'block';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+        const assetsSelect = document.getElementById('assets');
+        const typeSelect = document.getElementById('type');
+
+        const fetchAndPopulateType = (url) => {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    typeSelect.innerHTML = '<option value="">Select Asset</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.name; // Adjust according to your data structure
+                        option.textContent = `Assets: ${item.name}`; // Adjust according to your data structure
+                        typeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        };
+
+        assetsSelect.addEventListener('change', function() {
+            const selectedValue = assetsSelect.value;
+
+            let url = '';
+            if (selectedValue === 'stocks') {
+                url = '{{ route('assets.get') }}';
+            } else if (selectedValue === 'crypto') {
+                url = '{{ route('crypto.get') }}';
+            }
+
+            if (url) {
+                fetchAndPopulateType(url);
+            } else {
+                typeSelect.innerHTML = '<option value="">Select Crypto</option>';
+            }
+        });
+
+        // Fetch and populate the type dropdown based on the default selection
+        const initialValue = assetsSelect.value || 'stocks'; // Default to 'stocks' if no value selected
+        if (initialValue === 'stocks') {
+            fetchAndPopulateType('{{ route('assets.get') }}');
+        } else if (initialValue === 'crypto') {
+            fetchAndPopulateType('{{ route('crypto.get') }}');
+        }
+    });
+
+
+
+</script>
+
 @endsection

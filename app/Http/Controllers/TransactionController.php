@@ -743,14 +743,38 @@ class TransactionController extends Controller
             $fromWallet = $request->input('from_wallet');
             $amount = $request->input('amount');
 
-            if ($wallet->$fromWallet < $amount) {
+            // if ($wallet->$fromWallet < $amount) {
+            //     return redirect()->route('user.swap')->with('error', 'Insufficient funds in the source wallet!');
+            // }
+
+            $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+            $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+            $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+            $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+            $ira_roi = $user->ira_roi()->sum('ROI');
+            $offshore_roi = $user->offshore_roi()->sum('ROI');
+            $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+            $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+
+            $activeIRA = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+            $activeOffshore = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('roi');
+
+            $ira_cash =  $ira - $activeIRA;
+            $ira_trading = $activeIRA;
+
+            $offshore_cash = $offshore - $activeOffshore;
+            $offshore_trading = $activeOffshore;
+
+            $bal = $fromWallet == 'it_wallet' ? $ira_trading : $offshore_trading;
+
+            if ($amount <= $bal) {
+                // Perform the swap: decrement the source wallet and increment the destination wallet
+                $toWallet = $request->input('to_wallet');
+                $wallet->decrement($fromWallet, $amount);
+                $wallet->increment($toWallet, $amount);
+            } else {
                 return redirect()->route('user.swap')->with('error', 'Insufficient funds in the source wallet!');
             }
-
-            // Perform the swap: decrement the source wallet and increment the destination wallet
-            $toWallet = $request->input('to_wallet');
-            $wallet->decrement($fromWallet, $amount);
-            $wallet->increment($toWallet, $amount);
 
             // Save the updated wallet
             // $user->wallet = $wallet;
@@ -762,7 +786,79 @@ class TransactionController extends Controller
         }
     }
 
+    public function storeInvestment(Request $request)
+    {
+        $user = User::find(auth()->id());
 
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'assets' => 'required|in:stocks,crypto',
+            'acct_type' => 'required|in:basic_ira,offshore',
+            'type' => 'required|string|max:255',
+            'interval' => 'required|string|max:255',
+            'leverage' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'entry' => 'nullable|numeric|min:0',
+            'stop' => 'nullable|numeric|min:0',
+            'takeprofit' => 'nullable|numeric|min:0',
+        ]);
+
+        $accoutType = $validated['acct_type'] == 'basic_ira' ? $user->wallet->ic_wallet : $user->wallet->oc_wallet;
+
+        if ($validated['amount'] <= $accoutType) {
+            Investment::create([
+                'user_id' => Auth::id(),
+                'amount' => $validated['amount'],
+                'type' => $validated['type'],
+                'roi' => 0,
+                'status' => 'open',
+                'acct_type' => $validated['acct_type'],
+                'copy_bot_id' => 0,
+                'asset_type' => $validated['assets'],
+                'interval' => $validated['interval'],
+                'leverage' => $validated['leverage'],
+                'entry_point' => $validated['entry'],
+                'stop_loss' => $validated['stop'],
+                'take_profit' => $validated['takeprofit'],
+            ]);
+
+            if ($validated['acct_type'] == 'offshore') {
+                $user->wallet->decrement('oc_wallet', $validated['amount']);
+                $user->wallet->increment('ot_wallet', $validated['amount']);
+            } else {
+                $user->wallet->decrement('ic_wallet', $validated['amount']);
+                $user->wallet->increment('it_wallet', $validated['amount']);
+            }
+
+        } else {
+            return back()->with('error', 'Insufficient funds!');
+        }
+
+        // Redirect or return a response
+        return redirect()->route('user.index')->with('success', 'Trade created successfully!');
+    }
+
+    public function getAssets()
+    {
+        // Load the JSON file from storage
+        $json = Storage::disk('public')->get('asset.json');
+        
+        // Decode JSON into an associative array
+        $assets = json_decode($json, true);
+        
+        return response()->json($assets);
+    }
+
+    public function getCrypto()
+    {
+        // Load the JSON file from storage
+        $json = Storage::disk('public')->get('crypto.json');
+        
+        // Decode JSON into an associative array
+        $assets = json_decode($json, true);
+        
+        return response()->json($assets);
+    }
 
 
 }
