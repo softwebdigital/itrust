@@ -185,6 +185,26 @@
                     </div>
                 @endif
 
+                <div class="mt-4">
+                    <label>Trading Form 
+                        <span class="badge {{ $user['trade'] ? 'bg-success' : 'bg-danger' }}">
+                            {{ $user['trade'] ? 'Active' : 'Inactive' }}
+                        </span>
+                    </label>
+                    <div>
+                        <form action="{{ route('user.trade') }}" method="post">
+                            @csrf
+                                <input type="hidden" name="action" id="action" value="activate">
+                            @if($user['trade'])
+                                <button type="submit" class="btn btn-danger" onclick="document.getElementById('action').value='deactivate'">Deactivate</button>
+                            @else
+                                <button type="submit" class="btn btn-success" onclick="document.getElementById('action').value='activate'">Activate</button>
+                            @endif
+                        </form>
+                    </div>
+                </div>
+
+
 
                 </div>
                 <br>
