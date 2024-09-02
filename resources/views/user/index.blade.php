@@ -283,9 +283,9 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                             <th>{{ $key + 1 }}</th>
                                             <td>
                                                 <div class="row">
-                                                    <div class="col-3">
+                                                    <!-- <div class="col-3">
                                                         <img src="{{ $market['logo'] ?? '' }}" alt="" height="20">
-                                                    </div>
+                                                    </div> -->
                                                     <div class="col-9">
                                                         {{ $market['name'] }}
                                                     </div>
@@ -375,8 +375,8 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                         <div class="mt-3">
                             <label for="acct_type">Cash Trading Balance:</label>
                             <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type" id="acct_type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
-                                <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA  - {{ $sym->symbol }}{{ $user->wallet->ic_wallet }} </option>
-                                <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account  - {{ $sym->symbol }}{{ $user->wallet->oc_wallet }} </option>
+                                <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA  - {{ $sym->symbol }}{{ $ira_cash }} </option>
+                                <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account  - {{ $sym->symbol }}{{ $offshore_cash }} </option>
                             </select>
                         </div>
                         <div class="mt-3">
@@ -396,15 +396,15 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                         </div>
                         <div class="mt-3">
                             <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
-                                <option value="5min">Trade Interval: 5min </option>
-                                <option value="10min">Trade Interval: 10min </option>
-                                <option value="30min">Trade Interval: 30min </option>
-                                <option value="1hrs">Trade Interval: 1hrs </option>
-                                <option value="2hrs">Trade Interval: 2hrs </option>
-                                <option value="3hrs">Trade Interval: 3hrs </option>
-                                <option value="6hrs">Trade Interval: 6hrs </option>
-                                <option value="12hrs">Trade Interval: 12hrs </option>
-                                <option value="24hrs">Trade Interval: 24hrs </option>
+                                <option value="5min">Interval: 5min </option>
+                                <option value="10min">Interval: 10min </option>
+                                <option value="30min">Interval: 30min </option>
+                                <option value="1hrs">Interval: 1hrs </option>
+                                <option value="2hrs">Interval: 2hrs </option>
+                                <option value="3hrs">Interval: 3hrs </option>
+                                <option value="6hrs">Interval: 6hrs </option>
+                                <option value="12hrs">Interval: 12hrs </option>
+                                <option value="24hrs">Interval: 24hrs </option>
                             </select>
                         </div>
                         <div class="mt-3">
@@ -1215,7 +1215,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     data.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item.name; // Adjust according to your data structure
-                        option.textContent = `Assets: ${item.name}`; // Adjust according to your data structure
+                        option.textContent = `${item.name}`; // Adjust according to your data structure
                         typeSelect.appendChild(option);
                     });
                 })
@@ -1228,15 +1228,41 @@ document.addEventListener('DOMContentLoaded', function() {
             let url = '';
             if (selectedValue === 'stocks') {
                 url = '{{ route('assets.get') }}';
+
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    typeSelect.innerHTML = '<option value="">Select Asset</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.name; // Adjust according to your data structure
+                        option.textContent = `${item.name}`; // Adjust according to your data structure
+                        typeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
             } else if (selectedValue === 'crypto') {
                 url = '{{ route('crypto.get') }}';
+
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    typeSelect.innerHTML = '<option value="">Select Asset</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.name; // Adjust according to your data structure
+                        option.textContent = `${item.symbol.toUpperCase()}/USDT`; // Adjust according to your data structure
+                        typeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
             }
 
-            if (url) {
-                fetchAndPopulateType(url);
-            } else {
-                typeSelect.innerHTML = '<option value="">Select Crypto</option>';
-            }
+            // if (url) {
+            //     fetchAndPopulateType(url);
+            // } else {
+            //     typeSelect.innerHTML = '<option value="">Select Crypto</option>';
+            // }
         });
 
         // Fetch and populate the type dropdown based on the default selection
