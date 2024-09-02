@@ -33,13 +33,20 @@ class InvestmentController extends Controller
     public function newInvestUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'amount' => 'required|string',
             'ROI' => 'required|string',
             'status' => 'required',
             'user' => 'required|string',
             'type' => 'required',
-            'acct_type' => 'required',
-            'bot' => 'required'
+            'bot' => 'required',
+            'assets' => 'required|in:stocks,crypto',
+            'acct_type' => 'required|in:basic_ira,offshore',
+            'type' => 'required|string|max:255',
+            'interval' => 'required|string|max:255',
+            'leverage' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'entry' => 'nullable|numeric|min:0',
+            'stop' => 'nullable|numeric|min:0',
+            'takeprofit' => 'nullable|numeric|min:0',
         ]);
 
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
@@ -72,18 +79,21 @@ class InvestmentController extends Controller
 
         $amount = 0;
 
-        $inv = new Investment();
-        $amount = $inv->amount;
-        $inv->user_id = $user_id;
-        $inv->type = $request['type'];
-        $inv->amount = (float) $request['amount'] + $amount;
-        $inv->ROI = (float) $request['ROI'];
-        $inv->status = $request['status'];
-        $inv->acct_type = $request['acct_type'];
-        $inv->copy_bot_id = $request['bot'];
-        $inv->created_at = Carbon::make($request['date'])->format('Y-m-d');
-
-        $inv->save();
+        Investment::create([
+            'user_id' => $user_id,
+            'amount' => $request['amount'],
+            'type' => $request['type'],
+            'roi' => (float) $request['ROI'],
+            'status' => $request['status'],
+            'acct_type' => $request['acct_type'],
+            'copy_bot_id' => $request['bot'],
+            'asset_type' => $request['assets'],
+            'interval' => $request['interval'],
+            'leverage' => $request['leverage'],
+            'entry_point' => $request['entry'],
+            'stop_loss' => $request['stop'],
+            'take_profit' => $request['takeprofit'],
+        ]);
 
         $roi = $request['ROI'];
 
@@ -222,11 +232,32 @@ class InvestmentController extends Controller
         $validator = Validator::make($request->all(), [
             'amount' => 'required|string',
             'investment' => 'required|string',
-            // 'status' => 'required|string',
+            'status' => 'required|string',
+            'type' => 'required|string',
+            'assets' => 'required|string',
+            'interval' => 'required|string',
+            'leverage' => 'required|string',
+            'entry' => 'required|numeric',
+            'stop' => 'required|numeric',
+            'takeprofit' => 'required|numeric',
+            'date' => 'required|date',
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
 
-        if ($investment->update(['ROI' => $request['amount'], 'amount' => $request['investment'], 'created_at' => Carbon::make($request['date'])->format('Y-m-d')]))
+        if ($investment->update(
+            [
+                'ROI' => $request['amount'],
+                'amount' => $request['investment'],
+                'status' => $request['status'],
+                'type' => $request['type'],
+                'asset_type' => $request['assets'],
+                'interval' => $request['interval'],
+                'leverage' => $request['leverage'],
+                'entry_point' => $request['entry'],
+                'stop_loss' => $request['stop'],
+                'take_profit' => $request['takeprofit'],
+                'created_at' => Carbon::make($request['date'])->format('Y-m-d'),
+            ]))
             return back()->with('success', 'Investment successfully updated');
 
         return back()->with('error', 'An error occurred, try again.');
