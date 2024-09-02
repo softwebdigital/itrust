@@ -136,11 +136,11 @@ class UserController extends Controller
         //         dd($assets, $new_assets);
         $total_assets = $investment->count();
 
-        $ira_cash = 0.00;
-        $ira_trading = 0.00;
+        // $ira_cash = 0.00;
+        // $ira_trading = 0.00;
 
-        $offshore_cash = 0.00;
-        $offshore_trading = 0.00;
+        // $offshore_cash = 0.00;
+        // $offshore_trading = 0.00;
 
 
         $walletData = [
@@ -153,6 +153,16 @@ class UserController extends Controller
             // 'margin' => $user->maigin,
             // 'phrase' => $user->phrase,
         ];
+
+        $activeIRA = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+        $activeOffshore = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('roi');
+
+        $ira_cash =  $ira - $activeIRA;
+        $ira_trading = $activeIRA;
+
+        $offshore_cash =  $offshore - $activeOffshore;
+        $offshore_trading =  $activeOffshore;
+
 
         if(!$user->wallet) {
             $user->createOrUpdateWallet($walletData);
