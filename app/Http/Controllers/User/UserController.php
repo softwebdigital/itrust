@@ -93,14 +93,14 @@ class UserController extends Controller
         // $stocks_data = [];
 
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
-        $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
-        $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('ROI');
+        // $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');
+        // $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('ROI');
         $fixed = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Bonds(Fixed Income)')->sum('amount');
         $fixed_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Bonds(Fixed Income)')->sum('ROI');
         $Properties = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Properties')->sum('amount');
         $Properties_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Properties')->sum('ROI');
-        $Cryptocurrencies = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('amount');
-        $Cryptocurrencies_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('ROI');
+        // $Cryptocurrencies = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('amount');
+        // $Cryptocurrencies_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'Cryptocurrencies')->sum('ROI');
         $gold = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'gold')->sum('amount');
         $gold_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'gold')->sum('ROI');
         $Cash = $investment->where('type', 'Cash')->sum('amount');
@@ -112,10 +112,18 @@ class UserController extends Controller
         $options = Investment::query()->where('type', 'Options')->where('user_id', auth()->id())->where('status', 'open')->sum('amount');
         $options_roi = Investment::query()->where('type', 'Options')->where('user_id', auth()->id())->where('status', 'open')->sum('ROI');
 
+        $Cryptocurrencies = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('asset_type', 'crypto')->sum('amount');
+        $Cryptocurrencies_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('asset_type', 'crypto')->sum('ROI');
+
+        $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('asset_type', 'stocks')->sum('amount');
+        $stocks_roi = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('asset_type', 'stocks')->sum('ROI');
+
         $assets = [
             'stocks' => ['label' => 'Stocks', 'value' => round($stocks + $stocks_roi, 2), 'color' => "#62d9d7"],
+            // 'stocks' => ['label' => 'Stocks', 'value' => round($stocks + $stocks_roi, 2), 'color' => "#62d9d7"],
             'fixed' => ['label' => 'Fixed', 'value' => round($fixed + $fixed_roi, 2), 'color' => "#0d1189"],
             'properties' => ['label' => 'properties', 'value' => round($Properties + $Properties_roi, 2), 'color' => "#deb2d2"],
+            // 'crypto' => ['label' => 'Crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#6c96d3"],
             'crypto' => ['label' => 'Crypto', 'value' => round($Cryptocurrencies + $Cryptocurrencies_roi, 2), 'color' => "#6c96d3"],
             'gold' => ['label' => 'Gold', 'value' => round($gold + $gold_roi, 2), 'color' => "#69382c"],
             'cash' => ['label' => 'Cash', 'value' => round($withdrawable, 2), 'color' => "#90bcbc"],

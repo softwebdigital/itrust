@@ -30,9 +30,13 @@
                 <thead>
                 <tr>
                     <th>Copy Bots</th>
-                    <th>Investment</th>
-                    <th>ROI</th>
                     <th>Account</th>
+                    <th>Investment</th>
+                    <th>Asset</th>
+                    <th>ROI</th>
+                    <th>Leverage</th>
+                    <th>S/L</th>
+                    <th>T/P</th>
                     <th>Date</th>
                     <th>Status</th>
                 </tr>
@@ -62,8 +66,25 @@
 
                        </td>
                        <td>
+                            @if($investment->acct_type == 'offshore')
+                                Offshore
+                            @elseif($investment->acct_type == 'basic_ira')
+                                Basic IRA
+                            @else
+                                -----
+                            @endif
+                       </td>
+                       <td>
                             <h5>{{ $symbol->symbol }}{{ number_format($investment->amount, 2) }}</h5>
-                            <p>{{ ucwords(str_replace('_', ' ', $investment->type)) }}</p>
+                            <p>{{ ucwords(str_replace('_', ' ', $investment->asset_type)) }}</p>
+                       </td>
+                       <td>
+                            {{ ucwords(str_replace('_', ' ', $investment->type)) }}
+                            @if($investment->asset_type == 'stocks')
+                                <span class="px-3"><i class="fas fa-arrow-up text-success"></i></span>
+                            @else
+                                <span class="px-3"><i class="fas fa-arrow-down text-danger"></i></span>
+                            @endif
                        </td>
                         <td>
                             @php
@@ -79,14 +100,14 @@
                             <p class="text-success">+{{ number_format($percentage) }} %</p>
                         </td>
                        <td>
-                            @if($investment->acct_type == 'offshore')
-                            Offshore
-                            @elseif($investment->acct_type == 'basic_ira')
-                            Basic IRA
-                            @else
-                            -----
-                            @endif
-                        </td>
+                            {{ ucwords($investment->leverage) }}X
+                       </td>
+                       <td>
+                            {{ ucwords($investment->stop_loss) }}
+                       </td>
+                       <td>
+                            {{ ucwords($investment->take_profit) }}
+                       </td>
                         
                         <td>{{ \Carbon\Carbon::make($investment->created_at)->format('Y/m/d') }}</td>
                        <td> <span class="badge p-2

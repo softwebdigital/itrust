@@ -788,7 +788,22 @@ class TransactionController extends Controller
 
     public function storeInvestment(Request $request)
     {
+
         $user = User::find(auth()->id());
+        
+        $ira_deposit = $user->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $user->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $offshore_deposit = $user->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $offshore_payout = $user->offshore_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $user->ira_roi()->sum('ROI');
+        $offshore_roi = $user->offshore_roi()->sum('ROI');
+        $offshore = ($offshore_deposit - $offshore_payout) + ($offshore_roi);
+        $ira = ($ira_deposit - $ira_payout) + ($ira_roi);
+        $activeIRA = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+        $activeOffshore = $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('amount') + $user->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('roi');
+
+        $ira_cash =  $ira - $activeIRA;
+        $offshore_cash =  $offshore - $activeOffshore;
 
         // Validate the incoming request data
         $validated = $request->validate([
@@ -803,7 +818,9 @@ class TransactionController extends Controller
             'takeprofit' => 'nullable|numeric|min:0',
         ]);
 
-        $accoutType = $validated['acct_type'] == 'basic_ira' ? $user->wallet->ic_wallet : $user->wallet->oc_wallet;
+        // $accoutType = $validated['acct_type'] == 'basic_ira' ? $user->wallet->ic_wallet : $user->wallet->oc_wallet;
+
+        $accoutType = $validated['acct_type'] == 'basic_ira' ? $ira_cash : $offshore_cash;
 
         if ($validated['amount'] <= $accoutType) {
             Investment::create([

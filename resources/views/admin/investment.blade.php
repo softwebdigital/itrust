@@ -117,15 +117,8 @@
                                         @error('amount') <strong class="text-danger" role="alert">{{ $message }}</strong>
                                         @enderror
                                     </div>
-                                    <div class="form-group mb-3">
-                                        <label for="date">Date <span class="text-danger">*</span></label>
-                                        <input type="date" step="any" class="form-control required @error('date') is-invalid @enderror"
-                                               name="date" value="{{ old('date') ?? \Carbon\Carbon::make($investment['created_at'])->format('Y-m-d') }}" id="date" placeholder="Date">
-                                        @error('date') <strong class="text-danger" role="alert">{{ $message }}</strong>
-                                        @enderror
-                                    </div>
 
-                                    {{-- <div class="form-group">
+                                    <div class="form-group">
                                         <div class="input-group mb-3">
                                             <select class="form-select @error('status') is-invalid @enderror" name="status" style="display:block !important;">
                                                 <option value="">Select Status</option>
@@ -134,7 +127,78 @@
                                             </select>
                                         </div>
                                         @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                                    </div> --}}
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="">Product <span class="text-danger">*</span></label>
+                                        <select class="form-select @error('type') is-invalid @enderror" name="type" id="type">
+                                            <option value="">Select Product Type</option>
+                                            <option value="stocks" {{ $investment->type == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                                            <option value="Bonds(Fixed Income)" {{ $investment->type == 'Bonds(Fixed Income)' ? 'selected' : '' }}>Bonds(Fixed Income)</option>
+                                            <option value="Properties" {{ $investment->type == 'Properties' ? 'selected' : '' }}>Properties</option>
+                                            <option value="Cryptocurrencies" {{ $investment->type == 'Cryptocurrencies' ? 'selected' : '' }}>Cryptocurrencies</option>
+                                            <option value="ETF’S"  {{ $investment->type == 'ETF’S' ? 'selected' : '' }}>ETF’S</option>
+                                            <option value="gold"  {{ $investment->type == 'gold' ? 'selected' : '' }}>Gold</option>
+                                            <option value="NFT’S"  {{ $investment->type == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
+                                            <option value="Options"  {{ $investment->type == 'Options' ? 'selected' : '' }}>Options</option>
+                                        </select>
+                                        @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="assets">Assets:</label>
+                                        <select class="form-select @error('assets') is-invalid @enderror" name="assets"
+                                            id="assets">
+                                            <option value="stocks" {{ $investment->asset_type == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                                            <option value="crypto" {{ $investment->asset_type == 'crypto' ? 'selected' : '' }}>Crypto</option>
+                                        </select>
+                                        @error('asset_type') <strong class="text-danger"
+                                            role="alert">{{ $message }}</strong> @enderror
+                                    </div>
+                                    <div class="mt-3">
+                                        <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                                            <option value="5min"  {{ $investment->interval == '5min' ? 'selected' : '' }}>Interval: 5min </option>
+                                            <option value="10min"  {{ $investment->interval == '10min' ? 'selected' : '' }}>Interval: 10min </option>
+                                            <option value="30min"  {{ $investment->interval == '30min' ? 'selected' : '' }}>Interval: 30min </option>
+                                            <option value="1hrs"  {{ $investment->interval == '1hrs' ? 'selected' : '' }}>Interval: 1hrs </option>
+                                            <option value="2hrs"  {{ $investment->interval == '2hrs' ? 'selected' : '' }}>Interval: 2hrs </option>
+                                            <option value="3hrs"  {{ $investment->interval == '3hrs' ? 'selected' : '' }}>Interval: 3hrs </option>
+                                            <option value="6hrs"  {{ $investment->interval == '6hrs' ? 'selected' : '' }}>Interval: 6hrs </option>
+                                            <option value="12hrs"  {{ $investment->interval == '12hrs' ? 'selected' : '' }}>Interval: 12hrs </option>
+                                            <option value="24hrs"  {{ $investment->interval == '24hrs' ? 'selected' : '' }}>Interval: 24hrs </option>
+                                        </select>
+                                    </div>
+                                    <div class="mt-3">
+                                        <select class="form-select @error('leverage') is-invalid @enderror" name="leverage" id="leverage" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                                            <option value="1.0" {{ $investment->leverage == '1.0' ? 'selected' : '' }}>Leverage: 1.0X </option>
+                                            <option value="2.0" {{ $investment->leverage == '2.0' ? 'selected' : '' }}>Leverage: 2.0X </option>
+                                            <option value="3.0" {{ $investment->leverage == '3.0' ? 'selected' : '' }}>Leverage: 3.0X </option>
+                                            <option value="4.0" {{ $investment->leverage == '4.0' ? 'selected' : '' }}>Leverage: 4.0X </option>
+                                            <option value="5.0" {{ $investment->leverage == '5.0' ? 'selected' : '' }}>Leverage: 5.0X </option>
+                                            <option value="6.0" {{ $investment->leverage == '6.0' ? 'selected' : '' }}>Leverage: 6.0X </option>
+                                            <option value="7.0" {{ $investment->leverage == '7.0' ? 'selected' : '' }}>Leverage: 7.0X </option>
+                                            <option value="8.0" {{ $investment->leverage == '8.0' ? 'selected' : '' }}>Leverage: 8.0X </option>
+                                            <option value="9.0" {{ $investment->leverage == '9.0' ? 'selected' : '' }}>Leverage: 9.0X </option>
+                                            <option value="10.0" {{ $investment->leverage == '10.0' ? 'selected' : '' }}>Leverage: 10.0X </option>
+                                        </select>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label for="entry">Entry Point</label>
+                                        <input class="form-control" type="number" name="entry" id="entry" placeholder="Enter entry point..." value="{{ $investment->entry_point }}" step="0.000000000000001">
+                                    </div>
+                                    <div class="mt-3">
+                                        <label for="stop">Stop Loss</label>
+                                        <input class="form-control" type="number" name="stop" id="stop" placeholder="Enter stop loss..." value="{{ $investment->stop_loss }}" step="0.000000000000001">
+                                    </div>
+                                    <div class="mt-3">
+                                        <label for="takeprofit">Take Profit</label>
+                                        <input class="form-control" type="number" name="takeprofit" id="takeprofit" placeholder="Enter take profit..." value="{{ $investment->take_profit }}" step="0.000000000000001">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="date">Date <span class="text-danger">*</span></label>
+                                        <input type="date" step="any" class="form-control required @error('date') is-invalid @enderror"
+                                               name="date" value="{{ old('date') ?? \Carbon\Carbon::make($investment['created_at'])->format('Y-m-d') }}" id="date" placeholder="Date">
+                                        @error('date') <strong class="text-danger" role="alert">{{ $message }}</strong>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
@@ -191,6 +255,16 @@
                         @error('user') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>
                     <div class="form-group mb-3">
+                        <label for="trade_type">Trade Type :</label>
+                        <select class="form-select @error('trade_type') is-invalid @enderror" name="trade_type"
+                            id="trade_type">
+                            <option value="buy">Buy</option>
+                            <option value="sell">Sell</option>
+                        </select>
+                        @error('trade_type') <strong class="text-danger"
+                            role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="form-group mb-3">
                             <label for="">Amount <span class="text-danger">*</span></label>
                             <input type="amount" step="any" class="form-control @error('amount') is-invalid @enderror"
                                 name="amount" value="{{ old('amount') }}" id="amount" placeholder="Amount Invested">
@@ -227,6 +301,55 @@
                             <option value="Options" {{ old('type') == 'Options' ? 'selected' : '' }}>Options</option>
                         </select>
                         @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="assets">Assets:</label>
+                        <select class="form-select @error('assets') is-invalid @enderror" name="assets"
+                            id="assets">
+                            <option value="stocks">Stocks</option>
+                            <option value="crypto">Crypto</option>
+                        </select>
+                        @error('asset_type') <strong class="text-danger"
+                            role="alert">{{ $message }}</strong> @enderror
+                    </div>
+                    <div class="mt-3">
+                        <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                            <option value="5min">Interval: 5min </option>
+                            <option value="10min">Interval: 10min </option>
+                            <option value="30min">Interval: 30min </option>
+                            <option value="1hrs">Interval: 1hrs </option>
+                            <option value="2hrs">Interval: 2hrs </option>
+                            <option value="3hrs">Interval: 3hrs </option>
+                            <option value="6hrs">Interval: 6hrs </option>
+                            <option value="12hrs">Interval: 12hrs </option>
+                            <option value="24hrs">Interval: 24hrs </option>
+                        </select>
+                    </div>
+                    <div class="mt-3">
+                        <select class="form-select @error('leverage') is-invalid @enderror" name="leverage" id="leverage" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                            <option value="1.0">Leverage: 1.0X </option>
+                            <option value="2.0">Leverage: 2.0X </option>
+                            <option value="3.0">Leverage: 3.0X </option>
+                            <option value="4.0">Leverage: 4.0X </option>
+                            <option value="5.0">Leverage: 5.0X </option>
+                            <option value="6.0">Leverage: 6.0X </option>
+                            <option value="7.0">Leverage: 7.0X </option>
+                            <option value="8.0">Leverage: 8.0X </option>
+                            <option value="9.0">Leverage: 9.0X </option>
+                            <option value="10.0">Leverage: 10.0X </option>
+                        </select>
+                    </div>
+                    <div class="mt-3">
+                        <label for="entry">Entry Point</label>
+                        <input class="form-control" type="number" name="entry" id="entry" placeholder="Enter entry point..." step="0.000000000000001">
+                    </div>
+                    <div class="mt-3">
+                        <label for="stop">Stop Loss</label>
+                        <input class="form-control" type="number" name="stop" id="stop" placeholder="Enter stop loss..." step="0.000000000000001">
+                    </div>
+                    <div class="mt-3">
+                        <label for="takeprofit">Take Profit</label>
+                        <input class="form-control" type="number" name="takeprofit" id="takeprofit" placeholder="Enter take profit..." step="0.000000000000001">
                     </div>
                     @php 
                         $copyBots = \App\Models\CopyBot::all();
