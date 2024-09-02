@@ -423,15 +423,15 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                         </div>
                         <div class="mt-3">
                             <label for="entry">Entry Point</label>
-                            <input class="form-control" type="number" name="entry" id="entry" placeholder="Enter entry point...">
+                            <input class="form-control" type="number" name="entry" id="entry" placeholder="Enter entry point..." step="0.000000000000001">
                         </div>
                         <div class="mt-3">
                             <label for="stop">Stop Loss</label>
-                            <input class="form-control" type="number" name="stop" id="stop" placeholder="Enter stop loss...">
+                            <input class="form-control" type="number" name="stop" id="stop" placeholder="Enter stop loss..." step="0.000000000000001">
                         </div>
                         <div class="mt-3">
                             <label for="takeprofit">Take Profit</label>
-                            <input class="form-control" type="number" name="takeprofit" id="takeprofit" placeholder="Enter take profit...">
+                            <input class="form-control" type="number" name="takeprofit" id="takeprofit" placeholder="Enter take profit..." step="0.000000000000001">
                         </div>
                         <div class="mt-3">
                             <div class="position-relative buy-submit" style="display: block;">
