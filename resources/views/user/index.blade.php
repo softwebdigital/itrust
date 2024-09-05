@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css"
           integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 @endsection
 
 @section('style')
@@ -380,6 +383,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                             </select>
                         </div>
                         <div class="mt-3">
+                            <label for="type">Select Asset:</label>
                             <select class="form-select @error('type') is-invalid @enderror" name="type" id="type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                 <option value="">Select Asset </option>
                             </select>
@@ -1204,78 +1208,73 @@ document.querySelectorAll('input[name="trade_action"]').forEach((elem) => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-        const assetsSelect = document.getElementById('assets');
-        const typeSelect = document.getElementById('type');
+    const assetsSelect = document.getElementById('assets');
+    const typeSelect = document.getElementById('type');
 
-        const fetchAndPopulateType = (url) => {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    typeSelect.innerHTML = '<option value="">Select Asset</option>';
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.name; // Adjust according to your data structure
-                        option.textContent = `${item.name}`; // Adjust according to your data structure
-                        typeSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        };
+    // Initialize Choices.js for the 'type' select dropdown
+    let typeChoices = new Choices(typeSelect, {
+        searchEnabled: true,  // Enable search
+        placeholder: true,
+        itemSelectText: 'Select',   // Disable select text
+    });
 
-        assetsSelect.addEventListener('change', function() {
-            const selectedValue = assetsSelect.value;
+    // Function to fetch and populate the 'type' dropdown with data
+    const fetchAndPopulateType = (url, isCrypto = false) => {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Clear the current options in 'Choices'
+                typeChoices.clearStore();
 
-            let url = '';
-            if (selectedValue === 'stocks') {
-                url = '{{ route('assets.get') }}';
+                // Create an array of new options
+                const options = data.map(item => ({
+                    value: isCrypto ? item.name + ` (${item.symbol.toUpperCase()}/USDT)` : item.name, // Adjust according to your data structure
+                    label: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name // Format based on asset type
+                }));
 
-                fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    typeSelect.innerHTML = '<option value="">Select Asset</option>';
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.name; // Adjust according to your data structure
-                        option.textContent = `${item.name}`; // Adjust according to your data structure
-                        typeSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-            } else if (selectedValue === 'crypto') {
-                url = '{{ route('crypto.get') }}';
+                // Add the new options to the Choices instance
+                typeChoices.setChoices(options, 'value', 'label', true); // true flag ensures the new options are added and set
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    };
 
-                fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    typeSelect.innerHTML = '<option value="">Select Asset</option>';
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.name; // Adjust according to your data structure
-                        option.textContent = `${item.symbol.toUpperCase()}/USDT`; // Adjust according to your data structure
-                        typeSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-            }
+    // Listen for changes in the assets dropdown
+    assetsSelect.addEventListener('change', function() {
+        const selectedValue = assetsSelect.value;
+        let url = '';
 
-            // if (url) {
-            //     fetchAndPopulateType(url);
-            // } else {
-            //     typeSelect.innerHTML = '<option value="">Select Crypto</option>';
-            // }
-        });
-
-        // Fetch and populate the type dropdown based on the default selection
-        const initialValue = assetsSelect.value || 'stocks'; // Default to 'stocks' if no value selected
-        if (initialValue === 'stocks') {
-            fetchAndPopulateType('{{ route('assets.get') }}');
-        } else if (initialValue === 'crypto') {
-            fetchAndPopulateType('{{ route('crypto.get') }}');
+        // Determine the correct URL and data handling based on selected asset type
+        if (selectedValue === 'stocks') {
+            url = '{{ route('assets.get') }}';
+            fetchAndPopulateType(url, false);  // Call the function for stocks (isCrypto is false)
+        } else if (selectedValue === 'crypto') {
+            url = '{{ route('crypto.get') }}';
+            fetchAndPopulateType(url, true);  // Call the function for crypto (isCrypto is true)
         }
     });
 
+    // Fetch and populate the 'type' dropdown based on the default selection
+    const initialValue = assetsSelect.value || 'stocks'; // Default to 'stocks' if no value is selected
+    if (initialValue === 'stocks') {
+        fetchAndPopulateType('{{ route('assets.get') }}', false);  // Default stocks
+    } else if (initialValue === 'crypto') {
+        fetchAndPopulateType('{{ route('crypto.get') }}', true);  // Default crypto
+    }
+});
 
 
+
+</script>
+<script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/61d7335eb84f7301d329b6f4/1fooa1bol';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+    })();
 </script>
 
 @endsection
