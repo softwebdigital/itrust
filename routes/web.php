@@ -63,6 +63,10 @@ Route::post('/image/upload', [AdminController::class, 'imageUpload'])->name('ima
 
 Route::get('/cap', [UserController::class, 'marketCap'])->name('cap');
 
+Route::get('/asset/file', [TransactionController::class, 'getAssets'])->name('assets.get');
+
+Route::get('/crypto/file', [TransactionController::class, 'getCrypto'])->name('crypto.get');
+
 Auth::routes(['verify' => true]);
 Route::get('/email/change', [VerificationController::class, 'changeEmail']);
 Route::post('/email/change', [VerificationController::class, 'postChangeEmail'])->name('change.email');
@@ -134,10 +138,6 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
         Route::get('/user/swap', [TransactionController::class, 'swap'])->name('user.swap');
 
         Route::post('/user/swap/store', [TransactionController::class, 'swapBalance'])->name('user.swap.store');
-
-        Route::get('/asset/file', [TransactionController::class, 'getAssets'])->name('assets.get');
-
-        Route::get('/crypto/file', [TransactionController::class, 'getCrypto'])->name('crypto.get');
 
         Route::post('/trade/store', [TransactionController::class, 'storeInvestment'])->name('store.trade');
     });

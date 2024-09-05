@@ -233,7 +233,7 @@ class InvestmentController extends Controller
             'amount' => 'required|string',
             'investment' => 'required|string',
             'status' => 'required|string',
-            'type' => 'required|string',
+            // 'type' => 'required|string', s
             'assets' => 'required|string',
             'interval' => 'required|string',
             'leverage' => 'required|string',
