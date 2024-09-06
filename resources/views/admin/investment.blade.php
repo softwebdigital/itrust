@@ -133,34 +133,26 @@
                                         </div>
                                         @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                                     </div>
-                                    {{-- <div class="form-group mb-3">
-                                        <label for="">Product <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('other') is-invalid @enderror" name="other" id="other">
-                                            <option value="">Select Product Type</option>
-                                            <option value="stocks" {{ $investment->type == 'stocks' ? 'selected' : '' }}>Stocks</option>
-                                            <option value="Bonds(Fixed Income)" {{ $investment->type == 'Bonds(Fixed Income)' ? 'selected' : '' }}>Bonds(Fixed Income)</option>
-                                            <option value="Properties" {{ $investment->type == 'Properties' ? 'selected' : '' }}>Properties</option>
-                                            <option value="Cryptocurrencies" {{ $investment->type == 'Cryptocurrencies' ? 'selected' : '' }}>Cryptocurrencies</option>
-                                            <option value="ETF’S"  {{ $investment->type == 'ETF’S' ? 'selected' : '' }}>ETF’S</option>
-                                            <option value="gold"  {{ $investment->type == 'gold' ? 'selected' : '' }}>Gold</option>
-                                            <option value="NFT’S"  {{ $investment->type == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
-                                            <option value="Options"  {{ $investment->type == 'Options' ? 'selected' : '' }}>Options</option>
-                                        </select>
-                                        @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                                    </div> --}}
                                     <div class="form-group mb-3">
                                         <label for="assets">Product:</label>
                                         <select class="form-select @error('asset_type') is-invalid @enderror" name="assets"
-                                            id="assets">
-                                            <option value="stocks"  {{ $investment->asset_type == 'stocks' ? 'selected' : '' }}>Stocks</option>
-                                            <option value="crypto"  {{ $investment->asset_type == '5min' ? 'crypto' : '' }}>Crypto</option>
+                                            id="assets-{{ $investment->id }}">
+                                            <option value="">Select Asset</option>
+                                            <option value="stocks" {{ $investment->asset_type == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                                            <option value="Bonds(Fixed Income)" {{ $investment->asset_type == 'Bonds(Fixed Income)' ? 'selected' : '' }}>Bonds(Fixed Income)</option>
+                                            <option value="Properties" {{ $investment->asset_type == 'Properties' ? 'selected' : '' }}>Properties</option>
+                                            <option value="crypto" {{ $investment->asset_type == 'crypto' ? 'selected' : '' }}>Cryptocurrencies</option>
+                                            <option value="ETF’S" {{ $investment->asset_type == 'ETF’S' ? 'selected' : '' }}>ETF’S</option>
+                                            <option value="gold" {{ $investment->asset_type == 'gold' ? 'selected' : '' }}>Gold</option>
+                                            <option value="NFT’S" {{ $investment->asset_type == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
+                                            <option value="Options" {{ $investment->asset_type == 'Options' ? 'selected' : '' }}>Options</option>
                                         </select>
                                         @error('asset_type') <strong class="text-danger"
                                             role="alert">{{ $message }}</strong> @enderror
                                     </div>
                                     <div class="mt-3">
                                         <label for="type">Select Asset:</label>
-                                        <select class="form-select @error('type') is-invalid @enderror" name="types" id="type" style="border: 1px solid #f0f0f0; border-radius: 15px;">
+                                        <select class="form-select @error('type') is-invalid @enderror" name="types" id="type-{{ $investment->id }}" style="border: 1px solid #f0f0f0; border-radius: 15px;">
                                             <option value=""></option>
                                         </select>
                                         @error('type') 
@@ -169,7 +161,7 @@
                                             </strong> 
                                         @enderror
                                     </div>
-                                    <input id="hidden_type" name="type" type="hidden" value="{{ $investment->type }}" />
+                                    <input id="hidden-type-{{ $investment->id }}" name="type" type="hidden" value="{{ $investment->type }}" />
                                     <div class="mt-3">
                                         <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                             <option value="5min"  {{ $investment->interval == '5min' ? 'selected' : '' }}>Interval: 5min </option>
@@ -245,6 +237,84 @@
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const assetsSelect = document.getElementById('assets-{{ $investment->id }}');
+                        const typeSelect = document.getElementById('type-{{ $investment->id }}');
+                        const hiddenType = document.getElementById('hidden-type-{{ $investment->id }}');
+
+                        // Initialize Choices.js for the 'type' select dropdown
+                        let typeChoices = new Choices(typeSelect, {
+                            searchEnabled: true,  // Enable search
+                            placeholder: true,
+                            itemSelectText: 'Select',   // Disable select text
+                        });
+
+                        // Function to fetch and populate the 'type' dropdown with data
+                        const fetchAndPopulateType = (url, isCrypto = false) => {
+                            fetch(url)
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Clear the current options in 'Choices'
+                                    typeChoices.clearStore();
+
+                                    // Create an array of new options
+                                    const options = data.map(item => ({
+                                        value: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name, // Adjust according to your data structure
+                                        label: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name // Format based on asset type
+                                    }));
+
+                                    // Add the new options to the Choices instance
+                                    typeChoices.setChoices(options, 'value', 'label', true); // true flag ensures the new options are added and set
+                                })
+                                .catch(error => console.error('Error fetching data:', error));
+                        };
+
+                        // Listen for changes in the assets dropdown
+                        assetsSelect.addEventListener('change', function() {
+                            const selectedValue = assetsSelect.value;
+                            let url = '';
+
+                            // Determine the correct URL and data handling based on selected asset type
+                            if (selectedValue === 'stocks') {
+                                url = '{{ route('assets.get') }}';
+                                fetchAndPopulateType(url, false);  // Call the function for stocks (isCrypto is false)
+                                typeSelect.style.display = 'block'; // Show the type select field for stocks
+                            } else if (selectedValue === 'crypto') {
+                                url = '{{ route('crypto.get') }}';
+                                fetchAndPopulateType(url, true);  // Call the function for crypto (isCrypto is true)
+                                typeSelect.style.display = 'block'; // Show the type select field for crypto
+                            } else {
+                                // For non-crypto or non-stock assets, automatically set the type field
+                                typeChoices.clearStore(); // Clear any previous choices
+                                typeChoices.setChoices([{ value: selectedValue, label: selectedValue }]); // Set the asset value as the type
+                                typeChoices.setChoiceByValue(selectedValue);  // Automatically select the asset as the type
+                                hiddenType.value = selectedValue;
+                            }
+                        });
+
+                        // Update hidden input when a type is selected
+                        typeSelect.addEventListener('change', function() {
+                            hiddenType.value = typeSelect.value;  // Set the hidden_type value to the selected type
+                        });
+
+                        // Fetch and populate the 'type' dropdown based on the default selection
+                        const initialValue = assetsSelect.value || 'stocks'; // Default to 'stocks' if no value is selected
+                        if (initialValue === 'stocks') {
+                            fetchAndPopulateType('{{ route('assets.get') }}', false);  // Default stocks
+                            typeSelect.style.display = 'block'; // Show the type select for stocks
+                        } else if (initialValue === 'crypto') {
+                            fetchAndPopulateType('{{ route('crypto.get') }}', true);  // Default crypto
+                            typeSelect.style.display = 'block'; // Show the type select for crypto
+                        } else {
+                            // If it's neither crypto nor stocks, set the asset as the type and hide the type dropdown
+                            typeChoices.setChoices([{ value: initialValue, label: initialValue }]);
+                            typeChoices.setChoiceByValue(initialValue);  // Automatically select the initial asset as the type
+                            hiddenType.value = selectedValue;
+                        }
+                    });
+                </script>
             @endforeach
             </tbody>
         </table>
@@ -304,27 +374,19 @@
                         </select>
                         @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>
-                    {{-- <div class="form-group mb-3">
-                        <label for="">Product <span class="text-danger">*</span></label>
-                        <select class="form-select @error('') is-invalid @enderror" name="" id="">
-                            <option value="">Select Product Type</option>
-                            <option value="stocks" {{ old('type') == 'stocks' ? 'selected' : '' }}>Stocks</option>
-                            <option value="Bonds(Fixed Income)" {{ old('type') == 'Bonds(Fixed Income)' ? 'selected' : '' }}>Bonds(Fixed Income)</option>
-                            <option value="Properties" {{ old('type') == 'Properties' ? 'selected' : '' }}>Properties</option>
-                            <option value="Cryptocurrencies" {{ old('type') == 'Cryptocurrencies' ? 'selected' : '' }}>Cryptocurrencies</option>
-                            <option value="ETF’S" {{ old('type') == 'ETF’S' ? 'selected' : '' }}>ETF’S</option>
-                            <option value="gold" {{ old('type') == 'gold' ? 'selected' : '' }}>Gold</option>
-                            <option value="NFT’S" {{ old('type') == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
-                            <option value="Options" {{ old('type') == 'Options' ? 'selected' : '' }}>Options</option>
-                        </select>
-                        @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                    </div> --}}
                     <div class="form-group mb-3">
                         <label for="assets">Assets:</label>
                         <select class="form-select @error('assets') is-invalid @enderror" name="assets"
                             id="create_assets">
-                            <option value="stocks">Stocks</option>
-                            <option value="crypto">Crypto</option>
+                            <option value="">Select Asset</option>
+                            <option value="stocks" {{ old('type') == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                            <option value="Bonds(Fixed Income)" {{ old('type') == 'Bonds(Fixed Income)' ? 'selected' : '' }}>Bonds(Fixed Income)</option>
+                            <option value="Properties" {{ old('type') == 'Properties' ? 'selected' : '' }}>Properties</option>
+                            <option value="crypto" {{ old('type') == 'Cryptocurrencies' ? 'selected' : '' }}>Cryptocurrencies</option>
+                            <option value="ETF’S" {{ old('type') == 'ETF’S' ? 'selected' : '' }}>ETF’S</option>
+                            <option value="gold" {{ old('type') == 'gold' ? 'selected' : '' }}>Gold</option>
+                            <option value="NFT’S" {{ old('type') == 'NFT’S' ? 'selected' : '' }}>NFT’S</option>
+                            <option value="Options" {{ old('type') == 'Options' ? 'selected' : '' }}>Options</option>
                         </select>
                         @error('asset_type') <strong class="text-danger"
                             role="alert">{{ $message }}</strong> @enderror
@@ -421,68 +483,6 @@
         $('#datatable').DataTable({
             "ordering": false
         })
-        document.addEventListener('DOMContentLoaded', function() {
-            const assetsSelect = document.getElementById('assets');
-            const typeSelect = document.getElementById('type');
-            const hiddenType = document.getElementById('hidden_type');
-
-            // Initialize Choices.js for the 'type' select dropdown
-            let typeChoices = new Choices(typeSelect, {
-                searchEnabled: true,  // Enable search
-                placeholder: true,
-                itemSelectText: 'Select',   // Disable select text
-            });
-
-            // Function to fetch and populate the 'type' dropdown with data
-            const fetchAndPopulateType = (url, isCrypto = false) => {
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Clear the current options in 'Choices'
-                        typeChoices.clearStore();
-
-                        // Create an array of new options
-                        const options = data.map(item => ({
-                            value: isCrypto ? item.name + ` (${item.symbol.toUpperCase()}/USDT)` : item.name, // Adjust according to your data structure
-                            label: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name // Format based on asset type
-                        }));
-
-                        // Add the new options to the Choices instance
-                        typeChoices.setChoices(options, 'value', 'label', true); // true flag ensures the new options are added and set
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            };
-
-            // Listen for changes in the assets dropdown
-            assetsSelect.addEventListener('change', function() {
-                const selectedValue = assetsSelect.value;
-                let url = '';
-
-                // Determine the correct URL and data handling based on selected asset type
-                if (selectedValue === 'stocks') {
-                    url = '{{ route('assets.get') }}';
-                    fetchAndPopulateType(url, false);  // Call the function for stocks (isCrypto is false)
-                } else if (selectedValue === 'crypto') {
-                    url = '{{ route('crypto.get') }}';
-                    fetchAndPopulateType(url, true);  // Call the function for crypto (isCrypto is true)
-                }
-            });
-
-            // Update hidden input when a type is selected
-            typeSelect.addEventListener('change', function() {
-                hiddenType.value = typeSelect.value;  // Set the hidden_type value to the selected type
-                console.log(typeSelect.value);
-                
-            });
-
-            // Fetch and populate the 'type' dropdown based on the default selection
-            const initialValue = assetsSelect.value || 'stocks'; // Default to 'stocks' if no value is selected
-            if (initialValue === 'stocks') {
-                fetchAndPopulateType('{{ route('assets.get') }}', false);  // Default stocks
-            } else if (initialValue === 'crypto') {
-                fetchAndPopulateType('{{ route('crypto.get') }}', true);  // Default crypto
-            }
-        });
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -506,7 +506,7 @@
 
                         // Create an array of new options
                         const options = data.map(item => ({
-                            value: isCrypto ? item.name + ` (${item.symbol.toUpperCase()}/USDT)` : item.name, // Adjust according to your data structure
+                            value: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name, // Adjust according to your data structure
                             label: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name // Format based on asset type
                         }));
 
@@ -525,9 +525,17 @@
                 if (selectedValue === 'stocks') {
                     url = '{{ route('assets.get') }}';
                     fetchAndPopulateType(url, false);  // Call the function for stocks (isCrypto is false)
+                    typeSelect.style.display = 'block'; // Show the type select field for stocks
                 } else if (selectedValue === 'crypto') {
                     url = '{{ route('crypto.get') }}';
                     fetchAndPopulateType(url, true);  // Call the function for crypto (isCrypto is true)
+                    typeSelect.style.display = 'block'; // Show the type select field for crypto
+                } else {
+                    // For non-crypto or non-stock assets, automatically set the type field
+                    typeChoices.clearStore(); // Clear any previous choices
+                    typeChoices.setChoices([{ value: selectedValue, label: selectedValue }]); // Set the asset value as the type
+                    typeChoices.setChoiceByValue(selectedValue);  // Automatically select the asset as the type
+                    typeSelect.style.display = 'none'; // Hide the type dropdown for other assets
                 }
             });
 
@@ -535,8 +543,15 @@
             const initialValue = assetsSelect.value || 'stocks'; // Default to 'stocks' if no value is selected
             if (initialValue === 'stocks') {
                 fetchAndPopulateType('{{ route('assets.get') }}', false);  // Default stocks
+                typeSelect.style.display = 'block'; // Show the type select for stocks
             } else if (initialValue === 'crypto') {
                 fetchAndPopulateType('{{ route('crypto.get') }}', true);  // Default crypto
+                typeSelect.style.display = 'block'; // Show the type select for crypto
+            } else {
+                // If it's neither crypto nor stocks, set the asset as the type and hide the type dropdown
+                typeChoices.setChoices([{ value: initialValue, label: initialValue }]);
+                typeChoices.setChoiceByValue(initialValue);  // Automatically select the initial asset as the type
+                typeSelect.style.display = 'none'; // Hide the type select for other assets
             }
         });
     </script>

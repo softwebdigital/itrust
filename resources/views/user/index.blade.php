@@ -1228,7 +1228,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Create an array of new options
                 const options = data.map(item => ({
-                    value: isCrypto ? item.name + ` (${item.symbol.toUpperCase()}/USDT)` : item.name, // Adjust according to your data structure
+                    value: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name, // Adjust according to your data structure
                     label: isCrypto ? `${item.symbol.toUpperCase()}/USDT` : item.name // Format based on asset type
                 }));
 
