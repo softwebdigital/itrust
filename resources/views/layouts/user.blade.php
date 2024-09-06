@@ -942,6 +942,8 @@
     })
 </script>
 
+<script src="//code.tidio.co/24agp2azq6tkrizvwrrl8q8w1rawkfun.js" async></script>
+
 @yield('script')
 
 </body>
