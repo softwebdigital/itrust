@@ -338,7 +338,7 @@
 
                         <li class="nav-item dropdown {{ Route::currentRouteNamed(['user.deposit', 'user.withdraw']) ? 'mm-active' : '' }}">
                             <a class="nav-link dropdown-toggle arrow-none" href="{{ route('user.deposit') }}" id="topnav-documents" role="button">
-                                <i data-feather="file-text"></i><span data-key="t-documents">Cash</span>
+                                <i data-feather="dollar-sign"></i><span data-key="t-documents">Cash</span>
                             </a>
                         </li>
 

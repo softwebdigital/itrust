@@ -38,7 +38,7 @@ class InvestmentController extends Controller
             'user' => 'required|string',
             'type' => 'required',
             'bot' => 'required',
-            'assets' => 'required|in:stocks,crypto',
+            'assets' => 'required',
             'acct_type' => 'required|in:basic_ira,offshore',
             'type' => 'required|string|max:255',
             'interval' => 'required|string|max:255',
