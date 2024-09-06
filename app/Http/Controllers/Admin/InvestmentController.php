@@ -17,7 +17,7 @@ class InvestmentController extends Controller
 
     public function index()
     {
-        $investments = Investment::query()->latest()->get();
+        $investments = Investment::query()->latest()->paginate(100);
         $users = User::query()->latest()->get();
         return view('admin.investment', compact('investments', 'users'));
     }
@@ -233,7 +233,7 @@ class InvestmentController extends Controller
             'amount' => 'required|string',
             'investment' => 'required|string',
             'status' => 'required|string',
-            // 'type' => 'required|string', s
+            'type' => 'required|string',
             'assets' => 'required|string',
             'interval' => 'required|string',
             'leverage' => 'required|string',
