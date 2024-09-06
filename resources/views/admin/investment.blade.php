@@ -133,7 +133,7 @@
                                         </div>
                                         @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                                     </div>
-                                    <div class="form-group mb-3">
+                                    {{-- <div class="form-group mb-3">
                                         <label for="">Product <span class="text-danger">*</span></label>
                                         <select class="form-select @error('other') is-invalid @enderror" name="other" id="other">
                                             <option value="">Select Product Type</option>
@@ -147,23 +147,29 @@
                                             <option value="Options"  {{ $investment->type == 'Options' ? 'selected' : '' }}>Options</option>
                                         </select>
                                         @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group mb-3">
-                                        <label for="assets">Assets:</label>
-                                        <select class="form-select @error('assets') is-invalid @enderror" name="assets"
+                                        <label for="assets">Product:</label>
+                                        <select class="form-select @error('asset_type') is-invalid @enderror" name="assets"
                                             id="assets">
-                                            <option value="stocks">Stocks</option>
-                                            <option value="crypto">Crypto</option>
+                                            <option value="stocks"  {{ $investment->asset_type == 'stocks' ? 'selected' : '' }}>Stocks</option>
+                                            <option value="crypto"  {{ $investment->asset_type == '5min' ? 'crypto' : '' }}>Crypto</option>
                                         </select>
                                         @error('asset_type') <strong class="text-danger"
                                             role="alert">{{ $message }}</strong> @enderror
                                     </div>
                                     <div class="mt-3">
                                         <label for="type">Select Asset:</label>
-                                        <select class="form-select @error('type') is-invalid @enderror" name="type" id="type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
-                                            <option value="">Select Asset </option>
+                                        <select class="form-select @error('type') is-invalid @enderror" name="types" id="type" style="border: 1px solid #f0f0f0; border-radius: 15px;">
+                                            <option value=""></option>
                                         </select>
+                                        @error('type') 
+                                            <strong class="text-danger" role="alert">
+                                                {{ $message }}
+                                            </strong> 
+                                        @enderror
                                     </div>
+                                    <input id="hidden_type" name="type" type="hidden" value="{{ $investment->type }}" />
                                     <div class="mt-3">
                                         <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                             <option value="5min"  {{ $investment->interval == '5min' ? 'selected' : '' }}>Interval: 5min </option>
@@ -222,7 +228,7 @@
 
                 <div class="modal fade" id="staticBackdrop-delete-{{ $investment->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
+                        <div class="modal-content bg-white">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="staticBackdropLabel">Confirm Approval</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -298,7 +304,7 @@
                         </select>
                         @error('status') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>
-                    <div class="form-group mb-3">
+                    {{-- <div class="form-group mb-3">
                         <label for="">Product <span class="text-danger">*</span></label>
                         <select class="form-select @error('') is-invalid @enderror" name="" id="">
                             <option value="">Select Product Type</option>
@@ -312,7 +318,7 @@
                             <option value="Options" {{ old('type') == 'Options' ? 'selected' : '' }}>Options</option>
                         </select>
                         @error('type') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
-                    </div>
+                    </div> --}}
                     <div class="form-group mb-3">
                         <label for="assets">Assets:</label>
                         <select class="form-select @error('assets') is-invalid @enderror" name="assets"
@@ -418,6 +424,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const assetsSelect = document.getElementById('assets');
             const typeSelect = document.getElementById('type');
+            const hiddenType = document.getElementById('hidden_type');
 
             // Initialize Choices.js for the 'type' select dropdown
             let typeChoices = new Choices(typeSelect, {
@@ -459,6 +466,13 @@
                     url = '{{ route('crypto.get') }}';
                     fetchAndPopulateType(url, true);  // Call the function for crypto (isCrypto is true)
                 }
+            });
+
+            // Update hidden input when a type is selected
+            typeSelect.addEventListener('change', function() {
+                hiddenType.value = typeSelect.value;  // Set the hidden_type value to the selected type
+                console.log(typeSelect.value);
+                
             });
 
             // Fetch and populate the 'type' dropdown based on the default selection
