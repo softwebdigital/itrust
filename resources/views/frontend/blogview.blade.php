@@ -98,9 +98,10 @@
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="uil uil-share-alt"></i> Share </button>
                           <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ Share::currentPage($blog_post->title)->twitter()->getRawLinks() }}"><i class="uil uil-twitter"></i>Twitter</a>
-                            <a class="dropdown-item" href="{{ Share::currentPage($blog_post->title)->facebook()->getRawLinks()}}"><i class="uil uil-facebook-f"></i>Facebook</a>
-                            <a class="dropdown-item" href="{{ Share::currentPage($blog_post->title)->linkedin()->getRawLinks() }}"><i class="uil uil-linkedin"></i>Linkedin</a>
+                            <a class="dropdown-item" href="{{ Share::page(url()->current(), $blog_post->title)->twitter() }}"><i class="uil uil-twitter"></i>Twitter</a>
+                            <a class="dropdown-item" href="{{ Share::page(url()->current(), $blog_post->title)->facebook() }}"><i class="uil uil-facebook-f"></i>Facebook</a>
+                            <a class="dropdown-item" href="{{ Share::page(url()->current(), $blog_post->title)->linkedin() }}"><i class="uil uil-linkedin"></i>LinkedIn</a>
+
                             {{-- {!! Share::page('http://jorenvanhocht.be')->facebook()!!} --}}
                           </div>
                           <!--/.dropdown-menu -->
