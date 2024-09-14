@@ -308,10 +308,10 @@
                                             style="border: 1px solid #00000033; border-radius: 5px; padding: 10px; font-weight: 700; background: #f0f0f0;"
                                             name="from_wallet" id="from_wallet" onchange="updateToWallet()">
                                             <option value="it_wallet" {{ old('from_wallet') == 'it_wallet' ? 'selected' : '' }}>
-                                                IRA Trading: {{ $sym->symbol }}{{ number_format($ira_trading, 2) }}
+                                                IRA Trading: {{ $sym->symbol }}{{ number_format($ira_cash, 2) }}
                                             </option>
                                             <option value="ot_wallet" {{ old('from_wallet') == 'ot_wallet' ? 'selected' : '' }}>
-                                                Offshore Trading: {{ $sym->symbol }}{{ number_format($offshore_trading, 2) }}
+                                                Offshore Trading: {{ $sym->symbol }}{{ number_format($offshore_cash, 2) }}
                                             </option>
                                         </select>
                                         <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
