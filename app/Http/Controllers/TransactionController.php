@@ -765,7 +765,7 @@ class TransactionController extends Controller
             $offshore_cash = $offshore - $activeOffshore;
             $offshore_trading = $activeOffshore;
 
-            $bal = $fromWallet == 'it_wallet' ? $ira_trading : $offshore_trading;
+            $bal = $fromWallet == 'it_wallet' ? $ira_cash : $offshore_cash;
 
             if ($amount <= $bal) {
                 // Perform the swap: decrement the source wallet and increment the destination wallet
