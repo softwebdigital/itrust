@@ -137,8 +137,7 @@ function formatValues($number)
 
     return number_format($number, 2) . $suffix;
 }
-
-                
+$userTrade = json_decode($user->user_trade, true) ?? ['bot' => 0, 'buy' => 0, 'sell' => 0];
 $copyBots = App\Models\CopyBot::query()->latest()->paginate(3);
 $user = App\Models\User::find(auth()->id());
 $sym = App\Models\Currency::where('id', $user->currency_id)->first();
@@ -216,7 +215,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                     <div class="card">
                         <div class="card-body px-0">
                             <div class="table table-responsive" style="height: 1672px;">
-                                <table class="table table-borderless table-hover">
+                                <table class="table table-borderless table-hover d-sm-block d-none">
                                     <thead>
                                     <tr>
                                         <th></th>
@@ -227,7 +226,6 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                         <th>24H Change</th>
                                         <th>High</th>
                                         <th>Low</th>
-                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody id="cap">
@@ -241,17 +239,26 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                             <td class="{{ $market["price_change_percentage_24h"] < 0 ? 'text-danger' : 'text-success' }}">{{ number_format($market["price_change_percentage_24h"], 2) . '%' }}</td>
                                             <td class="text-success">${{ number_format($market['high_24h'], 2) }}</td>
                                             <td class="text-danger">${{ number_format($market['low_24h'], 2) }}</td>
-
-                                            <!-- <td class="{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1h"]) ? ($market["1h"]["price_change_pct"] * 100).'%' : '' }}</td>
-                                            <td class="{{ isset($market["1d"]) ? ($market["1d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["1d"]) ? ($market['1d']['price_change_pct'] * 100).'%' : '' }}</td>
-                                            <td class="{{ isset($market["30d"]) ? ($market["30d"]["price_change_pct"] < 0 ? 'text-danger' : 'text-success') : '' }}">{{ isset($market["30d"]) ? ($market['30d']['price_change_pct'] * 100).'%' : '' }}</td> -->
-                                            <td>
-                                                <div class="d-flex">
-
-                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-success mx-1">Buy</a>
-                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-danger mx-1">Sell</a>
-                                                </div>
-                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                                <table class="table table-borderless table-hover d-sm-none d-block">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Symbol</th>
+                                        <th>Price</th>
+                                        <th>24H Change</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="cap">
+                                    @foreach($data as $key => $market)
+                                        <tr>
+                                            <td><img src="{{ $market['image'] }}" alt="" height="20"> {{ $market['name'] }}</td>
+                                            <td>{{ $market['symbol'] }}</td>
+                                            <td>${{ number_format($market['current_price'], 2) }}</td>
+                                            <td class="{{ $market["price_change_percentage_24h"] < 0 ? 'text-danger' : 'text-success' }}">{{ number_format($market["price_change_percentage_24h"], 2) . '%' }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -461,10 +468,8 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                     <img src="{{ asset('img/dummy/bot.png') }}" alt="" width="75">
                                 </div>
 
-                                <input type="checkbox" id="bot" checked />
+                                <input type="checkbox" id="bot" name="bot" value="1" {{ $userTrade['bot'] ? 'checked' : '' }} disabled>
                                 <label class="toggle" for="bot">Toggle</label>
-
-                                <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
                             </div>
                         </div>
                     </div>
@@ -479,7 +484,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                     <img src="img/dummy/buy.png" alt="" width="75">
                                 </div>
 
-                                <input type="checkbox" id="buy" checked />
+                                <input type="checkbox" id="buy" name="buy" value="1" {{ $userTrade['buy'] ? 'checked' : '' }} disabled>
                                 <label class="toggle" for="buy">Buying</label>
 
                                 <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
@@ -497,7 +502,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                     <img src="img/dummy/sell.png" alt="" width="75">
                                 </div>
 
-                                <input type="checkbox" id="sell" />
+                                <input type="checkbox" id="sell" name="sell" value="1" {{ $userTrade['sell'] ? 'checked' : '' }} disabled>
                                 <label class="toggle" for="sell">Selling</label>
 
                                 <!-- <a class="btn btn-sm btn-success mx-1" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#staticBackdrop-add">Add Bot <i class="mdi mdi-plus"></i></a> -->
@@ -721,7 +726,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                         <input type="file" class="dropify" id="pass-file-field"
                                                data-default-file="{{ $user->passport ? asset($user->passport) : '' }}"
                                                data-allowed-file-extensions="png jpg jpeg" data-max-file="1"
-                                               data-max-file-size="1M" required />
+                                               data-max-file-size="2M" required />
                                     </div>
                                     {{-- <div class="d-none" id="drv-file">
                                     <input type="file" class="dropify" id="drv-file-field" data-default-file="{{ $user->drivers_license ? asset($user->drivers_license) : '' }}" data-allowed-file-extensions="png jpg jpeg" data-max-file="1" data-max-file-size="1M" required />
@@ -730,7 +735,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                         <input type="file" class="dropify" id="stt-file-field"
                                                data-default-file="{{ $user->state_id ? asset($user->state_id) : '' }}"
                                                data-allowed-file-extensions="png jpg jpeg" data-max-file="1"
-                                               data-max-file-size="1M" required />
+                                               data-max-file-size="2M" required />
                                     </div>
                                 </div>
 
@@ -1002,11 +1007,6 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                         <i class=" fas fa-check-circle text-success"></i> Show all four corners<br>
                     </div>
                     <div class="col-md-6">
-                        We can't accept:<br>
-                        <i class="fas fa-times-circle text-danger"></i> Scans, copies, or screenshots<br>
-                        <i class="fas fa-times-circle text-danger"></i> U.S. military ID and trusted traveller cards<br>
-                        <i class="fas fa-times-circle text-danger"></i> Employment authorization documents<br>
-                        <i class="fas fa-times-circle text-danger"></i> Documents not from the U.S. government<br>
                     </div>
                 `);
            }

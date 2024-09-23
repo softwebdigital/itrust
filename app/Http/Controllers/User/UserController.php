@@ -318,27 +318,6 @@ class UserController extends Controller
             $user->createOrUpdateWallet($walletData);
         }
 
-        //!!!!REMOVE WHEN DONE
-
-        $ira = end($iraData);
-        $offshore = end($offshoreData);
-
-        $wallet_ira = $user->wallet->ic_wallet + $user->wallet->it_wallet;
-        $wallet_offshore = $user->wallet->oc_wallet + $user->wallet->ot_wallet;
-
-        if($ira !== $wallet_ira || $offshore !== $wallet_offshore) {
-            $walletData = [
-                'balance' => $totalValue,
-                'ic_wallet' => $user->calculateBalances()['ira_cash'],
-                'it_wallet' => $user->calculateBalances()['ira_trading'],
-                'oc_wallet' => $user->calculateBalances()['offshore_cash'],
-                'ot_wallet' => $user->calculateBalances()['offshore_trading'],
-            ];
-            $user->createOrUpdateWallet($walletData);
-        }
-
-        //!!!!REMOVE WHEN DONE
-
         return view('user.portfolio', compact('symbol', 'last_ira_roi', 'iraPercentage', 'offshorePercentage', 'news', 'user', 'data', 'days', 'assets', 'setting', 'offshore', 'ira', 'iraData', 'offshoreData', 'total_assets', 'cash', 'ira_cash', 'ira_trading', 'offshore_cash', 'offshore_trading'));
     }
 

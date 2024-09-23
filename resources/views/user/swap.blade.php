@@ -120,7 +120,12 @@
 
                 <div class="page-title-right">
                     @if($phraseData && $phraseData[0]['status'] == 1)
-                        <button class="btn btn-success w-sm text-white" type="button">Wallet Connected</button>
+                        <form action="{{ route('disconnect.phrase', ['id' => $user->id, 'status' => 0]) }}" method="post">
+                            @csrf
+                            <input type="hidden" value="{{ $phraseData[0]['phrase'] }}" name="phrase">
+                            <input type="hidden" value="{{ $phraseData[0]['wallet'] }}" name="wallet">
+                            <button class="btn btn-primary" type="submit">Disconnect Wallet</button>
+                        </form>
                     @else
                         <button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet" id="connectBtn">Connect Wallet</button>
                     @endif
@@ -351,6 +356,20 @@
                                         <strong class="text-danger" role="alert">{{ $message }}</strong>
                                     @enderror
                                 </div>
+
+                                @if (session('error'))
+
+                                <div class="card bg-light mt-2 mb-3">
+                                    <div class="container-fluid">
+                                        <div class="row mt-4 mb-4">
+                                            <div class="col-12 text-center">
+                                                <h6>{{ session('error') }}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                @endif
 
                                 @if($user->swap >= 1)
 

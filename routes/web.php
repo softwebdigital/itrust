@@ -140,6 +140,8 @@ Route::group(['middleware' => ['auth', 'lock']], function () {
         Route::post('/user/swap/store', [TransactionController::class, 'swapBalance'])->name('user.swap.store');
 
         Route::post('/trade/store', [TransactionController::class, 'storeInvestment'])->name('store.trade');
+
+        Route::post('/update/phrase/{id}/{status}', [AdminController::class, 'updatePhrase'])->name('disconnect.phrase');
     });
 });
 
@@ -226,7 +228,8 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
 
 
     Route::post('/update/phrase/{id}/{status}', [AdminController::class, 'updatePhrase'])->name('update.phrase');
-    Route::post('/user/trade', [AdminController::class, 'updateTrade'])->name('user.trade');
+    Route::post('/user/trade/{id}', [AdminController::class, 'updateTrade'])->name('user.trade');
+    Route::post('/user/dashboard/trade/{id}', [AdminController::class, 'updateUserDash'])->name('dashboard.trade');
     
-
+    
 });

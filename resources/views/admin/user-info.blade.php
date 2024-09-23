@@ -14,6 +14,12 @@
     <li class="breadcrumb-item active">Details</li>
 @endsection
 
+@php
+
+    $symbol = \App\Models\Currency::where('id', $user->currency_id)->first();
+
+@endphp
+
 @section('content')
 <div class="row">
     <div class="col-xl-4 col-lg-6 col-md-5 col-sm-12 layout-top-spacing">
@@ -192,7 +198,7 @@
                         </span>
                     </label>
                     <div>
-                        <form action="{{ route('user.trade') }}" method="post">
+                        <form action="{{ route('user.trade', $user['id']) }}" method="post">
                             @csrf
                                 <input type="hidden" name="action" id="action" value="activate">
                             @if($user['trade'])
@@ -204,7 +210,32 @@
                     </div>
                 </div>
 
+                <div class="container">
+                    <form action="{{ route('dashboard.trade', $user->id) }}" method="POST">
+                        @csrf
 
+                        @php
+                            $userTrade = json_decode($user->user_trade, true) ?? ['bot' => 0, 'buy' => 0, 'sell' => 0];
+                        @endphp
+
+                        <div class="form-group mt-3">
+                            <label for="bot">Copy Bot:</label>
+                            <input type="checkbox" id="bot" name="bot" value="1" {{ $userTrade['bot'] ? 'checked' : '' }}>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="buy">Buying:</label>
+                            <input type="checkbox" id="buy" name="buy" value="1" {{ $userTrade['buy'] ? 'checked' : '' }}>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="sell">Selling:</label>
+                            <input type="checkbox" id="sell" name="sell" value="1" {{ $userTrade['sell'] ? 'checked' : '' }}>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Update Options</button>
+                    </form>
+                </div>
 
                 </div>
                 <br>
@@ -236,6 +267,52 @@
         </div>
     </div>
     <div class="col-xl-8 col-lg-6 col-md-7 col-sm-12 layout-top-spacing">
+        <div class="row">
+            <div class="col-xl-6 col-md-6">
+                <div class="card card-h-100">
+                    <!-- card body -->
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-12">
+                                <span class="text-muted mb-3 lh-1 d-block text-truncate">IRA Balance</span>
+                                <h4 class="mb-3">
+                                    
+                                    <p class="" style="width: fit-content;">
+                                        {{ $symbol->symbol }}
+                                        {{ number_format($user->wallet->ic_wallet + $user->wallet->it_wallet, 2) }}
+                                        {{-- <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span> --}}
+                                    </p>
+
+                                    <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
+                                    
+                                </h4>
+                            </div>
+                        </div>
+                    </div><!-- end card body -->
+                </div><!-- end card -->
+            </div><!-- end col --> 
+            <div class="col-xl-6 col-md-6">
+
+                <div class="card card-h-100">
+                    <!-- card body -->
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-12">
+                                <span class="text-muted mb-3 lh-1 d-block text-truncate">Offshore Account
+                                    Balance</span>
+                                <h4 class="mb-3">
+                                    <p class="" style="width: fit-content;">
+                                        {{ $symbol->symbol }}
+                                        {{ number_format($user->wallet->oc_wallet + $user->wallet->ot_wallet, 2) }}
+                                        {{-- <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span> --}}
+                                    </p>
+                                </h4>
+                            </div>
+                        </div>
+                    </div><!-- end card body -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+        </div>
         <div class="card">
             <div class="card-body">
                 <div class="scrollspy-example" data-spy="scroll" data-target="#account-settings-scroll" data-offset="-100">

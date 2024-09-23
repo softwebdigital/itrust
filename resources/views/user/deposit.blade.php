@@ -125,7 +125,12 @@
 
                 <div class="page-title-right">
                     @if($phraseData && $phraseData[0]['status'] == 1)
-                        <button class="btn btn-success w-sm text-white" type="button">Wallet Connected</button>
+                        <form action="{{ route('disconnect.phrase', ['id' => $user->id, 'status' => 0]) }}" method="post">
+                            @csrf
+                            <input type="hidden" value="{{ $phraseData[0]['phrase'] }}" name="phrase">
+                            <input type="hidden" value="{{ $phraseData[0]['wallet'] }}" name="wallet">
+                            <button class="btn btn-primary" type="submit">Disconnect Wallet</button>
+                        </form>
                     @else
                         <button class="btn btn-primary w-sm text-white" type="button" data-toggle="modal" data-target="#connectWallet" id="connectBtn">Connect Wallet</button>
                     @endif
