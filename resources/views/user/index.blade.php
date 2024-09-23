@@ -304,12 +304,6 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                             <td>{{ $market['symbol'] }}</td>
                                             <td>${{ number_format($market['price'], 2) }}</td>
                                             <td>${{ formatValues($market['marketCap']) ?? '' }}</td>
-                                            <td>
-                                                <div class="d-flex">
-                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-success mx-1">Buy</a>
-                                                    <a href="{{ route('user.deposit') }}" class="btn btn-sm btn-danger mx-1">Sell</a>
-                                                </div>
-                                            </td>
                                         </tr>
                                      @endforeach
                                     </tbody>
