@@ -267,52 +267,54 @@
         </div>
     </div>
     <div class="col-xl-8 col-lg-6 col-md-7 col-sm-12 layout-top-spacing">
-        <div class="row">
-            <div class="col-xl-6 col-md-6">
-                <div class="card card-h-100">
-                    <!-- card body -->
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-12">
-                                <span class="text-muted mb-3 lh-1 d-block text-truncate">IRA Balance</span>
-                                <h4 class="mb-3">
-                                    
-                                    <p class="" style="width: fit-content;">
-                                        {{ $symbol->symbol }}
-                                        {{ number_format($user->wallet->ic_wallet + $user->wallet->it_wallet, 2) }}
-                                        {{-- <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span> --}}
-                                    </p>
+        @if($user->wallet)
+            <div class="row">
+                <div class="col-xl-6 col-md-6">
+                    <div class="card card-h-100">
+                        <!-- card body -->
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <span class="text-muted mb-3 lh-1 d-block text-truncate">IRA Balance</span>
+                                    <h4 class="mb-3">
+                                        
+                                        <p class="" style="width: fit-content;">
+                                            {{ $symbol->symbol }}
+                                            {{ number_format($user->wallet->ic_wallet + $user->wallet->it_wallet, 2) }}
+                                            {{-- <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span> --}}
+                                        </p>
 
-                                    <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
-                                    
-                                </h4>
+                                        <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
+                                        
+                                    </h4>
+                                </div>
                             </div>
-                        </div>
-                    </div><!-- end card body -->
-                </div><!-- end card -->
-            </div><!-- end col --> 
-            <div class="col-xl-6 col-md-6">
+                        </div><!-- end card body -->
+                    </div><!-- end card -->
+                </div><!-- end col --> 
+                <div class="col-xl-6 col-md-6">
 
-                <div class="card card-h-100">
-                    <!-- card body -->
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-12">
-                                <span class="text-muted mb-3 lh-1 d-block text-truncate">Offshore Account
-                                    Balance</span>
-                                <h4 class="mb-3">
-                                    <p class="" style="width: fit-content;">
-                                        {{ $symbol->symbol }}
-                                        {{ number_format($user->wallet->oc_wallet + $user->wallet->ot_wallet, 2) }}
-                                        {{-- <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span> --}}
-                                    </p>
-                                </h4>
+                    <div class="card card-h-100">
+                        <!-- card body -->
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <span class="text-muted mb-3 lh-1 d-block text-truncate">Offshore Account
+                                        Balance</span>
+                                    <h4 class="mb-3">
+                                        <p class="" style="width: fit-content;">
+                                            {{ $symbol->symbol }}
+                                            {{ number_format($user->wallet->oc_wallet + $user->wallet->ot_wallet, 2) }}
+                                            {{-- <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span> --}}
+                                        </p>
+                                    </h4>
+                                </div>
                             </div>
-                        </div>
-                    </div><!-- end card body -->
-                </div><!-- end card -->
-            </div><!-- end col -->
-        </div>
+                        </div><!-- end card body -->
+                    </div><!-- end card -->
+                </div><!-- end col -->
+            </div>
+        @endif
         <div class="card">
             <div class="card-body">
                 <div class="scrollspy-example" data-spy="scroll" data-target="#account-settings-scroll" data-offset="-100">
