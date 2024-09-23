@@ -302,9 +302,9 @@
                             <div id="flush-collapseDevices" class="accordion-collapse collapse" aria-labelledby="flush-headingDevices">
                                 <div class="accordion-body text-muted">
                                     <div class="">
-                                        <h6 class="mb-2">You are currently signed in to <strong id="device-count">{{ count($devices) }}</strong> device(s).</h6>
+                                        <h6 class="mb-2">You are currently signed in to <strong id="device-count">1</strong> device(s).</h6>
                                         <div id="dsp-tab">
-                                        @foreach($devices as $device)
+                                        {{-- @foreach($devices as $device)
                                             <div class="card" id="device-{{ $device->id }}">
                                                 <div class="d-flex justify-content-between p-2">
                                                     <div class="">
@@ -363,7 +363,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        @endforeach --}}
                                         </div>
                                         <div class="d-flex justify-content-end mt-3">
                                             <button class="btn btn-outline-success btn-block px-4" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseDevices" aria-expanded="false" aria-controls="flush-collapseDevices">Close</button>
