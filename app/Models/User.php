@@ -157,18 +157,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(CopyBot::class);
     }
 
-    // public function updateWallet($crypto, $trading)
-    // {
-    //     $data = [
-    //         'crypto' => $crypto,
-    //         'trading' => $trading,
-    //     ];
-
-    //     $dataJson = json_encode($data);
-
-    //     $this->update(['wallet' => $dataJson]);
-    // }
-
     public function calculateBalances()
     {
         // Sum deposits, payouts, and ROI for IRA and Offshore accounts
@@ -224,4 +212,40 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->wallet;
     }
+
+    public function availableCashIRA()
+    {
+        $tradeBal = $this->wallet->it_wallet;
+
+        $activeIRA = $this->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $this->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+
+        $tradeBalance = $tradeBal - $activeIRA;
+
+        return $tradeBalance;
+    }
+
+    public function availableCashOFS()
+    {
+        $tradeBal = $this->wallet->ot_wallet;
+
+        $activeIRA = $this->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $this->investments()->where('status', '=', 'open')->where('acct_type', '=', 'offshore')->sum('roi');
+
+        $tradeBalance = $tradeBal - $activeIRA;
+
+        return $tradeBalance;
+    }
+
+    public function tradingCashIRA()
+    {
+        $ira_deposit = $this->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
+        $ira_payout = $this->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
+        $ira_roi = $this->ira_roi()->sum('ROI');
+
+        $ira = ($ira_deposit - $ira_payout) + $ira_roi;
+
+        $activeIRA = $this->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('amount') + $this->investments()->where('status', '=', 'open')->where('acct_type', '=', 'basic_ira')->sum('roi');
+        
+        return $activeIRA;
+    }
+    
 }
