@@ -335,12 +335,11 @@
                                                     {{ number_format($user->wallet->ic_wallet + $user->wallet->it_wallet, 2) }}
                                                     <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span>
                                                 </p>
-
                                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
                                                 
                                             </h4>
                                             <div style="float: inline-end;">
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($ira_cash, 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($user->availableCashIRA(), 2) }}</span> <br>
                                                 <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($ira_trading, 2) }}</span>
                                             </div>
                                         </div>
