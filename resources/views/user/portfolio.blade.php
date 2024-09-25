@@ -332,15 +332,15 @@
                                                 
                                                 <p class="" style="width: fit-content;">
                                                     {{ $symbol->symbol }}
-                                                    {{ number_format($user->wallet->ic_wallet + $user->wallet->it_wallet, 2) }}
-                                                    <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($iraPercentage, 2) }}%</span>
+                                                    {{ number_format(max(0,$user->wallet->ic_wallet + $user->wallet->it_wallet), 2) }}
+                                                    <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format(max(0,$iraPercentage), 2) }}%</span>
                                                 </p>
                                                 <!-- <span class="text-danger mt-3 text-truncate" style="font-size: 15px;">-35%</span> -->
                                                 
                                             </h4>
                                             <div style="float: inline-end;">
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($user->availableCashIRA(), 2) }}</span> <br>
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($ira_trading, 2) }}</span>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format(max(0,$user->availableCashIRA()), 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format(max(0,$ira_trading), 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -365,13 +365,13 @@
                                             <h4 class="mb-3">
                                                 <p class="" style="width: fit-content;">
                                                     {{ $symbol->symbol }}
-                                                    {{ number_format($user->wallet->oc_wallet + $user->wallet->ot_wallet, 2) }}
-                                                    <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format($offshorePercentage, 2) }}%</span>
+                                                    {{ number_format(max(0,$user->wallet->oc_wallet + $user->wallet->ot_wallet), 2) }}
+                                                    <span class="text-success mb-1 text-truncate" style="float: right; font-size: 12px;">+{{ number_format(max(0,$offshorePercentage), 2) }}%</span>
                                                 </p>
                                             </h4>
                                             <div style="float: inline-end;">
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}</span> <br>
-                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format($user->wallet->ot_wallet, 2) }}</span>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="unlock" class="icon-xs"></i> Available Cash: {{ $symbol->symbol }}{{ number_format(max(0,$user->wallet->oc_wallet), 2) }}</span> <br>
+                                                <span class="text-muted" style="font-size: 10px;"> <i data-feather="lock" class="icon-xs"></i> Trading Cash: {{ $symbol->symbol }}{{ number_format(max(0,$user->wallet->ot_wallet), 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -414,13 +414,13 @@
                     <div class="card-body">
                         <div class="table">
                             <table class="table table-borderless">
-                                <h4>Total Balance: <strong>{{ $symbol->symbol }} {{ number_format($user->wallet->balance, 2) }}</strong></h4> 
+                                <h4>Total Balance: <strong>{{ $symbol->symbol }} {{ number_format(max(0,$user->wallet->balance), 2) }}</strong></h4> 
                                 <p class="text-muted">Safe Deposit Margin: <strong>{{ $symbol->symbol }} {{ number_format($user->wallet->margin, 2) }}</strong></p>
                                 
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Crypto Balance</td>
                                     <td class="float-end"> 
-                                        {{ $symbol->symbol }}{{ number_format($user->wallet->ic_wallet + $user->wallet->oc_wallet, 2) }}
+                                        {{ $symbol->symbol }}{{ number_format(max(0,$user->wallet->ic_wallet + $user->wallet->oc_wallet), 2) }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -436,7 +436,7 @@
                                 <tr class="text-" style="border: 0 !important;">
                                     <td colspan="4">Trading Balance <i data-feather="lock" class="icon-xs"></i></td>
                                     <td class="float-end"> 
-                                        {{ $symbol->symbol }}{{ number_format($user->wallet->it_wallet + $user->wallet->ot_wallet, 2) }}
+                                        {{ $symbol->symbol }}{{ number_format(max(0,$user->wallet->it_wallet + $user->wallet->ot_wallet), 2) }}
                                     </td>
                                 </tr>
                                 <tr>
