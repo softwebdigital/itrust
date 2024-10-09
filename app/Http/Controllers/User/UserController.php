@@ -319,7 +319,7 @@ class UserController extends Controller
 
         $last_iraValue = end($iraData);
 
-        if($user->id == '194') {
+        // if($user->id == '194') {
             $wallet = [
                 'balance' => $totalValue,
                 'ic_wallet' => $user->calculateBalances()['ira_cash'],
@@ -331,7 +331,7 @@ class UserController extends Controller
             $user->createOrUpdateWallet($wallet);
 
             // dd(end($iraData));
-        }
+        // }
         // dd(end($iraData));
 
         //::::: FIX A USERS WALLET VALUE  :::::
