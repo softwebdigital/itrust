@@ -317,18 +317,18 @@ class UserController extends Controller
 
         //::::: FIX A USERS WALLET VALUE  :::::
 
-        $last_iraValue = end($iraData);
+        // $last_iraValue = end($iraData);
 
         // if($user->id == '194') {
-            $wallet = [
-                'balance' => $totalValue,
+            // $wallet = [
+            //     'balance' => $totalValue,
             //     'ic_wallet' => $user->calculateBalances()['ira_cash'],
-                'it_wallet' => $last_iraValue, // $user->calculateBalances()['ira_trading'],
+            //     'it_wallet' => $last_iraValue, // $user->calculateBalances()['ira_trading'],
             //     'oc_wallet' => $user->calculateBalances()['offshore_cash'],
             //     'ot_wallet' => $user->calculateBalances()['offshore_trading'],
-            ];
+            // ];
 
-            $user->createOrUpdateWallet($wallet);
+            // $user->createOrUpdateWallet($wallet);
 
             // dd(end($iraData));
         // }
