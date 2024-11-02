@@ -19,8 +19,8 @@
         <img class="position-lg-absolute" src="img/photos/Mockup-1.png" srcset="img/photos/Mockup-1.png 2x" data-cue="fadeIn" alt="" style="top: 10%; left: -10%;" />
         <div class="row gx-0 align-items-center">
           <div class="col-md-10 offset-md-1 col-lg-5 offset-lg-7 offset-xxl-6 ps-xxl-12 mt-md-n9 text-center text-lg-start" data-cues="slideInDown" data-group="page-title" data-delay="600">
-            <h1 class="display-3 mb-4 mx-sm-n2 mx-md-0">World class automated stocks and crypto trading bot</h1>
-            <p class="lead fs-lg mb-7 px-md-10 px-lg-0">Become a better trader. Powerful, AI-powered stocks and crypto trading bot to help you save time, trade 24/7, and automate your trading.</p>
+            <h1 class="display-3 mb-4 mx-sm-n2 mx-md-0">Invest the way you want to</h1>
+            <p class="lead fs-lg mb-7 px-md-10 px-lg-0">Whether you are an active trader or investing for the future, we can help you reach your goals. Invest globally in stocks, options, futures, currencies, bonds and funds from a single unified platform.</p>
             <div class="d-flex justify-content-center justify-content-lg-start" data-cues="slideInDown" data-group="page-title-buttons" data-delay="900">
               <span><a href="{{ route('register') }}" class="btn btn-primary btn-icon btn-icon-start rounded me-2"><i class="uil uil-user"></i> Sign Up</a></span>
               <!-- <span><a class="btn btn-green btn-icon btn-icon-start rounded"><i class="uil uil-google-play"></i> Google Play</a></span> -->

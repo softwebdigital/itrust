@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:image" content="{{ asset('card.jpeg') }}">
-    <meta property="og:title" content="Access The Most Powerful Stock & Crypto Trading Bot - Itrust Investment">
+    <meta property="og:title" content="Invest globally in stocks, options, futures and many more from a single unified platform.">
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
     <title>Itrust Investments</title>
     <link rel="stylesheet" href="css/plugins.css">
