@@ -623,12 +623,12 @@
 <!-- pace js -->
 <!-- <script src="{{ asset('assets/libs/pace-js/pace.min.js') }}"></script> -->
 <!-- apexcharts -->
-<script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+<!-- <script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script> -->
 <!-- Plugins js-->
 <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
 <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
 <!-- apexcharts js -->
-<script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+<!-- <script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script> -->
 
 <script src="{{ asset('assets/js/app.js') }}"></script>
 <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>

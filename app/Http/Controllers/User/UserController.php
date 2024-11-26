@@ -83,14 +83,14 @@ class UserController extends Controller
             $data = null;
         }
 
-        // $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
+        $urlStock = 'https://financialmodelingprep.com/api/v3/quote/AAPL,GOOGL,AMZN,MSFT,TSLA,FB,JPM,V,A,PG,JNJ,MA,NVDA,UNH,BRK.B,HD,DIS,INTC,VZ,PYPL,CMCSA,PFE,ADBE,CRM,XOM,CSCO,IBM,ABT,ACN,BAC,ORCL,COST,TMO,ABBV,NFLX,T,XEL,MDT,NKE,AMGN,CVS,TMUS,DHR,LMT,NEE,HON,BMY,COP?apikey=afc624e3f711729ac7e9d83e211a8dd4';
         
-        // $res = Http::get($urlStock);
-        // $stocks_data = $res->json();
+        $res = Http::get($urlStock);
+        $stocks_data = $res->json();
 
         // $stocks_data = self::stock();
 
-        $stocks_data = [];
+        // $stocks_data = [];
 
         $investment = Investment::query()->where('user_id', auth()->id())->where('status', 'open');
         // $stocks = Investment::query()->where('user_id', auth()->id())->where('status', 'open')->where('type', 'stocks')->sum('amount');

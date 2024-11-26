@@ -29,7 +29,6 @@ class InvestmentController extends Controller
         return view('admin.new-inv', compact('users'));
     }
 
-
     public function newInvestUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -116,7 +115,6 @@ class InvestmentController extends Controller
         MailController::sendInvestmentNotification($user, $mail);
         return redirect()->route('admin.investments')->with($msg);
     }
-
 
     public function investUser(Request $request, $user_id)
     {
