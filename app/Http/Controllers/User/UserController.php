@@ -330,7 +330,7 @@ class UserController extends Controller
 
             $user->createOrUpdateWallet($wallet);
 
-            dd(end($iraData));
+            // dd(end($iraData));
         }
         // dd(end($iraData));
 
