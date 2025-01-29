@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Providers\RouteServiceProvider;
+use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -83,6 +84,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $mailBody = '<p>You have a new user by the name <b>' . $data['first_name'] . ' ' . $data['last_name'] . '</b>.</p>';
+
+        $admin = new User;
+        $admin['email'] = env('TRANX_EMAIL');
+        $adminMail = [
+            'subject' => 'New User',
+            'body' => $mailBody
+        ];
+        
+        MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
+        
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],

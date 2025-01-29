@@ -155,7 +155,6 @@ class InvestmentController extends Controller
         return redirect()->route('admin.users')->with($msg);
     }
 
-
     public function addTransaction(Request $request, $user_id)
     {
         $validator = Validator::make($request->all(), [
@@ -242,6 +241,22 @@ class InvestmentController extends Controller
         ]);
         if ($validator->fails()) return back()->with('error', $validator->errors()->first());
 
+        // dd(' - ' . $investment['ROI'] . ' and + ' . $request['amount']);
+
+        if ($investment->acct_type == 'offshore') {
+            $user->wallet->decrement('balance',$investment['ROI']);
+            $user->wallet->decrement('ot_wallet',$investment['ROI']);
+
+            $user->wallet->increment('balance', $request['amount']);
+            $user->wallet->increment('ot_wallet', $request['amount']);
+        } else {
+            $user->wallet->decrement('balance', $investment['ROI']);
+            $user->wallet->decrement('it_wallet', $investment['ROI']);
+            
+            $user->wallet->increment('balance', $request['amount']);
+            $user->wallet->increment('it_wallet', $request['amount']);
+        }
+
         if ($investment->update(
             [
                 'ROI' => $request['amount'],
@@ -256,6 +271,7 @@ class InvestmentController extends Controller
                 'take_profit' => $request['takeprofit'],
                 'created_at' => Carbon::make($request['date'])->format('Y-m-d'),
             ]))
+
             return back()->with('success', 'Investment successfully updated');
 
         return back()->with('error', 'An error occurred, try again.');

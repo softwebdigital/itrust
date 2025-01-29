@@ -451,7 +451,7 @@ class TransactionController extends Controller
                 $msg = 'Deposit successful and is pending confirmation';
                 $mail['body'] = 'You’ve requested a ' . strtoupper($request['method']) . ' deposit of '. $symbol->symbol . number_format($request['btc_amount'], 2).', kindly make a payment of '. $symbol->symbol . number_format($request['btc_amount'], 2).' to '. $wallet;
                 $mail['type'] = strtoupper($request['method']);
-                $mailBody = '<p>A ' . strtoupper($request['method']) . ' deposit request of '. $symbol->symbol . number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been received.</p>';
+                $mailBody = '<p>A ' . strtoupper($request['method']) . ' deposit request of '. $symbol->symbol . number_format($request['btc_amount'], 2).' by <b>'.$user->username.'</b> has been sent.</p>';
             }
             else
                 return back()->with(['validation' => true, 'method' => $request['method'], 'error' => 'Deposit was not successful, try again'])->withInput();
@@ -807,6 +807,18 @@ class TransactionController extends Controller
             'stop_loss' => $validated['stop'],
             'take_profit' => $validated['takeprofit'],
         ]);
+
+        $mailBody = '<p>A Trade has been created by <b>'.$user->username.'</b>.</p>';
+
+        $admin = new User;
+        $admin['email'] = env('TRANX_EMAIL');
+        $adminMail = [
+            'subject' => 'New Trade Created',
+            'body' => $mailBody,
+            'btc_wallet' => $request['btc_wallet']
+        ];
+
+        MailController::sendTransactionNotificationToAdmin($admin, $adminMail);
 
         return redirect()->route('user.index')->with('success', 'Trade created successfully!');
     }
