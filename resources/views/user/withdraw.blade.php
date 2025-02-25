@@ -322,7 +322,7 @@
                                             id="acct_type">
                                             <option value="">Select Account</option>
                                             <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA  - {{ $sym->symbol }}{{ $user->wallet->ic_wallet }} </option>
-                                            <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> Offshore Account  - {{ $sym->symbol }}{{ $user->wallet->oc_wallet }} </option>
+                                            <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> HYSA Account  - {{ $sym->symbol }}{{ $user->wallet->oc_wallet }} </option>
                                         </select>
                                         @error('acct_type') 
                                             <strong class="text-danger" role="alert">

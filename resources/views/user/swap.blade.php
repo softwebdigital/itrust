@@ -316,7 +316,7 @@
                                                 IRA Trading: {{ $sym->symbol }}{{ number_format($user->availableCashIRA(), 2) }}
                                             </option>
                                             <option value="ot_wallet" {{ old('from_wallet') == 'ot_wallet' ? 'selected' : '' }}>
-                                                Offshore Trading: {{ $sym->symbol }}{{ number_format($offshore_cash, 2) }}
+                                                HYSA Trading: {{ $sym->symbol }}{{ number_format($offshore_cash, 2) }}
                                             </option>
                                         </select>
                                         <i class="fas fa-chevron-down position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></i>
@@ -335,7 +335,7 @@
                                                 IRA Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->ic_wallet, 2) }}
                                             </option>
                                             <option value="oc_wallet" {{ old('to_wallet') == 'oc_wallet' ? 'selected' : '' }}>
-                                                Offshore Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}
+                                                HYSA Crypto: {{ $sym->symbol }}{{ number_format($user->wallet->oc_wallet, 2) }}
                                             </option>
                                         </select>
                                         <input type="hidden" name="to_wallet" id="to_wallet">
@@ -481,7 +481,7 @@
                         </td>
                         <td>
                             @if($transaction->acct_type == 'offshore')
-                            Offshore
+                            HYSA
                             @elseif($transaction->acct_type == 'basic_ira')
                             Basic IRA
                             @else

@@ -19,7 +19,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Offshore Deposit</h5>
+                    <h5 class="modal-title" id="exampleModalCenterTitle">HYSA Deposit</h5>
                     {{-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button> --}}
@@ -360,7 +360,7 @@
                                                         data-target="#exampleModalCenterdeposit">DEPOSIT NOW <i
                                                             class="mdi mdi-arrow-down"></i></a></div> --}}
                                             @endif
-                                            <span class="text-muted mb-3 lh-1 d-block text-truncate">Offshore Account
+                                            <span class="text-muted mb-3 lh-1 d-block text-truncate">HYSA Account
                                                 Balance</span>
                                             <h4 class="mb-3">
                                                 <p class="" style="width: fit-content;">
@@ -1166,7 +1166,7 @@
                     data: {!! json_encode($iraData) !!}
                 },
                 {
-                    name: "Offshore",
+                    name: "HYSA",
                     data: {!! json_encode($offshoreData) !!}
                 }
             ],

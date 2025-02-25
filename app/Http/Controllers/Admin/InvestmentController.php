@@ -69,7 +69,7 @@ class InvestmentController extends Controller
         if ($request['acct_type'] == 'offshore') {
             // $withdrawable = $offshore;
             $withdrawable = $user->wallet->ot_wallet;
-            if ((float) $request['amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
+            if ((float) $request['amount'] > $withdrawable) return back()->with('error', 'Insufficient Funds in your HYSA Account, try again');
         } else {
             // $withdrawable = $ira;
             $withdrawable = $user->wallet->it_wallet;
@@ -214,7 +214,7 @@ class InvestmentController extends Controller
 
             if ($acct_type == 'offshore') {
                 $portfolioValue = $offshore;
-                if ((float) $request['investment'] > $portfolioValue) return back()->with('error', 'Insufficient Funds in your Offshore Account, try again');
+                if ((float) $request['investment'] > $portfolioValue) return back()->with('error', 'Insufficient Funds in your HYSA Account, try again');
             } else {
                 $portfolioValue = $ira;
                 if ((float) $request['investment'] > $portfolioValue) return back()->with('error', 'Insufficient Funds in your Basic IRA Account, try again');
