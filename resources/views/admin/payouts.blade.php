@@ -59,7 +59,7 @@
                         <select class="form-select @error('account') is-invalid @enderror" name="account" id="user">
                             <option value="">Select Account</option>
                             <option @if(old('account') == 'basic_ira') selected @endif value="basic_ira">Basic IRA </option>
-                            <option @if(old('account') == 'offshore') selected @endif value="offshore"> HYSA Account </option>
+                            <option @if(old('account') == 'offshore') selected @endif value="offshore"> HYSA </option>
                         </select>
                         @error('account') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                     </div>
@@ -326,7 +326,7 @@
                                             <select class="form-select @error('account') is-invalid @enderror" name="account" id="user">
                                                 <option value="">Select Account</option>
                                                 <option @if(old('account') == 'basic_ira') selected @elseif($payout['acct_type'] == 'basic_ira') selected @endif value="basic_ira">Basic IRA </option>
-                                                <option @if(old('account') == 'offshore') selected @elseif($payout['acct_type'] == 'offshore') selected @endif value="offshore"> HYSA Account </option>
+                                                <option @if(old('account') == 'offshore') selected @elseif($payout['acct_type'] == 'offshore') selected @endif value="offshore"> HYSA </option>
                                             </select>
                                             @error('account') <strong class="text-danger" role="alert">{{ $message }}</strong> @enderror
                                         </div>

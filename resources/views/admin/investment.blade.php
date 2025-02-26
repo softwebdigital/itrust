@@ -455,7 +455,7 @@
                             id="acct_type">
                             <option value="">Select Account</option>
                             <option value="basic_ira">Basic IRA (current account)</option>
-                            <option value="offshore"> HYSA Account </option>
+                            <option value="offshore"> HYSA </option>
                         </select>
                         @error('acct_type') <strong class="text-danger"
                             role="alert">{{ $message }}</strong> @enderror

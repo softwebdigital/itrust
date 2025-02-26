@@ -380,7 +380,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                             <label for="acct_type">Cash Trading Balance:</label>
                             <select class="form-select @error('acct_type') is-invalid @enderror" name="acct_type" id="acct_type" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                 <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA  - {{ $sym->symbol }}{{ $ira_cash }} </option>
-                                <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> HYSA Account  - {{ $sym->symbol }}{{ $offshore_cash }} </option>
+                                <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> HYSA  - {{ $sym->symbol }}{{ $offshore_cash }} </option>
                             </select>
                         </div>
                         <div class="mt-3">

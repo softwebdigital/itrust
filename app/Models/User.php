@@ -159,7 +159,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function calculateBalances()
     {
-        // Sum deposits, payouts, and ROI for IRA and HYSA Accounts
+        // Sum deposits, payouts, and ROI for IRA and HYSAs
         $ira_deposit = $this->ira_deposit()->where('status', '=', 'approved')->sum('actual_amount');
         $ira_payout = $this->ira_payout()->whereIn('status', ['approved', 'pending'])->sum('actual_amount');
         $offshore_deposit = $this->offshore_deposit()->where('status', '=', 'approved')->sum('actual_amount');

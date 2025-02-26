@@ -538,7 +538,7 @@ class TransactionController extends Controller
                         ])->withInput();
                     }
                 } else {
-                    return back()->with('error', 'Insufficient funds in your Offshore Available Cash.');
+                    return back()->with('error', 'Insufficient funds in your HYSA Available Cash.');
                 }
             } else {
                 if ($user->wallet && $amount <= $user->wallet->ic_wallet) {
@@ -750,7 +750,7 @@ class TransactionController extends Controller
             }
         } else {
             if($amount > $user->availableCashOFS()) {
-                return redirect()->route('user.swap')->with('error', 'Insufficient funds in the Offshore wallet!');
+                return redirect()->route('user.swap')->with('error', 'Insufficient funds in the HYSA wallet!');
             }
         }
 
@@ -782,13 +782,13 @@ class TransactionController extends Controller
 
         if ($validated['acct_type'] == 'basic_ira') {
             if($user->availableCashIRA() <= $validated['amount']) {
-                return back()->with('error', 'Insufficient Offshore wallet balance!');
+                return back()->with('error', 'Insufficient HYSA wallet balance!');
             }
         }
 
         if ($validated['acct_type'] == 'offshore') {
             if($user->availableCashOFS() <= $validated['amount']) {
-                return back()->with('error', 'Insufficient Offshore wallet balance!');
+                return back()->with('error', 'Insufficient HYSA wallet balance!');
             }
         }
 

@@ -179,7 +179,7 @@
                                     id="acct_type">
                                     <option value="">Select Account</option>
                                     <option value="basic_ira" {{ old('acct_type') == 'basic_ira' ? 'selected' : '' }}>Basic IRA </option>
-                                    <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> HYSA Account </option>
+                                    <option value="offshore" {{ old('acct_type') == 'offshore' ? 'selected' : '' }}> HYSA </option>
                                 </select>
                             </div>
 

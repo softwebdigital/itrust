@@ -299,7 +299,7 @@
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-12">
-                                    <span class="text-muted mb-3 lh-1 d-block text-truncate">HYSA Account
+                                    <span class="text-muted mb-3 lh-1 d-block text-truncate">HYSA
                                         Balance</span>
                                     <h4 class="mb-3">
                                         <p class="" style="width: fit-content;">
