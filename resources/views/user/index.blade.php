@@ -400,7 +400,8 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                             </div>
                         </div>
                         <div class="mt-3">
-                            <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
+                            <input type="hidden" name="interval" value="6hrs">
+                            {{-- <select class="form-select @error('interval') is-invalid @enderror" name="interval" id="interval" style="border: 1px solid #f0f0f0; border-radius: 10px;">
                                 <option value="5min">Interval: 5min </option>
                                 <option value="10min">Interval: 10min </option>
                                 <option value="30min">Interval: 30min </option>
@@ -410,7 +411,7 @@ $sym = App\Models\Currency::where('id', $user->currency_id)->first();
                                 <option value="6hrs">Interval: 6hrs </option>
                                 <option value="12hrs">Interval: 12hrs </option>
                                 <option value="24hrs">Interval: 24hrs </option>
-                            </select>
+                            </select> --}}
                         </div>
                         <div class="mt-3">
                             <select class="form-select @error('leverage') is-invalid @enderror" name="leverage" id="leverage" style="border: 1px solid #f0f0f0; border-radius: 10px;">
